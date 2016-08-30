@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+{% block title %}Login | Geostore{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 login-form">
+        <h2>LOGIN</h2>
+        <form method="POST" id="loginAccountForm">
+            <div class="form-group">
+                <label for="exampleInputEmail1">EMAIL</label>
+                <input type="email" name="email" class="form-control input-lg" required>
+                {% if redirect %}
+                <input type="hidden" name="redirect" value="{{ redirect }}">
+                {% endif %}
+                <input type="hidden" name="token" value="{{ csrf_token }}">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">PASSWORD</label>
+                <input type="password" name="password" class="form-control input-lg" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-lg btn-inverse"> LOGIN</button>
+            </div>
+            <a href="/password/reset">Forgot your Password? Click here to reset it.</a><br /><br />
+            <a href="{% if admin %}/admin/register?r={{ redirect }}{% else %}/register?r={{ redirect }}{% endif %}">No account yet? Click here to Register for an Account.</a>
+        </form>
+    </div>
+</div>
+<div id="system-requirements" class="row">
+    <div align="center">
+        <p>For optimized browsing experience, the recommended browser is <b>Chrome 50</b> and above.</p>
+        <a href="https://support.google.com/chrome/answer/7026064?hl=en&rd=1" target="_blank" title="Download Google Chrome"><img src="/images/chrome.png"></a>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('input[name=email]').focus();
+    });
+    $("#loginAccountForm").submit(function (){
+        $(".form-control").prop("readonly", true);
+        $(".btn-inverse").prop("disabled", true).prepend($("<i>", { class: "fa fa-spin fa-circle-o-notch" }));
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+TODO
+
+- Audit - make sure data is being collected
+- Viewer - make everything work
+- Publishing
+
+
+
+Major things to build
+
+Publish function
+Audit Trail
+    - Collection
+    - Browser
+        - Main browser
+        - within each project
+
+
+
+Environments. make public
+
+- create backend
+    - toggle private/public for specific file *
+        - any user can do this *
+    - toggle private/public for environment *
+        - check if cluster director *
+
+- create frontend
+    - editing permissions
+    -
+
+
+Behavior:
+    - if environment is private, everything inside is private.
+    - if environment is public, everything that is not private inside it becomes public.
+
+
+- when creating things, let them inherit the environment of their parent_id
+-
+
+
+
+
+Hide DPWH Variables aside from the list
+
+
+
+
+Red Flags
+
+Generate retroactively red flags
+

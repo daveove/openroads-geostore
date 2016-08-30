@@ -1,0 +1,463 @@
+<!-- {{ system_url }} -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Project Geoprocessing Summary</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.2.1/css/buttons.dataTables.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/geoprocessing-classification.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row mb-50">
+                <div class="col-md-4">
+                    <h4>PROJECT NAME</h4>
+                    <div class="mv-5" id="project-name">Brgy. Patag FMR (Phase 1)</div>
+                </div>
+                <div class="col-md-4">
+                    <h4>PROJECT CODE</h4>
+                    <div class="mv-5" id="project-code">FMRDP-R008-LEY-ORM-053-2015</div>
+                </div>
+                <div class="col-md-4">
+                    <h4>DATE</h4>
+                    <div class="mv-5">
+                        <select id="dataset-select">
+                            {% for x in datasets %}
+                                <option value="{{ x }}">{{ datasets[x] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <h4>SUMMARY</h4>
+            <div class="row mb-50 mt-25">
+                <div class="col-md-3">
+                    <div class="summary-item">
+                        <div>GEOMETRY LENGTH (KM)</div>
+                        <h1 class="geometry-length"><i class="fa fa-refresh fa-spin fa-pulse" aria-hidden="true"></i></h1>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-item">
+                        <div>TOTAL NUMBER OF ROAD SURVEYS</div>
+                        <h1 class="total-temporal-points"><i class="fa fa-refresh fa-spin fa-pulse" aria-hidden="true"></i></h1>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-item">
+                        <div>NUMBER OF CLASSIFIED IMAGES</div>
+                        <h1 class="total-tags"><i class="fa fa-refresh fa-spin fa-pulse" aria-hidden="true"></i></h1>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="summary-item">
+                        <div>IMAGES CLASSIFIED AS ROAD</div>
+                        <h1 class="total-unique-images"><i class="fa fa-refresh fa-spin fa-pulse" aria-hidden="true"></i></h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h6>SURFACE CHART</h6></div>
+                        <div class="panel-body">
+                            <div id="surface-chart" class="chart"></div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h6>QUALITY CHART</h6></div>
+                        <div class="panel-body">
+                            <div id="quality-chart" class="chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>MAP</h4>
+                    <div id="geotagging-canvass"></div>
+                </div>
+            </div>
+            <h4>
+                PROJECT SUMMARY
+                <div class="pull-right" style="font-size: 13px;">
+                    <b style="margin-right: 15px;">SHOW:</b>
+                    <button class="btn btn-md btn-orange active" style="margin-right: 10px;" id="btn-project-summary-table">
+                        <i class="fa fa-table"></i> TABLE
+                    </button>
+                    <button class="btn btn-md btn-orange" id="btn-project-summary-graph">
+                        <i class="fa fa-bar-chart"></i> GRAPH
+                    </button>
+                </div>
+            </h4>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-container" id="project-summary-table-container">
+                        <table class="table table-bordered" id="project-summary-table">
+                            <thead style="font-size: 1.3em;">
+                                <tr>
+                                   <th rowspan="2">SURFACE TYPE</th> 
+                                   <th colspan="8">QUALITY</th>
+                                   <th rowspan="2" colspan="2">TOTAL</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Good</th>
+                                    <th colspan="2">Fair</th>
+                                    <th colspan="2">Poor</th>
+                                    <th colspan="2">Bad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>CONCRETE</b></td>
+                                    <td id="concrete-good-percent">0 %</td>
+                                    <td id="concrete-good-km">0 km</td>
+                                    <td id="concrete-fair-percent">0 %</td>
+                                    <td id="concrete-fair-km">0 km</td>
+                                    <td id="concrete-poor-percent">0 %</td>
+                                    <td id="concrete-poor-km">0 km</td>
+                                    <td id="concrete-bad-percent">0 %</td>
+                                    <td id="concrete-bad-km">0 km</td>
+                                    <td id="total-concrete-percent">0 %</td>
+                                    <td id="total-concrete-km">0 km</td>
+                                </tr>
+                                <tr>
+                                    <td><b>ASPHALT</b></td>
+                                    <td id="asphalt-good-percent">0 %</td>
+                                    <td id="asphalt-good-km">0 km</td>
+                                    <td id="asphalt-fair-percent">0 %</td>
+                                    <td id="asphalt-fair-km">0 km</td>
+                                    <td id="asphalt-poor-percent">0 %</td>
+                                    <td id="asphalt-poor-km">0 km</td>
+                                    <td id="asphalt-bad-percent">0 %</td>
+                                    <td id="asphalt-bad-km">0 km</td>
+                                    <td id="total-asphalt-percent">0 %</td>
+                                    <td id="total-asphalt-km">0 km</td>
+                                </tr>
+                                <tr>
+                                    <td><b>GRAVEL</b></td>
+                                    <td id="gravel-good-percent">0 %</td>
+                                    <td id="gravel-good-km">0 km</td>
+                                    <td id="gravel-fair-percent">0 %</td>
+                                    <td id="gravel-fair-km">0 km</td>
+                                    <td id="gravel-poor-percent">0 %</td>
+                                    <td id="gravel-poor-km">0 km</td>
+                                    <td id="gravel-bad-percent">0 %</td>
+                                    <td id="gravel-bad-km">0 km</td>
+                                    <td id="total-gravel-percent">0 %</td>
+                                    <td id="total-gravel-km">0 km</td>
+                                </tr>
+                                <tr>
+                                    <td><b>EARTH</b></td>
+                                    <td id="dirt-good-percent">0 %</td>
+                                    <td id="dirt-good-km">0 km</td>
+                                    <td id="dirt-fair-percent">0 %</td>
+                                    <td id="dirt-fair-km">0 km</td>
+                                    <td id="dirt-poor-percent">0 %</td>
+                                    <td id="dirt-poor-km">0 km</td>
+                                    <td id="dirt-bad-percent">0 %</td>
+                                    <td id="dirt-bad-km">0 km</td>
+                                    <td id="total-dirt-percent">0 %</td>
+                                    <td id="total-dirt-km">0 km</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-size: 1.3em;">
+                                    <td><b>TOTAL</b></td>
+                                    <td id="total-good-percent">0 %</td>
+                                    <td id="total-good-km">0 km</td>
+                                    <td id="total-fair-percent">0 %</td>
+                                    <td id="total-fair-km">0 km</td>
+                                    <td id="total-poor-percent">0 %</td>
+                                    <td id="total-poor-km">0 km</td>
+                                    <td id="total-bad-percent">0 %</td>
+                                    <td id="total-bad-km">0 km</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div id="project-summary-graph-container" class="hidden">
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h6>CONCRETE</h6></div>
+                            <div class="panel-body">
+                                <div id="concrete-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h6>ASPHALT</h6></div>
+                            <div class="panel-body">
+                                <div id="asphalt-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h6>GRAVEL</h6></div>
+                            <div class="panel-body">
+                                <div id="gravel-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h6>EARTH</h6></div>
+                            <div class="panel-body">
+                                <div id="dirt-chart" class="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <p><a href="#" id="asset-values-modal-show">Click here</a> to see how the values below were calculated.</p>
+                    <div class="table-container" id="value-of-project">
+                        <header>CALCULATED ACTUAL VALUE OF PROJECT</header>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>SURFACE TYPE</th>
+                                    <th>Good</th>
+                                    <th>Fair</th>
+                                    <th>Poor</th>
+                                    <th>Bad</th>
+                                    <th>TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>CONCRETE</b></td>
+                                    <td id="value2-concrete-good"></td>
+                                    <td id="value2-concrete-fair"></td>
+                                    <td id="value2-concrete-poor"></td>
+                                    <td id="value2-concrete-bad"></td>
+                                    <td id="total2-concrete"></td>
+                                </tr>
+                                <tr>
+                                    <td><b>ASPHALT</b></td>
+                                    <td id="value2-asphalt-good"></td>
+                                    <td id="value2-asphalt-fair"></td>
+                                    <td id="value2-asphalt-poor"></td>
+                                    <td id="value2-asphalt-bad"></td>
+                                    <td id="total2-asphalt"></td>
+                                </tr>
+                                <tr>
+                                    <td><b>GRAVEL</b></td>
+                                    <td id="value2-gravel-good"></td>
+                                    <td id="value2-gravel-fair"></td>
+                                    <td id="value2-gravel-bad"></td>
+                                    <td id="value2-gravel-poor"></td>
+                                    <td id="total2-gravel"></td>
+                                </tr>
+                                <tr>
+                                    <td><b>EARTH</b></td>
+                                    <td id="value2-earth-good"></td>
+                                    <td id="value2-earth-fair"></td>
+                                    <td id="value2-earth-poor"></td>
+                                    <td id="value2-earth-bad"></td>
+                                    <td id="total2-earth"></td>
+                                </tr>
+                                <tr>
+                                    <td><b>TOTAL</b></td>
+                                    <td id="total2-good"></td>
+                                    <td id="total2-fair"></td>
+                                    <td id="total2-poor"></td>
+                                    <td id="total2-bad"></td>
+                                    <td id="total2-total"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <small style="display: none;">
+                    <div>CONCRETE-GOOD: <span id="value-concrete-good"></span> (Computed at <span id="computed-concrete-good"></span> per KM)</div>
+                    <div>CONCRETE-FAIR: <span id="value-concrete-fair"></span> (Computed at <span id="computed-concrete-fair"></span> per KM)</div>
+                    <div>CONCRETE-POOR: <span id="value-concrete-poor"></span> (Computed at <span id="computed-concrete-poor"></span> per KM)</div>
+                    <div>CONCRETE-BAD: <span id="value-concrete-bad"></span> (Computed at <span id="computed-concrete-bad"></span> per KM)</div>
+                    <div>ASPHALT-GOOD: <span id="value-asphalt-good"></span> (Computed at <span id="computed-asphalt-good"></span> per KM)</div>
+                    <div>ASPHALT-FAIR: <span id="value-asphalt-fair"></span> (Computed at <span id="computed-asphalt-fair"></span> per KM)</div>
+                    <div>ASPHALT-POOR: <span id="value-asphalt-poor"></span> (Computed at <span id="computed-asphalt-poor"></span> per KM)</div>
+                    <div>ASPHALT-BAD: <span id="value-asphalt-bad"></span> (Computed at <span id="computed-asphalt-bad"></span> per KM)</div>
+                    <div>GRAVEL-GOOD: <span id="value-gravel-good"></span> (Computed at <span id="computed-gravel-good"></span> per KM)</div>
+                    <div>GRAVEL-FAIR: <span id="value-gravel-fair"></span> (Computed at <span id="computed-gravel-fair"></span> per KM)</div>
+                    <div>GRAVEL-POOR: <span id="value-gravel-poor"></span> (Computed at <span id="computed-gravel-poor"></span> per KM)</div>
+                    <div>GRAVEL-BAD: <span id="value-gravel-bad"></span> (Computed at <span id="computed-gravel-bad"></span> per KM)</div>
+                    <div>EARTH-GOOD: <span id="value-earth-good"></span> (Computed at <span id="computed-earth-good"></span> per KM)</div>
+                    <div>EARTH-FAIR: <span id="value-earth-fair"></span> (Computed at <span id="computed-earth-fair"></span> per KM)</div>
+                    <div>EARTH-POOR: <span id="value-earth-poor"></span> (Computed at <span id="computed-earth-poor"></span> per KM)</div>
+                    <div>EARTH-BAD: <span id="value-earth-bad"></span> (Computed at <span id="computed-earth-bad"></span> per KM)</div>
+                </small>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-md-12">
+                    <h4>RESOURCES</h4>
+                    <b>KMLs</b>
+                    <ul class="list-unstyled" id="kml-resources">
+                    {% for kml in kmls %}
+                        <li><a href="{{ kml.file_url }}" target="_blank">Geometry for Project {% if 'ACCESS' in kml.filename %}Access Road {% endif %}- {{ kml.filename }} <i class="fa fa-download"></i></a></li>
+                        <li><a href="/geoprocessing/kml/download?parent_code={{ kml.parent_code }}&kml_id={{ kml.kml_id }}" target="_blank">State Geometry of Project {% if 'ACCESS' in kml.filename %}Access Road {% endif %}- {{ kml.filename }} <i class="fa fa-download"></i></a></li>
+                    {% endfor %}
+                    </ul>
+                    <button class="btn btn-orange btn-md" id="btn-csv-download" style="margin: 1em 0;">CSV <i class="fa fa-download"></i></button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-container" id="geoprocessed-images">
+                        <header>GEO-PROCESSED IMAGES</header>
+                        <table class="table" id="geoprocessed-images-table">
+                            <thead>
+                                <tr>
+                                    <th>IMAGE</th>
+                                    <th>QUALITY</th>
+                                    <th>SURFACE</th>
+                                    <th>USER</th>
+                                    <th>DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>FAIR</td>
+                                    <td>GRAVEL</td>
+                                    <td>Ashley Uy</td>
+                                    <td>Dec. 18, 2016</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>FAIR</td>
+                                    <td>ASPHALT</td>
+                                    <td>Jan Gonzales</td>
+                                    <td>Mar. 18, 2016</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>FAIR</td>
+                                    <td>CONCRETE</td>
+                                    <td>Jan Gonzales</td>
+                                    <td>Mar. 18, 2016</td>
+                                </tr>
+                                <tr class="warning">
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>
+                                        <div>FAIR</div>
+                                        <div>GOOD</div>
+                                    </td>
+                                    <td>CONCRETE</td>
+                                    <td>
+                                        <div>Jan Gonzales</div>
+                                        <div>Ashley Uy</div>
+                                    </td>
+                                    <td>
+                                        <div>Mar. 18, 2016</div>
+                                        <div>Dec. 20, 2016</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>FAIR</td>
+                                    <td>CONCRETE</td>
+                                    <td>Jan Gonzales</td>
+                                    <td>Mar. 18, 2016</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="http://lh3.googleusercontent.com/6pJuTa_q6KaMBYmQghvNLKfDnerrw4J42KoeAZJZeexNvcLoO2l2ib0FLdtbQaDWlcCdeBEEaZ8ulXPjDwXMKSQ=s75-c"></td>
+                                    <td>FAIR</td>
+                                    <td>CONCRETE</td>
+                                    <td>Ashley Uy</td>
+                                    <td>Mar. 18, 2016</td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="asset-values-modal" class="hidden">
+            <div id="asset-values-container">
+                <div id="asset-values-modal-close">&times;</div>
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="table-container" id="asset-values">
+                            <header>STANDARD APPROXIMATE ASSET VALUES</header>    
+                            <small>(Estimated Cost of a Kilometer of Road Based on Quality and Program)</small>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th></th>
+                                    <th>GOOD</th>
+                                    <th>FAIR</th>
+                                    <th>POOR</th>
+                                    <th>BAD</th>
+                                </tr>
+                                <tr>
+                                    <th>CONCRETE</th>
+                                    <td id="computed2-concrete-good"></td>
+                                    <td id="computed2-concrete-fair"></td>
+                                    <td id="computed2-concrete-poor"></td>
+                                    <td id="computed2-concrete-bad"></td>
+                                </tr>
+                                <tr>
+                                    <th>ASPHALT</th>
+                                    <td id="computed2-asphalt-good"></td>
+                                    <td id="computed2-asphalt-fair"></td>
+                                    <td id="computed2-asphalt-poor"></td>
+                                    <td id="computed2-asphalt-bad"></td>
+                                </tr>
+                                <tr>
+                                    <th>GRAVEL</th>
+                                    <td id="computed2-gravel-good"></td>
+                                    <td id="computed2-gravel-fair"></td>
+                                    <td id="computed2-gravel-poor"></td>
+                                    <td id="computed2-gravel-bad"></td>
+                                </tr>
+                                <tr>
+                                    <th>EARTH</th>
+                                    <td id="computed2-earth-good"></td>
+                                    <td id="computed2-earth-poor"></td>
+                                    <td id="computed2-earth-fair"></td>
+                                    <td id="computed2-earth-bad"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-3" id="asset-values-calculation">
+                        <p>To calculate the actual value of project, take the length of the Surface Type and Quality from the Project Summary Table and multiply it with the corresponding value in the Standard Approximate Asset Values table.</p>
+                        <p>e.g. <b>0.01km x 19,000,000.00 = 190,000.00</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://maps.googleapis.com/maps/api/js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script src="https://cdn.ravenjs.com/2.3.0/raven.min.js"></script>
+        <script src="/js/flot/jquery.flot.cust.js"></script>
+        <script src="/js/flot/jquery.flot.resize.js"></script>
+        <script src="/js/flot/jquery.flot.fillbetween.min.js"></script>
+        <script src="/js/flot/jquery.flot.orderBar.js"></script>
+        <script src="/js/flot/jquery.flot.pie.js"></script>
+        <script src="/js/flot/jquery.flot.tooltip.js"></script>
+        <script type="text/javascript">
+            Raven.config('https://f10053f0c3304adf9f8655d35a669ad0@app.getsentry.com/75603').install();
+            var system_url = '{{ system_url }}';
+            var project_code = '{{ project_code }}';
+            var asset_values = {{ asset_values|safe }};
+        </script>
+        <script type="text/javascript" src="/js/geoprocessing-classification.js"></script>
+    </body>
+</html>

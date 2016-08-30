@@ -1,0 +1,125 @@
+{% extends 'index.html' %}
+{% block title %}User Groups | Geostore{% endblock %}
+{% block style %}
+    <style>
+        .breadcrumb {
+            width: 60%;
+            display: inline-block;
+        }
+        .btn-new-team {
+            margin-top: 8px;
+            float: right;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="col-xs-12 col-lg-12" id="content-container">
+        {% if user_groups %}
+        <div class="panel panel-inverse">
+            <div class="panel-heading"><i class="fa fa-fw fa-lg fa-users"></i> User Groups</div>
+            <div class="panel-body">
+                <table class="table table-bordered" id="table_id">
+                    <thead>
+                        <tr>
+                            <th>User Group Name</th>
+                            <th>User Group Description</th>
+                            <th>User Group Members</th>
+                            <th>Created By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for group in user_groups %}
+                        <tr id="{{ group.id }}-row">
+                            <td>{{group.title}}</td>
+                            <td>{{group.description}}</td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#{{group.id}}-collapse" aria-expanded="false" aria-controls="collapseExample">
+  {{ group.members_length }} Member(s)
+</button>
+                                    <div class="collapse" id="{{group.id}}-collapse">
+                                <table class="">
+                                    <tbody>
+                                        {% set member = False -%}
+                                        {% for u in group.members %}
+                                        {% if u.id == user.id %}
+                                        {% set member = True -%}
+                                        {% endif %}
+                                        <tr>
+                                            <td><img class="navbar-avatar", src="https://www.gravatar.com/avatar/{{ u.email_md5 }}?s=30", style="padding-top: 10px;"> {{u.name}} {% if u.id == user.id %}(YOU){% endif %}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            </td>
+                            <td>{{group.owner.name}}</td>
+                            <td>
+                                {% if member %}
+                                <button class="btn btn-xs btn-success" data-group-id="{{group.id}}" data-group-name="{{group.title}}" onclick="acceptUserGroup(this);"> Accept Invite</button>
+                                <button class="btn btn-xs btn-danger" data-group-id="{{group.id}}" data-group-name="{{group.title}}" onclick="cancelUserGroup(this);"> Cancel Invite</button>
+                                {% else %}
+                                <button class="btn btn-xs btn-danger" data-group-id="{{group.id}}" data-group-name="{{group.title}}" onclick="leaveUserGroup(this);"> Leave Group</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning"><i class="fa fa-fw fa-warning"></i> Sorry, there are no user groups and user group invite to display. </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        var table = $('#table_id').DataTable({
+            'autoWidth': false,
+            'processing': true,
+            'language': {
+                'lengthMenu': '_MENU_',
+            },
+            // 'bSort': false,
+        }),
+        userID = "{{ user.id }}";
+        function leaveUserGroup(obj){
+            if(!$(obj).data('group-id')){
+                alert("Could not leave the user group. Please refresh the page and try again.");
+                console.log("No Group ID!");
+                return
+            }
+            var userGroupID = $(obj).data('group-id');
+            if (confirm('Are you sure you want to leave '+ $(obj).data('group-name').toUpperCase() +' the user group?')) {
+                $(obj).prop('disabled', true).prepend($('<i>', { class: 'fa fa-fw fa-spin fa-circle-o-notch' }));
+                $.ajax({
+                    url: '/groups/' + userGroupID,
+                    type: 'POST',
+                    data: {action: 'leave_group'},
+                    success: function (data){
+                        $(obj).prop('disabled', false).children('i.fa').remove();
+                        if(data){
+                            if(data.code == 200){
+                                if(data.success){
+                                    console.log(data)
+                                    showAlertMessage(data.description, 'alert-success', 'fa-check');
+                                    table.row( $(obj).parents('tr') ).remove().draw();
+                                    return
+                                }
+                            }
+                        }
+                        showAlertMessage(data.description);
+                    },
+                    error: function (){
+                        $(obj).prop('disabled', false).children('i.fa').remove();
+                        showAlertMessage(data.description);
+                    }
+                });
+            }
+        }
+    </script>
+    <script type="text/javascript" src="/js/groups.js"></script>
+{% endblock %}

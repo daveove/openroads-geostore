@@ -1,0 +1,845 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Geostore Statistics</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/css/statistics/normalize.min.css">
+        <link rel="stylesheet" href="/css/statistics/main.css">
+        <script src="/js/statistics/vendor/modernizr-2.8.3.min.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/css/statistics/styles.css">
+
+        {% include 'woopra.html' %}
+    </head>
+    <body>
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 center">
+                        <h1>Geostore Statistics</h1>
+                        <br />
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label for="select_province">Province</label>
+                                <select class="form-control" id="select_province"><option>ALL</option></select>
+                            </div>&nbsp;&nbsp;
+                            <div class="form-group">
+                                <label for="select_municipality">Municipality</label>
+                                <select class="form-control" id="select_municipality"><option>ALL</option></select>
+                            </div>&nbsp;&nbsp;
+                            <div class="form-group">
+                                <label for="select_year">Year</label>
+                                <select class="form-control" id="select_year">
+                                    <option>ALL</option>
+                                    <option value="2010">2010</option>
+                                    <option value="2011">2011</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2015">2015</option>
+                                </select>
+                            </div>
+                        </form>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                <div class="row">
+                     <!-- projects -->
+                    <div class="total-projects col-sm-12 col-md-4">
+                        <div class="feature">
+                            <img class="center-block" src="/img/statistics/icons/projects.png" alt="project icon">
+                            <h1 class="center color-blue" id="total_projects">{% if data %}{{ data.summary.count|format_add_comma }}{% else %}0{% endif %}</h1>
+                            <h3 class="center">Total Projects</h3>
+                            <hr class="center-block">
+                        </div>
+                        <div class="project col-xs-12 center parent mt50">
+                            <div class="logo col-xs-5">
+                                <img src="/img/statistics/logos/prdp.png" alt="prdp logo">
+                            </div>
+                            <div class="description col-xs-7">
+                                <h2 class="color-blue" id="total_projects_prdp">{% if data %}{{ data.summary.PRDP.count|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>PRDP Projects</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-5">
+                                <img src="/img/statistics/logos/bub.png" alt="bub logo">
+                            </div>
+                            <div class="description col-xs-7">
+                                <h2 class="color-blue" id="total_projects_bub">{% if data %}{{ data.summary.BUB.count|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>BUB Projects</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-5">
+                                <img src="/img/statistics/logos/gaa.png" alt="gaa logo">
+                            </div>
+                            <div class="description col-xs-7">
+                                <h2 class="color-blue" id="total_projects_gaa">{% if data %}{{ data.summary.GAA.count|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>GAA Projects</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-5">
+                                <img src="/img/statistics/logos/trip.png" alt="trip logo">
+                            </div>
+                            <div class="description col-xs-7">
+                                <h2 class="color-blue" id="total_projects_trip">{% if data %}{{ data.summary.TRIP.count|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>TRIP Projects</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- files -->
+                    <div class="total-projects col-sm-12 col-md-4">
+                        <div class="feature">
+                            <img class="center-block" src="/img/statistics/icons/files.png" alt="files icon">
+                            <h1 class="center color-green" id="total_kmls">{% if data %}{{ data.summary.kmls|format_add_comma }}{% else %}0{% endif %}</h1>
+                            <h3 class="center">Total KML Files</h3>
+                            <hr class="center-block">
+                        </div>
+                        <div class="project col-xs-12 center parent mt50">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/prdp.png" alt="prdp logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-green" id="total_kmls_prdp">{% if data %}{{ data.summary.PRDP.kmls|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>KMLs in <strong id="has_kml_prdp">{% if data %}{{ data.summary.PRDP.has_kml|format_add_comma }}{% else %}0{% endif %}</strong> PRDP Projects<br />
+                                <strong><span id="kml_percentage_prdp">{% if data %}{{ data.summary.PRDP.kml_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have a KML</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/bub.png" alt="bub logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-green" id="total_kmls_bub">{% if data %}{{ data.summary.BUB.kmls|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>KMLs in <strong id="has_kml_bub">{% if data %}{{ data.summary.BUB.has_kml|format_add_comma }}{% else %}0{% endif %}</strong> BUB Projects<br />
+                                <strong><span id="kml_percentage_bub">{% if data %}{{ data.summary.BUB.kml_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have a KML</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/gaa.png" alt="gaa logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-green" id="total_kmls_gaa">{% if data %}{{ data.summary.GAA.kmls|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>KMLs in <strong id="has_kml_gaa">{% if data %}{{ data.summary.GAA.has_kml|format_add_comma }}{% else %}0{% endif %}</strong> GAA Projects<br />
+                                <strong><span id="kml_percentage_gaa">{% if data %}{{ data.summary.GAA.kml_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have a KML</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/trip.png" alt="trip logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-green" id="total_kmls_trip">{% if data %}{{ data.summary.TRIP.kmls|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>KMLs in <strong id="has_kml_trip">{% if data %}{{ data.summary.TRIP.has_kml|format_add_comma }}{% else %}0{% endif %}</strong> TRIP Projects<br />
+                                <strong><span id="kml_percentage_trip">{% if data %}{{ data.summary.TRIP.kml_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have a KML</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- geotags -->
+                    <div class="total-projects col-sm-12 col-md-4">
+                        <div class="feature">
+                            <img class="center-block" src="/img/statistics/icons/geotag.png" alt="geotag icon">
+                            <h1 class="center color-orange" id="total_images">{% if data %}{{ data.summary.images|format_add_comma }}{% else %}0{% endif %}</h1>
+                            <h3 class="center">Total Geotagged Images</h3>
+                            <hr class="center-block">
+                        </div>
+                        <div class="project col-xs-12 center parent mt50">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/prdp.png" alt="prdp logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-orange" id="total_images_prdp">{% if data %}{{ data.summary.PRDP.images|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>Images in <strong id="has_image_prdp">{% if data %}{{ data.summary.PRDP.has_image|format_add_comma }}{% else %}0{% endif %}</strong> PRDP Projects<br />
+                                <strong><span id="image_percentage_prdp">{% if data %}{{ data.summary.PRDP.image_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have images</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/bub.png" alt="bub logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-orange" id="total_images_bub">{% if data %}{{ data.summary.BUB.images|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>Images in <strong id="has_image_bub">{% if data %}{{ data.summary.BUB.has_image|format_add_comma }}{% else %}0{% endif %}</strong> BUB Projects<br />
+                                <strong><span id="image_percentage_bub">{% if data %}{{ data.summary.BUB.image_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have images</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/gaa.png" alt="gaa logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-orange" id="total_images_gaa">{% if data %}{{ data.summary.GAA.images|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>Images in <strong id="has_image_gaa">{% if data %}{{ data.summary.GAA.has_image|format_add_comma }}{% else %}0{% endif %}</strong> GAA Projects<br />
+                                <strong><span id="image_percentage_gaa">{% if data %}{{ data.summary.GAA.image_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have images</p>
+                            </div>
+                        </div>
+                        <div class="project col-xs-12 center parent mt10">
+                            <div class="logo col-xs-3">
+                                <img src="/img/statistics/logos/trip.png" alt="trip logo">
+                            </div>
+                            <div class="description col-xs-9">
+                                <h2 class="color-orange" id="total_images_trip">{% if data %}{{ data.summary.TRIP.images|format_add_comma }}{% else %}0{% endif %}</h2>
+                                <p>Images in <strong id="has_image_trip">{% if data %}{{ data.summary.TRIP.has_image|format_add_comma }}{% else %}0{% endif %}</strong> TRIP Projects<br />
+                                <strong><span id="image_percentage_trip">{% if data %}{{ data.summary.TRIP.image_percentage|format_percentage }}{% else %}0{% endif %}</span>%</strong> of projects have images</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 center">
+                        <h1>COA CPA Statistics</h1>
+                        <br />
+                        <br />
+
+
+
+                        <div class="total-projects col-sm-12 col-md-5 col-md-offset-1">
+                            <div class="feature">
+                                <!-- <img class="center-block" src="/img/statistics/icons/geotag.png" alt="geotag icon"> -->
+                                <h1 class="center color-orange">National</h1>
+                                <!-- <h3 class="center">National</h3> -->
+                                <hr class="center-block">
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt50">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/projects.png" alt="project icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-blue">1,758 Projects</h2>
+                                    <p>National FMR Projects<br />
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/files.png" alt="files icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-green">1,752 KMLs</h2>
+                                    <p>KMLs in <strong>1,752</strong> National Projects<br />
+                                    <strong>99.66%</strong> of projects have a KML</p>
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/geotag.png" alt="geotag icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-orange">(Counting...) Images</h2>
+                                    <p>Images in <strong>(Counting...)</strong> National Projects<br />
+                                    <strong>(Counting...)</strong> of projects have images</p>
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img src="/img/statistics/logos/coa.png" style="width: 65px; height: 65px;" alt="coa logo">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-blue">15 Projects</h2>
+                                    <p>Projects chosen for COA CPA Assessment<br />
+                                    <strong>0.85%</strong> of projects chosen for CPA</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="total-projects col-sm-12 col-md-5">
+                            <div class="feature">
+                                <!-- <img class="center-block" src="/img/statistics/icons/geotag.png" alt="geotag icon"> -->
+                                <h1 class="center color-orange">Local</h1>
+                                <!-- <h3 class="center">Local</h3> -->
+                                <hr class="center-block">
+                            </div>
+                            <div class="project col-xs-12 center parent mt50">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/projects.png" alt="project icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-blue">5,415 Projects</h2>
+                                    <p>Local Projects<br />
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/files.png" alt="files icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-green">0 KMLs</h2>
+                                    <p>KMLs in <strong>0</strong> Local Projects<br />
+                                    <strong>0%</strong> of projects have a KML</p>
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img class="center-block" src="/img/statistics/icons/geotag.png" alt="geotag icon">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-orange">0 Images</h2>
+                                    <p>Images in <strong>0</strong> Local Projects<br />
+                                    <strong>0%</strong> of projects have images</p>
+                                </div>
+                            </div>
+
+                            <div class="project col-xs-12 center parent mt10">
+                                <div class="logo col-xs-3">
+                                    <img src="/img/statistics/logos/coa.png" style="width: 65px; height: 65px;" alt="coa logo">
+                                </div>
+                                <div class="description col-xs-9">
+                                    <h2 class="color-blue">57 Projects</h2>
+                                    <p>Projects chosen for COA CPA Assessment<br />
+                                    <strong>1.05%</strong> of projects chosen for CPA</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+        <!-- <pre>
+            {{ data }}
+        </pre> -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="/js/2.0/jquery.min.js"><\/script>')</script>
+
+        <script src="/js/statistics/main.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $.getJSON('https://coageostore.appspot.com/dashboard/statistics2?callback=?', function(data){
+                    if(data){
+                        window.data_stats = data.data;
+                        show_provinces();
+
+                        setTimeout(function(){
+                            render_values();
+                        }, 100);
+                    }
+                })
+            });
+
+
+            function show_provinces(){
+                $('#select_province').empty();
+                $('#select_province')
+                    .append($("<option></option>")
+                    .attr("value",'ALL')
+                    .text('ALL'));
+
+                var keys = [];
+
+                for (var key in window.data_stats) {
+                    if (window.data_stats.hasOwnProperty(key)) {
+                        if(key){
+                            keys.push(key);
+                        }
+                    }
+                }
+
+                keys.sort();
+
+                for (var i=0; i<keys.length; i++){
+                    $('#select_province')
+                        .append($("<option></option>")
+                        .attr("value", keys[i])
+                        .text(toTitleCase(keys[i])));
+                }
+
+            }
+
+
+            function show_municipalities(province){
+                $('#select_municipality').empty();
+                $('#select_municipality')
+                    .append($("<option></option>")
+                    .attr("value",'ALL')
+                    .text('ALL'));
+
+                var keys = [];
+
+                for (var key in window.data_stats[province]) {
+                    if (window.data_stats[province].hasOwnProperty(key)) {
+                        if(key){
+                            keys.push(key);
+                        }
+                    }
+                }
+
+                keys.sort();
+
+                for (var i=0; i<keys.length; i++){
+                    $('#select_municipality')
+                        .append($("<option></option>")
+                        .attr("value", keys[i])
+                        .text(toTitleCase(keys[i])));
+                }
+
+            }
+
+
+            function show_years(province, municipality){
+                $('#select_year').empty();
+                $('#select_year')
+                    .append($("<option></option>")
+                    .attr("value",'ALL')
+                    .text('ALL'));
+
+                var keys = [];
+
+                for (var key in window.data_stats[province][municipality]) {
+                    if (window.data_stats[province][municipality].hasOwnProperty(key)) {
+                        keys.push(key);
+                    }
+                }
+
+                keys.sort();
+
+                for (var i=0; i<keys.length; i++){
+                    $('#select_year')
+                        .append($("<option></option>")
+                        .attr("value", keys[i])
+                        .text(keys[i]));
+                }
+
+            }
+
+            var total_projects_prdp = 0;
+            var total_projects_bub = 0;
+            var total_projects_gaa = 0;
+            var total_projects_trip = 0;
+
+            var total_kmls_prdp = 0;
+            var total_kmls_bub = 0;
+            var total_kmls_gaa = 0;
+            var total_kmls_trip = 0;
+
+            var total_images_prdp = 0;
+            var total_images_bub = 0;
+            var total_images_gaa = 0;
+            var total_images_trip = 0;
+
+            var total_has_kml_prdp = 0;
+            var total_has_kml_bub = 0;
+            var total_has_kml_gaa = 0;
+            var total_has_kml_trip = 0;
+
+            var total_has_image_prdp = 0;
+            var total_has_image_bub = 0;
+            var total_has_image_gaa = 0;
+            var total_has_image_trip = 0;
+
+
+            function add_single_data(province, municipality, year){
+                try{
+                    total_projects_prdp += window.data_stats[province][municipality][year].PRDP.count;
+                    total_kmls_prdp += window.data_stats[province][municipality][year].PRDP.kmls;
+                    total_images_prdp += window.data_stats[province][municipality][year].PRDP.images;
+                    total_has_kml_prdp += window.data_stats[province][municipality][year].PRDP.has_kml;
+                    total_has_image_prdp += window.data_stats[province][municipality][year].PRDP.has_image;
+                }
+                catch(e){
+                    // do nothing
+                }
+
+                try{
+                    total_projects_bub += window.data_stats[province][municipality][year].BUB.count;
+                    total_kmls_bub += window.data_stats[province][municipality][year].BUB.kmls;
+                    total_images_bub += window.data_stats[province][municipality][year].BUB.images;
+                    total_has_kml_bub += window.data_stats[province][municipality][year].BUB.has_kml;
+                    total_has_image_bub += window.data_stats[province][municipality][year].BUB.has_image;
+                }
+                catch(e){
+                    // do nothing
+                }
+
+                try{
+                    total_projects_gaa += window.data_stats[province][municipality][year].GAA.count;
+                    total_kmls_gaa += window.data_stats[province][municipality][year].GAA.kmls;
+                    total_images_gaa += window.data_stats[province][municipality][year].GAA.images;
+                    total_has_kml_gaa += window.data_stats[province][municipality][year].GAA.has_kml;
+                    total_has_image_gaa += window.data_stats[province][municipality][year].GAA.has_image;
+                }
+                catch(e){
+                    // do nothing
+                }
+
+                try{
+                    total_projects_trip += window.data_stats[province][municipality][year].TRIP.count;
+                    total_kmls_trip += window.data_stats[province][municipality][year].TRIP.kmls;
+                    total_images_trip += window.data_stats[province][municipality][year].TRIP.images;
+                    total_has_kml_trip += window.data_stats[province][municipality][year].TRIP.has_kml;
+                    total_has_image_trip += window.data_stats[province][municipality][year].TRIP.has_image;
+                }
+                catch(e){
+                    // do nothing
+                }
+            }
+
+
+            function add_year_data(province, municipality, year){
+                if(year == 'ALL'){
+                    for (var year_key in window.data_stats[province][municipality]) {
+                        if (window.data_stats[province][municipality].hasOwnProperty(year_key)) {
+                            add_single_data(province, municipality, year_key);
+                        }
+                    }
+                }
+                else {
+                    add_single_data(province, municipality, year);
+                }
+            }
+
+
+            function add_municipality_data(province, municipality, year){
+                if(municipality == 'ALL'){
+                    for (var municipality_key in window.data_stats[province]) {
+                        if (window.data_stats[province].hasOwnProperty(municipality_key)) {
+                            add_year_data(province, municipality_key, year);
+                        }
+                    }
+                }
+                else {
+                    add_year_data(province, municipality, year);
+                }
+            }
+
+
+            function add_province_data(province, municipality, year){
+                if(province == 'ALL'){
+                    for (var province_key in window.data_stats) {
+                        if (window.data_stats.hasOwnProperty(province_key)) {
+                            add_municipality_data(province_key, municipality, year);
+                        }
+                    }
+                }
+                else {
+                    add_municipality_data(province, municipality, year);
+                }
+            }
+
+            window.cancel_increments = false;
+
+
+            function render_values(){
+                window.cancel_increments = true;
+
+                var province = $('#select_province').val();
+                var municipality = $('#select_municipality').val();
+                var year = $('#select_year').val();
+
+                total_projects_prdp = 0;
+                total_projects_bub = 0;
+                total_projects_gaa = 0;
+                total_projects_trip = 0;
+
+                total_kmls_prdp = 0;
+                total_kmls_bub = 0;
+                total_kmls_gaa = 0;
+                total_kmls_trip = 0;
+
+                total_images_prdp = 0;
+                total_images_bub = 0;
+                total_images_gaa = 0;
+                total_images_trip = 0;
+
+                total_has_kml_prdp = 0;
+                total_has_kml_bub = 0;
+                total_has_kml_gaa = 0;
+                total_has_kml_trip = 0;
+
+                total_has_image_prdp = 0;
+                total_has_image_bub = 0;
+                total_has_image_gaa = 0;
+                total_has_image_trip = 0;
+
+                add_province_data(province, municipality, year);
+
+                var total_projects = total_projects_prdp + total_projects_bub + total_projects_gaa + total_projects_trip;
+                var total_kmls = total_kmls_prdp + total_kmls_bub + total_kmls_gaa + total_kmls_trip;
+                var total_images = total_images_prdp + total_images_bub + total_images_gaa + total_images_trip;
+
+                var kml_percentage_prdp = total_has_kml_prdp / total_projects_prdp * 100;
+                var kml_percentage_bub = total_has_kml_bub / total_projects_bub * 100;
+                var kml_percentage_gaa = total_has_kml_gaa / total_projects_gaa * 100;
+                var kml_percentage_trip = total_has_kml_trip / total_projects_trip * 100;
+
+                var image_percentage_prdp = total_has_image_prdp / total_projects_prdp * 100;
+                var image_percentage_bub = total_has_image_bub / total_projects_bub * 100;
+                var image_percentage_gaa = total_has_image_gaa / total_projects_gaa * 100;
+                var image_percentage_trip = total_has_image_trip / total_projects_trip * 100;
+
+                setTimeout(function(){
+                    window.cancel_increments = false;
+
+                    change_number_with_effect('total_projects', total_projects);
+                    change_number_with_effect('total_projects_prdp', total_projects_prdp);
+                    change_number_with_effect('total_projects_bub', total_projects_bub);
+                    change_number_with_effect('total_projects_gaa', total_projects_gaa);
+                    change_number_with_effect('total_projects_trip', total_projects_trip);
+
+                    change_number_with_effect('total_kmls', total_kmls);
+                    change_number_with_effect('total_kmls_prdp', total_kmls_prdp);
+                    change_number_with_effect('total_kmls_bub', total_kmls_bub);
+                    change_number_with_effect('total_kmls_gaa', total_kmls_gaa);
+                    change_number_with_effect('total_kmls_trip', total_kmls_trip);
+
+                    change_number_with_effect('total_images', total_images);
+                    change_number_with_effect('total_images_prdp', total_images_prdp);
+                    change_number_with_effect('total_images_bub', total_images_bub);
+                    change_number_with_effect('total_images_gaa', total_images_gaa);
+                    change_number_with_effect('total_images_trip', total_images_trip);
+
+                    change_number_with_effect('has_kml_prdp', total_has_kml_prdp);
+                    change_number_with_effect('has_kml_bub', total_has_kml_bub);
+                    change_number_with_effect('has_kml_gaa', total_has_kml_gaa);
+                    change_number_with_effect('has_kml_trip', total_has_kml_trip);
+
+                    change_float_with_effect('kml_percentage_prdp', kml_percentage_prdp);
+                    change_float_with_effect('kml_percentage_bub', kml_percentage_bub);
+                    change_float_with_effect('kml_percentage_gaa', kml_percentage_gaa);
+                    change_float_with_effect('kml_percentage_trip', kml_percentage_trip);
+
+                    change_number_with_effect('has_image_prdp', total_has_image_prdp);
+                    change_number_with_effect('has_image_bub', total_has_image_bub);
+                    change_number_with_effect('has_image_gaa', total_has_image_gaa);
+                    change_number_with_effect('has_image_trip', total_has_image_trip);
+
+                    change_float_with_effect('image_percentage_prdp', image_percentage_prdp);
+                    change_float_with_effect('image_percentage_bub', image_percentage_bub);
+                    change_float_with_effect('image_percentage_gaa', image_percentage_gaa);
+                    change_float_with_effect('image_percentage_trip', image_percentage_trip);
+
+                }, 10);
+
+                // $('#total_projects').html(total_projects);
+                // $('#total_projects_prdp').html(total_projects_prdp);
+                // $('#total_projects_bub').html(total_projects_bub);
+                // $('#total_projects_gaa').html(total_projects_gaa);
+                // $('#total_projects_trip').html(total_projects_trip);
+
+                // $('#total_kmls').html(total_kmls);
+                // $('#total_kmls_prdp').html(total_kmls_prdp);
+                // $('#total_kmls_bub').html(total_kmls_bub);
+                // $('#total_kmls_gaa').html(total_kmls_gaa);
+                // $('#total_kmls_trip').html(total_kmls_trip);
+
+                // $('#total_images').html(total_images);
+                // $('#total_images_prdp').html(total_images_prdp);
+                // $('#total_images_bub').html(total_images_bub);
+                // $('#total_images_gaa').html(total_images_gaa);
+                // $('#total_images_trip').html(total_images_trip);
+
+            }
+
+
+            $('#select_province').on('change', function(){
+                show_municipalities($('#select_province').val());
+                // $("#select_year").val('ALL');
+                render_values();
+            });
+
+            $('#select_municipality').on('change', function(){
+                // show_years($('#select_province').val(), $('#select_municipality').val());
+                // $("#select_year").val('ALL');
+                render_values();
+            });
+
+            $('#select_year').on('change', function(){
+                render_values();
+            });
+
+
+            function toTitleCase(str)
+            {
+                return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+            }
+
+
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+
+            Number.prototype.formatMoney = function(c, d, t){
+                var n = this,
+                    c = isNaN(c = Math.abs(c)) ? 2 : c,
+                    d = d == undefined ? "." : d,
+                    t = t == undefined ? "," : t,
+                    s = n < 0 ? "-" : "",
+                    i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+                    j = (j = i.length) > 3 ? j % 3 : 0;
+                   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+            };
+
+
+            function change_number_with_effect(elementId, newValue){
+                el = document.getElementById(elementId);
+                try{
+                    currentValue = parseInt(el.innerHTML.replace(/,/g, "")) || 0;
+                }
+                catch(e){
+                    el.innerHTML = '0';
+                    change_number_with_effect(elementId, newValue);
+                    return;
+                }
+
+                difference = currentValue - newValue;
+                if(difference < 0){
+                    difference = difference * -1;
+                }
+
+                increment = 1;
+
+                if(difference > 100){
+                    increment = 10;
+                }
+                if(difference > 1000){
+                    increment = 100;
+                }
+                if(difference > 10000){
+                    increment = 1000;
+                }
+                if(difference > 100000){
+                    increment = 10000;
+                }
+                if(difference > 1000000){
+                    increment = 100000;
+                }
+                if(difference > 10000000){
+                    increment = 1000000;
+                }
+
+                if(currentValue > newValue){
+                    // higher. go down
+                    currentValue -= increment;
+                }
+                else if(currentValue < newValue){
+                    // lower. go up
+                    currentValue += increment;
+                }
+
+                el.innerHTML = numberWithCommas(currentValue);
+
+                if(currentValue != newValue){
+                    setTimeout(function(){
+                        if(window.cancel_increments){
+                            return;
+                        }
+                        change_number_with_effect(elementId, newValue);
+                    }, 1);
+                }
+            }
+
+            function change_float_with_effect(elementId, newValue){
+                el = document.getElementById(elementId);
+                try{
+                    currentValue = parseFloat(el.innerHTML.replace(/,/g, "")) || 0;
+                }
+                catch(e){
+                    el.innerHTML = '0.0';
+                    change_float_with_effect(elementId, newValue);
+                    return;
+                }
+
+                difference = currentValue - newValue;
+                if(difference < 0){
+                    difference = difference * -1;
+                }
+
+                increment = .01;
+
+                if(difference > 1){
+                    increment = .1;
+                }
+                if(difference > 10){
+                    increment = 1;
+                }
+                if(difference > 100){
+                    increment = 10;
+                }
+                if(difference > 1000){
+                    increment = 100;
+                }
+                if(difference > 10000){
+                    increment = 1000;
+                }
+                if(difference > 100000){
+                    increment = 10000;
+                }
+
+                if(currentValue > newValue){
+                    // higher. go down
+                    currentValue -= increment;
+                }
+                else if(currentValue < newValue){
+                    // lower. go up
+                    currentValue += increment;
+                }
+
+                el.innerHTML = currentValue.formatMoney(2);
+                newValueString = newValue.formatMoney(2);
+
+                if(el.innerHTML != newValueString){
+                    setTimeout(function(){
+                        if(window.cancel_increments){
+                            return;
+                        }
+                        change_float_with_effect(elementId, newValue);
+                    }, 1);
+                }
+            }
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

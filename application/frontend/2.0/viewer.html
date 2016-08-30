@@ -1,0 +1,971 @@
+<!-- {{ user|safe }} -->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <!-- <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi" /> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ title }} | Geostore</title>
+        <!-- font awesome -->
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/css/viewer.css">
+        <link rel="stylesheet" href="/css/slick.css">
+        <link rel="stylesheet" href="/css/selectboxit.css">
+        <link rel="stylesheet" href="/css/chosen.css">
+        <link rel="stylesheet" href="/css/animate.css">
+        <link rel="stylesheet" href="/css/avgrund.css">
+        <link rel="stylesheet" href="/css/tooltipster.css">
+        <link rel="stylesheet" href="/css/loaders.min.css">
+        <link rel="shortcut icon" href="/images/coa-logo.png">
+        <script src="/js/pace.min.js"></script>
+        <link href="/css/pace-simple-center.css" rel="stylesheet" />
+    </head>
+    <body style="min-width: 1279px; min-height: 400px;">
+    <div class="fluid-container">
+    <section>
+        <nav class="navbar navbar-default" id="firstrow-nav">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="navbar-header">
+                      <a class="navbar-brand" href="/"> <img src="/images/geostore-logo.png" alt="COA Geostore"></a>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                      <ul class="nav navbar-nav">
+                        {% if user.level == 3 or user.level == 4 %}
+                            <li class="program{% if page_programs %} active-1{% endif %}"><a href="/programs">Programs</a></li>
+                        {% endif %}
+                        <li class="dashboard"><a href="/projects/all">Projects</a></li>
+                        <li class="viewer active-1"><a href="/viewer">Viewer</a></li>
+                        <li class="environments"><a href="/workspace?current_workspace=all">Workspaces</a></li>
+                        {% if user.level == 4 %}
+                            <li><a href="/geoprocessing/dashboard">Geoprocessing Dashboard</a></li>
+                            <li><a href="/dashboard">User Management</a></li>
+                            <!-- <li><a href="/users/registration">User Registrations</a></li> -->
+                        {% elif user.level == 2 %}
+                        <li class="user_groups"><a href="/groups">User Groups</a></li>
+                        {% endif %}
+                                              </ul>
+                      <ul class="nav navbar-nav navbar-right">
+                                                <li> <p> {{ user.name }} ({{ role }}) </p> </li>
+                        <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                              </ul>
+                    </div><!-- navbar-collapse -->
+                </div><!-- row -->
+            </div><!-- col-md-12 -->
+        </nav>
+
+    </section>
+</div>
+<div class="clearfix"></div>
+
+       <!-- MAIN CONTAINER -->
+        <div class="main clearfix">
+            <div class="sidebar left" id="sidebar">
+                <div id="topside">
+                    <div class="menu-bar">
+                        <img src="/images/coa-geostore-logo.png">
+                        <ul class="menu-bar-nav">
+                            <li><a href="/projects/all" target="_blank">Projects Admin</a></li>
+                            <li><a href="/workspace" target="_blank">Workspaces</a></li>
+                            <li><a href="#contact" class="contact-link">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div id="about">
+                        <div class="about-container">
+                            <p>The Geostore is a collection of tools to relay updated and usable information on the government roadwork projects.</p>
+
+                            <p>The platform also serves as an online storage and management system of KML data project details. This endeavor is a result of the collaboration of multiple government agencies in an effort to visualize various roadwork projects and to better disclose government programs to the public.</p>
+                        </div>
+                    </div>
+                    <div id="contact">
+                        <div class="contact-container">
+                        <div class="centered p2030">
+                            <img src="/images/coa-logo.png" alt="">
+                        </div>
+                        <div class="clear"></div>
+                        <strong>COA</strong>
+                        Commission on Audit<br />
+                        Commonwealth Avenue, Quezon City<br />
+                        Philippines 0880<br />
+                        Phone: 931-9207; 931-9268<br />
+                        Trunk Line: 952-52700<br />
+                        Website: www.coa.gov.ph<br/>
+                        </div>
+                    </div>
+                    <div class="title-bar" id="toggle-title-bar">
+                        <h5 class="label-name">Select a Road Program</h5>
+                        <i class="fa fa-caret-down"></i>
+                    </div>
+                    <div class="title-barss">
+                        <div class="title-bar title-bar-da choose" choose="title-bar-da">
+                            <input type="checkbox" class="program_checkbox da" id="program_select_da" /> <label for="">Department of Agriculture</label>
+                            <h5>Philippine Rural Development Project</h5>
+                        </div>
+                        <div class="title-bar title-bar-bub choose" choose="title-bar-bub">
+                            <input type="checkbox" class="program_checkbox bub" id="program_select_bub" /> <label for="">openbub.gov.ph</label>
+                            <h5>Grassroots Participatory Budgeting Process</h5>
+                        </div>
+                        <div class="title-bar title-bar-trip choose" choose="title-bar-trip">
+                            <input type="checkbox" class="program_checkbox trip" id="program_select_trip" /> <label for="">Trip</label>
+                            <h5>Tourism Road Infrastructure Program</h5>
+                        </div>
+                        <div class="title-bar title-bar-gaa choose" choose="title-bar-gaa">
+                            <input type="checkbox" class="program_checkbox gaa" id="program_select_gaa" /> <label for="">GAA</label>
+                            <h5>FMR Regular GAA 2014</h5>
+                        </div>
+                        <div class="title-bar title-bar-coa-cpa choose" choose="title-bar-gaa">
+                            <input type="checkbox" class="program_checkbox cpa" id="program_select_cpa" /> <label for="">Commision on Audit</label>
+                            <h5>COA CPA 2015</h5>
+                        </div>
+                        <div class="title-bar title-bar-local choose" choose="title-bar-gaa">
+                            <input type="checkbox" class="program_checkbox local" id="program_select_local" /> <label for="">LOCAL</label>
+                            <h5>Local Projects</h5>
+                        </div>
+                    </div>
+                    <div class="search-queries" id="search-queries">
+                        <div class="tabs-content">
+                            <div id="subprojects" class="subprojects">
+                              <div class="search-queries-wrapper">
+                                <input type="text" placeholder="Search Projects" id="search_by_name" class="search-subproj"/>
+                                <div class="filter-proj-options">
+                                    <!-- <div class="trip-filters">
+                                        <select name="road-class-filter">
+                                            <option value="all">All Road Classifications</option>
+                                            <option value="NATIONAL SECONDARY">NATIONAL SECONDARY</option>
+                                            <option value="BARANGAY">BARANGAY</option>
+                                            <option value="PROVINCIAL">PROVINCIAL</option>
+                                            <option value="LOCAL">LOCAL</option>
+                                            <option value="NATIONAL ARTERIAL">NATIONAL ARTERIAL</option>
+                                        </select>
+                                    </div> -->
+
+                                    <div class="prdp-filters">
+                                        <label><input checked='checked' type="checkbox" id='has_kml_track_filter'> Has KML Track</label>
+                                        <label><input checked='checked' type="checkbox" id='has_images_filter'> Has Images</label>
+                                    </div>
+                                </div>
+                              </div>
+                              <div id="more-filters">
+                                    <div id="more-filter-contents">
+                                        <!-- <div class="filter-proj-options filter-proj-options2">
+                                            <select name="proj-status" id="project_status_select">
+                                                <option value="all">All Project Status</option>
+                                                <optgroup label="Planning">
+                                                    <option value="pre-planning">Pre-planning</option>
+                                                    <option value="finalization">Finalization</option>
+                                                </optgroup>
+                                                <optgroup label="Tender">
+                                                    <option value="for bidding">For Bidding</option>
+                                                    <option value="ongoing evaluation">Evaluation</option>
+                                                </optgroup>
+                                                <optgroup label="Awarded">
+                                                    <option value="pre-award">Pre-Award</option>
+                                                    <option value="awarded">Awarded</option>
+                                                </optgroup>
+                                                <optgroup label="Contract">
+                                                    <option value="signed">Signed</option>
+                                                    <option value="notice to proceed">Notice to Proceed</option>
+                                                </optgroup>
+                                                <optgroup label="Implementation">
+                                                    <option value="ongoing">Ongoing</option>
+                                                    <option value="completed">Completed</option>
+                                                </optgroup>
+                                            </select>
+
+                                            <select name="proj-type" id="project_type_select">
+                                                <option value="all">All Project Types</option>
+                                                <option value="national roads">National Roads</option>
+                                                <option value="national bridges">National Bridges</option>
+                                                <option value="local roads">Local Roads</option>
+                                                <option value="local bridges">Local Bridges</option>
+                                                <option value="traffic decongestion">Traffic Decongestion</option>
+                                                <option value="farm-to-market">Farm-to-Market Roads</option>
+                                            </select>
+                                            <br />
+                                            <br />
+                                        </div> -->
+
+                                        <div class="w20p">Location</div>
+                                        <div class="w80p">
+                                            <select data-placeholder="Choose..." id="search_by_location" multiple class="chosen-location chosen-select"></select>
+                                        </div>
+                                        <div class="clear"></div><br>
+                                        <div class="w20p">Scope</div>
+                                        <div class="w80p">
+                                            <select data-placeholder="Choose..." id="search_by_scope" multiple class="chosen-scope chosen-select">
+                                                <option value="construction">Construction</option>
+                                                <option value="improvement">Improvement</option>
+                                                <option value="rehabilitation">Rehabilitation</option>
+                                                <option value="upgrading">Upgrading</option>
+                                                <option value="widening">Widening</option>
+                                            </select>
+                                        </div><br>
+                                        <div class="w20p mt20">Year</div>
+                                        <div class="w80p mt20">
+                                            <select data-placeholder="Year" id="year_filter_select" class="year-filter custom-select">
+                                                <option value="all" selected="">All Years</option>
+                                                <option value="2013">2013</option>
+                                                <option value="2014">2014</option>
+                                                <option value="2015">2015</option>
+                                                <option value="2016">2016</option>
+                                            </select>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <div class="more-filters-toggle">More Filters</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="botside">
+                    <div class="sidebar-content">
+                        <div class="proj-list" id="sidebar_list_wrapper">
+                        </div>
+                    </div><!-- sidebar content -->
+                </div>
+
+            </div><!-- sidebar-->
+            <div class="main-content" class="left">
+            <div class="start-view-container">
+                <div class="start-view">
+                    <h1 id="logo-start-view">COA Geostore</h1>
+                    <p class="fz14">The COA Geostore is a comprehensive platform for viewing road projects and it is <br/>where the uploading and management of the KML data project details and features are done.</p>
+                    <br>
+                    <span class="uppercase fwb fz12 text-yellow">Start by selecting one or more programs below:</span>
+                    <div class="clear"></div>
+
+                    <div id="programs-boxes">
+                        <input type="checkbox" id="chk1" class="programs-checkbox" value="1"/>
+                        <label for="chk1" class="programs-checkbox-label daprdp">
+                        <h5>Department of Agriculture</h5>
+                        <span>Philippine Rural Development Project (DAPRDP)</span>
+                        </label>
+
+                        <input type="checkbox" id="chk2" class="programs-checkbox" value="2"/>
+                        <label for="chk2" class="programs-checkbox-label openbub">
+                        <h5>Openbub.gov.ph</h5>
+                        <span>Grassroots Participatory Budgeting Process</span>
+                        </label>
+
+                        <input type="checkbox" id="chk3" class="programs-checkbox" value="3"/>
+                        <label for="chk3" class="programs-checkbox-label trip">
+                        <h5>TRIP</h5>
+                        <span>Tourism Road Infrastructure Program</span>
+                        </label>
+
+                        <input type="checkbox" id="chk4" class="programs-checkbox" value="4"/>
+                        <label for="chk4" class="programs-checkbox-label gaa">
+                        <h5>GAA</h5>
+                        <span>Farm-to-Market Road <br/>Regular GAA</span>
+                        </label>
+
+                        <input type="checkbox" id="chk5" class="programs-checkbox" value="5"/>
+                        <label for="chk5" class="programs-checkbox-label coa">
+                        <h5>COA</h5>
+                        <span>Commision on Audit <br/>CPA 2015</span>
+                        </label>
+                    </div>
+                    <a href="#" class="ok-dismiss-btn">Go and Close This</a>
+                </div>
+            </div>
+                <div class="main-footer">
+                    <div class="choose-map-type">
+                       <label for="">Choose Map Type: </label>
+                        <ul class="googlemap-type">
+                            <li id="terrain" data-tooltip="Terrain Map"></li>
+                            <li id="hybrid" data-tooltip="Hybrid Map"></li>
+                            <li id="satellite" data-tooltip="Satellite Map"></li>
+                            <li id="roadmap" data-tooltip="Road Map"></li>
+                            <li id="osm" data-tooltip="OpenStreetMap"></li>
+                        </ul>
+                    </div>
+
+                    <ul class="layers-parent">
+                        <li class="layers-toggle">
+                            <span class="map-layer">Map Layers</span>
+                        </li>
+
+                        <li>
+                            <span class="legend-toggle active">Hide Legend</span>
+                        </li>
+                    </ul>
+                </div>
+                <div id="geotagging-canvass"></div>
+                <span class="view-details" id="view-details">View Details</span>
+                <div class="proj-details clearfix" id="proj-details">
+                <div id="notifications_bar"></div>
+                  <ul class="proj-tab left">
+                    <li><a href="#details" class="bold uppercase proj-details-link">Details</a></li>
+<!--                     <li><a href="#timeline" class="bold uppercase proj-timeline-link">Latest Updates</a></li>
+                    <li><a href="#comments" class="bold uppercase proj-comments-link">Feedback</a></li> -->
+                  </ul>
+                   <img src="images/close-icn_20.png" alt="" class="right" id="btn-close">
+                  <div class="divider clearfix"></div>
+                  <div class="proj-tab-content clearfix">
+                    <div id="details" class="details clearfix">
+                        <div class="proj-code-container">
+                            <span class="prog-type"></span><span class="proj-code right"></span>
+                        </div>
+                         <div class="detail-container">
+                             <ul class="details-links-tab">
+                                  <li data-link="projdetails" class="active">
+                                     Planning
+                                     <!-- initial details in project -->
+                                  </li>
+                                  <li data-link="procdetails">
+                                     Procurement
+                                     <!-- from PhilGEPS API -->
+                                  </li>
+                                  <li data-link="contractdetails">
+                                      Implementation
+                                      <!-- from DPWH API -->
+                                  </li>
+                              </ul>
+                              <div class="details-tab">
+                                  <div id="projdetails">
+                                    <ul class="list-info"></ul>
+                                       <section>
+                                       <div>
+                                        <span class="proj-type"></span>
+                                       </div>
+                                         <h3 class="proj-name"> </h3>
+                                         <p class="proj-desc"></p>
+                                         <ul class="extra-info">
+                                            <li class="li-pso"><p>PSO: <span class="bold proj-pso"></span></p></li>
+                                            <li class="li-region"><p>Region: <span class="bold proj-region"></span></p></li>
+                                            <li class="li-province"><p>Province: <span class="bold proj-province"></span></p></li>
+                                            <li class="li-municipality"><p>Municipality: <span class="bold proj-municipality"></span></p></li>
+                                            <li class="li-implementing-office"><p>Implementing Office: <span class="bold proj-implementing-office"></span></p></li>
+                                            <li class="li-project-length"><p>Project Length: <span class="bold proj-length"></span></p></li>
+                                            <li class="li-project-length-kml"><p>Project Length in KML: <span class="bold proj-length-kml"></span></p></li>
+                                            <li class="li-field-test"><p>Field Density Tests: <span class="bold proj-field-density"></span></p></li>
+                                            <li class="li-pavement-strength"><p>Pavement Strength: <span class="bold proj-pavement-strength"></span></p></li>
+                                         </ul>
+                                         <div class="table proj-cost">
+                                             <div class="table-row">
+                                                 <div class="table-cell">
+                                                     <label for="" class="proj-epc"></label>
+                                                     <span class="uppercase">Estimated project cost (<span class="agency-container">Agency</span>)</span>
+                                                 </div>
+                                                 <div class="divider"></div>
+                                                 <div class="table-cell">
+                                                     <label for="" class="proj-actual-cost"></label>
+                                                     <span class="uppercase">Actual cost (<span class="agency-container">Agency</span>)</span>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                          <div class="clearfix sp-ntp-stat">
+                                             <p>SP Status: <span class="bold proj-percent"></span></p>
+                                             <p class="right">NTP Date: <span class="bold proj-ntp"></span></p>
+                                         </div>
+                                         <div class="proj-gallery-label clearfix">
+                                             <label for="" class="num-pics"><span id="num-pics"></span> Pictures</label>
+                                         </div>
+
+                                      </section>
+                                      <section>
+                                    <div class="proj-gallery clearfix" id="proj-gallery"></div>
+
+
+                                     <div class="photo-gallery-num"><span></span></div>
+                                  </section>
+                                      <section class="leave-comment-form">
+                                        <ul></ul>
+                                    </section>
+                                    <section class="resources-wrapper">
+                                        <b>Resources</b>
+                                        <ul class="file-list"></ul>
+                                    </section>
+                                    <section class="elevation-wrapper">
+                                        <b>Elevation Profile</b>
+                                        <div id="elevation_profile" style="margin-bottom: -22px;">
+                                            <canvas id="elevation_chart" width="1600" height="200" style="max-width: 100%; max-height: 100%;"></canvas>
+                                        </div>
+                                    </section>
+                                  </div>
+                                  <div id="procdetails">
+
+                                    <div class="clearfix"></div>
+                                    <div class="list-info2">
+                                  <div class="procurement-wrap">
+                                      <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Date Posted</th>
+                                                <th>Name</th>
+                                                <th>Bid #</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Bid Classification</th>
+                                                <th>Procurement Mode</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Approved Budget</th>
+                                                <th>Contract Amount</th>
+                                                <th>Bid Status</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                                <!-- <td class="awarded">AWARDED<br>Jun 15, 2015</td> -->
+                                              </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Contract Start Date (EPLC)</th>
+                                                <th>Project Contractor</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr>
+                                                <td>Not Available</td>
+                                                <td>Not Available</td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="clearfix"></div>
+                                        <!-- <ul class="list-info hidden"></ul> -->
+
+                                  </div>
+                                  </div>
+
+
+
+                                  <section class="hidden">
+                                      <span class="">Bid #<span class="proc-bid-no bold"></span></span>
+                                      <span class="right">Date Posted:<span class="proc-date-posted bold"> </span></span>
+                                      <div class="bid-status-container centered">
+                                        <span class="bid-status-label">BID STATUS</span><br/>
+                                        <span class="bid-status"></span>
+                                      </div>
+                                      <span>Bid Reason: <span class="proc-bid-reason bold"></span></span>
+                                      <div class="table proj-cost">
+                                             <div class="table-row">
+                                                 <div class="table-cell">
+                                                     <label for="" class="proc-approved-budget fz20"></label>
+                                                     <span class="uppercase">Estimated project cost (PhilGEPS)</span>
+                                                 </div>
+                                                 <div class="divider"></div>
+                                                 <div class="table-cell">
+                                                     <label for="" class="proc-contract-amount fz20"></label>
+                                                     <span class="uppercase">Actual cost (PhilGEPS)</span>
+                                                 </div>
+                                             </div>
+                                      </div>
+                                      <div class="clear"></div><br/>
+                                      <span>Funding Source: <span class="proc-fund-src bold"></span></span><div class="clear"></div>
+                                      <span>Bid Classification: <span class="proc-bc bold"></span></span>
+                                      <span>Procurement Mode: <span class="proc-pm"></span></span>
+                                      <div class="clear"></div>
+                                      <div class="procurement-links">
+                                          <a href="" class="bid-notice-url" target="_blank">Bid Notice</a>
+                                          <a href="" class="award-notice-url" target="_blank">Award Notice</a>
+                                      </div>
+                                      <div class="clear"></div><br/>
+                                  </section>
+                                  <!-- <table>
+                                    <tr><td>Date Posted</td><td class="proc-date-posted"></td></tr>
+                                    <tr><td>Bid #</td><td class="proc-bid-no"></td></tr>
+                                    <tr><td>Funding Source</td><td class="proc-fund-src"></td></tr>
+                                    <tr><td>B.C.</td><td class="proc-bc"></td></tr>
+                                    <tr><td>P.M.</td><td class="proc-pm"></td></tr>
+                                    <tr><td>Approved Budget</td><td class="proc-approved-budget"></td></tr>
+                                    <tr><td>Contract Amount</td><td class="proc-contract-amount"></td></tr>
+                                    <tr><td>Bid Status</td><td class="proc-bid-status"></td></tr>
+                                    <tr><td>Bid Status Reason</td><td class="proc-bid-reason"></td></tr>
+                                    <tr><td>Procurement Bid Notice</td><td class="proc-bid-notice"></td></tr>
+                                    <tr><td>Procurement Award Notice</td><td class="proc-award-notice"></td></tr>
+                                    <tr><td>Procurement Award Contract</td><td class="proc-award-contract"></td></tr>
+                                </table> -->
+                                    <div class="procurementdetails-fail alert-box error">Failed to retrieve Procurement Information</div>
+                                  </div>
+                                  <div id="contractdetails">
+                                    <ul class="list-info hidden"></ul>
+                                    <div class="contract-details">
+                                    <section class="contract-details-wrap m0">
+                                     <h3>Contract Details</h3>
+                                     <hr>
+                                        <span>Contract ID/Tender #: <span class="contract-id bold"></span></span> <span class="right">Contract Status: <span class="contract-status bold"></span></span>
+
+                                         <h3 class="contract-name mt15"></h3>
+                                         <p class="contract-description"></p>
+
+                                         <ul class="extra-info">
+                                            <li><p>Contract Details/Scope of Work: <span class="bold contract-details"></span></p></li>
+                                            <li><p>Procuring Entity: <span class="bold contract-entity"></span></p></li>
+                                            <li><p>Project Number: <span class="bold contract-project-no"></span></p></li>
+                                            <li><p>Project Funding Agency: <span class="bold contract-funding-agency"></span></p></li>
+                                            <li><p>Contract Type: <span class="bold contract-type"></span></p></li>
+                                            <li><p>Currency: <span class="bold contract-currency"></span></p></li>
+                                            <li><p>Contract Duration: <span class="bold contract-duration"></span></p></li>
+                                            <li><p>Contract Actual Duration: <span class="bold contract-actual-date"></span></p></li>
+                                         </ul>
+                                         <div class="table proj-cost">
+                                             <div class="table-row">
+                                                 <div class="table-cell">
+                                                     <label for="" class="contract-cost"></label>
+                                                     <span class="uppercase">Estimated Cost (DPWH)</span>
+                                                 </div>
+                                                 <!-- <div class="divider"></div>
+                                                 <div class="table-cell">
+                                                     <label for="" class="proj-actual-cost">P18,000,000.00</label>
+                                                     <span class="uppercase">Actual cost</span>
+                                                 </div> -->
+                                             </div>
+                                         </div>
+                                         <div class="clear"></div><br/>
+                                         <span>Location Details:</span>
+                                         <p class="contract-location bold"></p>
+                                            <p>&nbsp;</p>
+                                         <h3>Award Details</h3>
+                                         <hr>
+                                         <div class="table proj-cost">
+                                             <div class="table-row">
+                                                 <div class="table-cell">
+                                                     <label for="" class="award-amount">N/A</label>
+                                                     <span class="uppercase">Agreed Amount</span>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                         <ul class="extra-info">
+                                            <li><p>Amount Currency: <span class="bold award-currency"></span></p></li>
+                                            <li><p>Supplier Name: <span class="bold award-supplier"></span></p></li>
+                                            <li><p>Supplier PHILGEPS Reg. #: <span class="bold award-philgeps-no"></span></p></li>
+                                            <li><p>Supplier Location: <span class="bold award-supplier-location"></span></p></li>
+                                            <li><p>Award Notice URL: </a><span class="bold award-url"></span></p></li>
+                                         </ul>
+                                         <p>&nbsp;</p>
+                                         </section>
+
+                                    <!-- <b>Contract Details:</b>
+                                    <table>
+                                        <tr><td>Contract Name:</td><td class="contract-name"></td></tr>
+                                        <tr><td>Contract ID/Tender #:</td><td class="contract-id"></td></tr>
+                                        <tr><td>Contract Description:</td><td class="contract-description"></td></tr>
+                                        <tr><td>Contract Status (Open, Closed, Cancelled):</td><td class="contract-status"></td></tr>
+                                        <tr><td>Contract Details/Scope of Work:</td><td class="contract-details"></td></tr>
+                                        <tr><td>Procuring Entity:</td><td class="contract-entity"></td></tr>
+                                        <tr><td>Project Number:</td><td class="contract-project-no"></td></tr>
+                                        <tr><td>Project Funding Agency</td><td class="contract-funding-agency"></td></tr>
+                                        <tr><td>Contract Type:</td><td class="contract-type"></td></tr>
+                                        <tr><td>Estimated Cost</td><td class="contract-cost"></td></tr>
+                                        <tr><td>Currency</td><td class="contract-currency"></td></tr>
+                                        <tr><td>Location Details</td><td class="contract-location"></td></tr>
+                                    </table>
+                                    </div>
+
+                                    <div class="award-details">
+                                    <b>Award Details:</b>
+                                    <table>
+                                        <tr><td>Agreed Amount:</td><td class="award-amount"></td></tr>
+                                        <tr><td>Currency:</td><td class="award-currency"></td></tr>
+                                        <tr><td>Supplier Name:</td><td class="award-supplier"></td></tr>
+                                        <tr><td>Supplier PhilGEPS Registration Number:</td><td class="award-philgeps-no"></td></tr>
+                                        <tr><td>Supplier Location:</td><td class="award-supplier-location"></td></tr>
+                                        <tr><td>Award Notice URL</td><td class="award-url"></td></tr>
+                                    </table>
+                                    </div> -->
+                                    </div>
+                                    <div class="contractdetails-fail alert-box error">Failed to retrieve Contract Information</div>
+                                  </div>
+                              </div>
+                         </div>
+
+
+                    </div><!-- details -->
+
+                    <div class="timeline clearfix" id="timeline">
+                       <!-- <span  class="load-more-comments">Load More</span> -->
+                        <!-- <span class="white-gradient"></span> -->
+                       <!-- <section class="timeline-first-sec">
+                             <div class="clearfix">
+                                 <select name="" id="" class="left">
+                                     <option value="">All Updates</option>
+                                     <option value=""></option>
+                                 </select>
+                                 <select name="" id="" class="right">
+                                     <option value="">Oldest to Newest</option>
+                                     <option value=""></option>
+                                 </select>
+                             </div>
+                         </section> -->
+                         <section>
+                           <ul class="updates-list scroll"></ul>
+                         </section>
+                    </div>
+                    <div id="comments" class="comments clearfix">
+                    <!-- <span id="load-more-comments" class="load-more-comments">Load More</span> -->
+                        <!-- <span class="white-gradient"></span> -->
+                     <section class="comment-form">
+                         <div class="clearfix">
+                             <label for="" class="num-comments">Provide your Feedback</label>
+                             <!-- <span class="num-comments-a right">12 Comments</span> -->
+                             <span class="back-feedback right"> Back </span><br>
+                             <span class="reach-us right">Reach us via:</span>
+                             <form class="feedback-online-form" data-project="">
+                                 <textarea rows="8" placeholder="Type your feedback here..." data-project-type="prdp"></textarea>
+                                 <input type="submit" class="feedback-online-submit" value="Submit">
+                                 <div class="thanks-feedback">Thanks! Your feedback is now awaiting approval.</div>
+                             </form>
+                            <ul class="feedback-type-select">
+                                <li class="feedback-online login-geostore">
+                                    <button type="button">
+                                        <img src="/images/icon-online-form2.png">
+                                        <div>Online Form</div>
+                                    </button>
+                                </li>
+                                <li class="feedback-coming-soon">
+                                    <b>Coming Soon</b>
+                                    <div>
+                                        <img src="/images/icon-sms2.png">
+                                        <div>SMS</div>
+                                    </div>
+                                </li>
+                                <li class="feedback-coming-soon">
+                                    <b>Coming Soon</b>
+                                    <div>
+                                        <img src="/images/icon-call-center2.png">
+                                        <div>Call Center</div>
+                                    </div>
+                                </li>
+                                <li class="feedback-coming-soon">
+                                    <b>Coming Soon</b>
+                                    <div>
+                                        <img src="/images/icon-mail-forms2.png">
+                                        <div>Email</div>
+                                    </div>
+                                </li>
+                                <li class="feedback-coming-soon">
+                                    <b>Coming Soon</b>
+                                    <div>
+                                        <a class="fb-share-link" href="" target="_blank"><img src="/images/icon-facebook2.png"><div>Facebook</div></a>
+                                    </div>
+                                </li>
+                                <li class="feedback-coming-soon">
+                                    <b>Coming Soon</b>
+                                    <div>
+                                        <a class="twitter-share-link" target="_blank" href=""><img src="/images/icon-twitter2.png"><div>Twitter</div></a>
+                                    </div>
+                                </li>
+                            </ul>
+                         </div>
+                         <textarea name="" id="project-comment-main" cols="20" rows="5" placeholder="Type and press enter..."></textarea>
+                         <a href="http://open-data-network.appspot.com/login/authorize?r=http%3A%2F%2Flocalhost:8080%2Flogin" class="comment-login-button">Login to comment</a>
+                         <!-- <span class="sms-note">&nbsp;&nbsp;<strong><i class="fa fa-mobile"></i> &nbsp; Comment via SMS by texting 0995-555-5555</strong><br />
+                         &nbsp;&nbsp;Example: PROJECT_ID &lt;space&gt; FEEDBACK MESSAGE</span> -->
+                     </section>
+                     <section class="comment-this-proj">
+                      <ul class="proj-comments"></ul>
+                     </section>
+                      <section>
+
+                        <ul class="proj-comments-list" id="proj-comments-list"></ul>
+
+
+                      </section>
+                    </div>
+                  </div><!-- proj tab content -->
+                </div><!-- proj details -->
+                <div class="legend table">
+                    <div class="table-row">
+                        <div class="table-cell legend-title">Legend</div>
+                        <!-- <div class="table-cell">
+                          <label for="" class="gaa-subprojects">GAA FMR Regular 2014 Subprojects</label>
+                        </div> -->
+                    </div>
+
+                  <div class="table-row">
+                    <div class="table-cell">
+                      <label for="" class="start-road">Start of the Road</label>
+                    </div>
+                    <!-- <div class="table-cell">
+                      <label for="" class="road-to">Road to the Municipal Hall</label>
+                    </div> -->
+                  </div>
+                  <div class="table-row">
+                    <div class="table-cell">
+                      <label for="" class="image-available">Images are available for this area</label>
+                    </div>
+                    <!-- <div class="table-cell">
+                      <label for="" class="proposed-road">Proposed Road</label>
+                    </div> -->
+                  </div>
+                  <div class="table-row">
+                    <div class="table-cell">
+                      <label for="" class="image-available-special">Special Findings &amp; Other Observations</label>
+                    </div>
+                    <!-- <div class="table-cell">
+                      <label for="" class="trip-project">TRIP Project</label>
+                    </div> -->
+                  </div>
+                  <div class="table-row">
+                    <div class="table-cell">
+                      <label for="" class="end-road">End of the Road</label>
+                    </div>
+                    <!-- <div class="table-cell">
+                      <label for="" class="trip-subproject">TRIP Subproject</label>
+                    </div> -->
+                  </div>
+                  <div class="table-row">
+                    <div class="table-cell">
+                      <label for="" class="nearest-municipal">Nearest Municipal Hall</label>
+                    </div>
+                    <!-- <div class="table-cell">
+                      <label for="" class="prdp-subprojects">FMR PRDP Subprojects</label>
+                    </div> -->
+                  </div>
+
+                </div><!-- legend-->
+                <!-- <div class="preloader-wrapper sub-preloader">
+                    <div class="preloader">
+                        <div class="loader-inner line-scale">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div> --> <!-- preloader-wrapper -->
+            </div>
+        </div><!-- main content -->
+
+        <!-- <div class="preloader-wrapper main-preloader">
+            <div class="preloader">
+                <div class="loader-inner line-scale">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div> --> <!-- preloader-wrapper -->
+
+        </div><!-- MAIN -->
+
+
+
+        <div class="proj-gallery-lightbox-wrapper" id="protocol_viewer">
+            <div class="clearfix close-btn">
+                <img src="images/close-lightbox_03.png" alt="" class="right">
+            </div>
+             <div class="clearfix photo-gallery-lightbox-info">
+                 <div class="left left-info">
+                   <label for="" class="uppercase view-dates">Viewing date/s</label>
+                    <div class="block choose-date-wrapper">
+                        <select data-placeholder="Compare +" multiple class="chosen-date chosen-select inline-block">
+                            <option value="construction" selected>Oct. 3, 2013</option>
+
+                        </select>
+                    </div>
+
+                   <!--span class="filename">
+
+                   <select class="image-date-select" style="display: none;">
+                     <option>Option 1</option>
+                     <option>Option 2</option>
+                     <option>Option 3</option>
+                     <option>Option 4</option>
+                     <option>Option 5</option>
+                   </select>
+
+                    </span>
+                    <span class="slide-number"></span-->
+                    <div class="image-dates"></div>
+                </div>
+                 <div class="move-up-direction"><button class="btn-move-forward"><i class="fa fa-chevron-up block"></i>
+                 <span class="block">Move Forward</span></button></div>
+                 <div class="right right-info">
+                    <ul class="tab">
+<!--                         <li class="active">
+                            <a href="#" class="uppercase timeline-details-toggle">Timeline Details</a>
+                        </li> -->
+                        <!-- <li>
+                            <a href="#" class="uppercase elevation-profile-toggle">Elevation Profile</a>
+                        </li> -->
+                    </ul>
+                    <!--span class="photo-taken"></span-->
+                 </div>
+             </div>
+             <div class="proj-gallery-lightbox-v clearfix" id="proj-gallery-lightbox-v">
+             </div> <!-- proj gallery lightbox -->
+             <div class="clearfix move-up-down-direction block">
+                 <div class="move-up-direction"><button class="btn-move-backward"><span class="block">Move Backward</span><i class="fa fa-chevron-down block"></i></button></div>
+             </div>
+            <!-- <li><i class="img-available"></i><span></span></li> -->
+             <div class="photo-timeline-wrapper">
+                <ul class="photo-timeline">
+                    <li class="markers"></li>
+                    <!-- <li class="percentage"></li> -->
+                </ul>
+                <div class="clearfix photo-timeline-info">
+                    <div class="left">
+                        <div style="color: #fff;">Start of the Road length</div>
+                        <span class="photo-timestamp-start"> 0 KM</span>
+                    </div>
+                    <div class="left center-photo-point"><span class="photo-point-number">APPROX. DISTANCE FROM STARTING POINT: <div class="latlng-point" id="distance_from_starting_point"></div><div style="display: none;">POINT <span class="point-number">1</span> - 9/4/2015 &middot; 7:05:27 AM </div></span></div>
+                    <div class="left">
+                        <div style="color: #fff;">End of the Road length</div>
+                        <span class="photo-timestamp-end" id="distance_until_the_end_of_the_road">0 KM</span>
+                    </div>
+                </div>
+             </div>
+
+         </div>
+
+
+        <div class="proj-gallery-lightbox-wrapper" id="special_findings_viewer">
+            <div class="clearfix close-btn">
+                <img src="images/close-lightbox_03.png" alt="" class="right">
+            </div>
+            <div id="special_findings_image_wrapper">
+                <div class="special_findings_preview_previous_image">
+                    <img src="">
+                </div>
+                 <button class='left-gallery-nav' id="special_left"><i class='fa fa-chevron-left'></i></button>
+                 <div class="proj-gallery-lightbox-v clearfix" id="proj-gallery-lightbox-v-special">
+                 </div> <!-- proj gallery lightbox -->
+                 <button class='right-gallery-nav' id="special_right"><i class='fa fa-chevron-right'></i></button>
+             </div>
+         </div>
+
+
+
+        <div class="modal set-width-road" id="setwidth" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-header clearfix">
+                    <div class="this-center">
+                        <div class="left img-container-left"><img src="/images/pointer.png" alt=""></div>
+                  <div class="left txt-content">
+                      <p>To estimate the width of the road, we need to scale it by using an object with a known width.<br/><span>Drag the tricycle on the road, place it where it looks right and measure the est. using the ruler. </span>
+                      </p>
+                  </div>
+                    </div>
+
+                </div>
+                <div class="modal-body img-container">
+                    <img src="/images/tricycle.png" alt="" class="dragTricycle" id="dragTricycle">
+                  <img src="/images/location/road-5.jpg" alt="" class="img-road-width">
+                </div>
+                <div class="modal-footer clearfix">
+                    <div class="right">
+                        <a href="#close" class="btn uppercase">Cancel</a>
+                        <form class="tricycle-form">
+                            <input type="text" placeholder="Width in Meters">
+                            <input type="hidden">
+                            <input type="submit" value="OK">
+                        </form>
+                    </div>
+                   <!--CHANGED TO "#close"-->
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="/js/nprogress.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="/js/jquery.avgrund.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="/js/init.js?v={{ v }}"></script>
+    <script src="/js/slick.min.js?v={{ v }}"></script>
+    <script src="/js/math.min.js?v={{ v }}"></script>
+    <script src="/js/kalman.js?v={{ v }}"></script>
+    <script type="text/javascript" src="/js/selectboxit.js"></script>
+    <script type="text/javascript">
+        map.init();
+        window.project = {}
+        window.user = '';
+        BASE_URL = '{{ app_url }}';
+        thisMap.mapTypes.set("OSM", new google.maps.ImageMapType({
+          getTileUrl: function(coord, zoom) {
+            return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+          },
+          tileSize: new google.maps.Size(256, 256),
+          name: "OpenStreetMap",
+          maxZoom: 19
+        }));
+        url = encodeURIComponent(window.location.protocol + '//' + window.location.host + '/');
+        $('.login-geostore').attr('data-url', 'http://open-data-network.appspot.com/login/authorize?r=' + url + 'login');
+        if(user.token) {
+          $('.login-geostore').removeClass('login-geostore');
+        }
+    </script>
+    <script src="https://open-data-network.appspot.com/js/geostore-login.js"></script>
+    <script src="/js/events.js?v={{ v }}"></script>
+    <script type="text/javascript" src="/js/chosen.jquery.min.js?v={{ v }}"></script>
+    <script type="text/javascript" src="/js/ImageSelect.jquery.js"></script>
+    <script type="text/javascript" src="/js/Chart.min.js?v={{ v }}"></script>
+    <script type="text/javascript" src="/js/jquery.tooltipster.js"></script>
+    <script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+    <script type="text/javascript">
+    	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+    </script>
+    <script type="text/javascript">
+        window.preselected_project_id = null;
+        {% if project_id %}
+        window.preselected_project_id = '{{ project_id }}';
+        {% endif %}
+    </script>
+    <script type="text/javascript" src="/js/application.js?v={{ v }}"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-72730623-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-63543163-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    <script>
+    $('.main').height( $(window).height() - 40 );
+    $(window).on('resize', function(){
+        $('.main').height( $(window).height() - 40 );
+    });
+    </script>
+
+</html>

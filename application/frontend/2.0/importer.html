@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Import</title>
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dropzone.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/importer.css">
+
+    {% include 'woopra.html' %}
+</head>
+<body>
+<div class="fluid-container">
+    <section>
+        <nav class="navbar navbar-default" id="firstrow-nav">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="navbar-header">
+                      <a class="navbar-brand" href="/"> <img src="/images/geostore-logo.png" alt="COA Geostore"></a>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                      <ul class="nav navbar-nav">
+                        <li class="dashboard"><a href="/projects/all">Projects</a></li>
+                        <li class="viewer active-1"><a href="/viewer">Viewer</a></li>
+                        <!-- <li class="geoprocessing"><a href="/geoprocessing/dashboard">Geoprocessing</a></li> -->
+                        <li class="environments"><a href="/workspace?current_workspace=all">Workspaces</a></li>
+                        {% if user.level == 2 %}
+                        <li class="user_groups"><a href="/groups">User Groups</a></li>
+                        {% endif %}
+                                              </ul>
+                      <ul class="nav navbar-nav navbar-right">
+                                                <li> <p> {{ user.name }} ({{ role }}) </p> </li>
+                        <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                              </ul>
+                    </div><!-- navbar-collapse -->
+                </div><!-- row -->
+            </div><!-- col-md-12 -->
+        </nav>
+
+    </section>
+</div>
+<div class="container">
+	<h3 class="pull-left mt40 mb20"><i class="glyphicon glyphicon-upload h3-icon"></i> Importer</h3>
+	<div class="pull-right mt40">
+    <span class="text-danger">* Please save filename as the program you want the projects to be imported. (eg. "PRDP.csv")</span>
+    &nbsp;&nbsp;
+    <a class="btn btn-default" href="/import/template.csv" role="button">Download Template</a>
+  </div>
+	<div class="col-md-12 p0">
+		<form action="/import" class="dropzone" id="my-awesome-dropzone"></form>
+	</div>
+</div>
+<script type="text/javascript" src="/js/2.0/dropzone.min.js"></script>
+<script src="https://cdn.ravenjs.com/2.3.0/raven.min.js"></script>
+<script type="text/javascript">
+    Raven.config('https://f10053f0c3304adf9f8655d35a669ad0@app.getsentry.com/75603').install();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-63543163-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{% extends 'index.html' %}
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+	<link rel="stylesheet" type="text/css" href="/css/geoprocessing/style.css">
+
+	<link rel="stylesheet" href="/css/geoprocessing/mystyle.css">
+{% endblock %}
+{% block content %}
+{% include 'geoprocessing/geoprocessing-navigation.html' %}
+
+<div class="container" style="position:relative;">
+	<div class="bs-callout bs-callout-info" id="callout-navbar-breakpoint" style="border-bottom: 4px solid #1b809e;">
+		<center><h2>Geoprocessing Dashboard Tool Specifications</h2></center>
+	</div>
+	<div id="filter">
+		Filter: <input type="text" placeholder="Search project.." id="search">
+		<i class="glyphicon glyphicon-search" style="color:gray;"></i>
+	</div>
+	<div class="jumbotron" id="loadproject">
+	</div>
+	<div id="prevnext"><a href="javascript:void(0)" id="prev"><i class="glyphicon glyphicon-backward"></i> Previous</a> <a href="javascript:void(0)" id="next">Next <i class="glyphicon glyphicon-forward"></i></a></div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+	<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="/js/geoprocessing/jquery.min.js"></script>
+<script src="/js/geoprocessing/myjs.js"></script>
+{% endblock %}

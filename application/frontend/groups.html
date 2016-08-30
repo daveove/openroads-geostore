@@ -1,0 +1,83 @@
+{% extends 'index.html' %}
+{% block title %}User Groups | Geostore{% endblock %}
+{% block content %}
+    <div class="row mt20" id="content-container">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <h3 class="no-margin-top">
+                <i class="fa fa-fw fa-users h3-icon"></i> User Groups
+            </h3>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-right">
+            <button type="button" class="btn btn-inverse" onclick="newUserGroup(this);">Create New User Group</button>
+        </div>
+    </div>
+    {% if user_groups %}
+        <div class="row margin-top-5">
+            <div class="col-xs-12 col-lg-12">
+                <div class="panel panel-inverse">
+                    <div class="panel-heading"><i class="fa fa-fw fa-lg fa-users"></i> User Groups</div>
+                    <div class="panel-body">
+                        <table class="table table-bordered" id="table_id">
+                            <thead>
+                                <tr>
+                                    <th>User Group Name</th>
+                                    <th>User Group Description</th>
+                                    <th>User Group Members</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for group in user_groups %}
+                                <tr id="{{ group.id }}-row">
+                                    <td>{{group.title}}</td>
+                                    <td>{{group.description}}</td>
+                                    <td>
+                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="collapse" data-target="#{{group.id}}-collapse" aria-expanded="false" aria-controls="collapseExample">
+          {{ group.members_length }} Member(s)
+        </button>
+                                            <div class="collapse" id="{{group.id}}-collapse">
+                                        <table class="">
+                                            <tbody>
+                                                {% for u in group.members %}
+                                                <tr>
+                                                    <td><img class="navbar-avatar" src="https://www.gravatar.com/avatar/{{ u.email_md5 }}?s=30" style="padding-top: 10px;"> {{u.name}} {% if u.id == user.id %}(YOU){% endif %}</td>
+                                                    <td><button class="btn btn-xs btn-danger" title="Remove from group" {% if u.id == user.id %}disabled{% endif %}><i class="fa fa-fw fa-remove"></i> Remove</button></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    </td>
+                                    <td><button class="btn btn-xs btn-inverse" data-group-id="{{group.id}}" onclick="manageUserGroup(this);"> Manage User Group</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+    <div class="row margin-top-10">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="alert alert-warning"><i class="fa fa-fw fa-warning"></i> Sorry, there are no user groups to display. <a href="javascript:void(0);" onclick="newUserGroup(this);">Create a new user group</a> now?</div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/dataTables.bootstrap.min.js"></script>
+    <script>
+        var table = $('#table_id').DataTable({
+            'autoWidth': false,
+            'processing': true,
+            'language': {
+                'lengthMenu': '_MENU_',
+            },
+            // 'bSort': false,
+        }),
+        userID = "{{ user.id }}";
+    </script>
+    <script type="text/javascript" src="/js/groups.js"></script>
+{% endblock %}

@@ -1,0 +1,185 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,700);
+@font-face {
+    font-family: 'Roboto-Regular';
+    src: url("../fonts/Roboto-Regular.ttf");
+    /* IE9 Compat Modes */
+}
+
+@font-face {
+    font-family: 'Roboto-Thin';
+    src: url("../fonts/Roboto-Thin.ttf");
+    /* IE9 Compat Modes */
+}
+
+@font-face {
+    font-family: 'Roboto-Light';
+    src: url("../fonts/Roboto-Light.ttf");
+    /* IE9 Compat Modes */
+}
+
+@font-face {
+    font-family: 'Roboto-Medium';
+    src: url("../fonts/Roboto-Medium.ttf");
+    /* IE9 Compat Modes */
+}
+
+@font-face {
+    font-family: 'Roboto-Bold';
+    src: url("../fonts/Roboto-Bold.ttf");
+    /* IE9 Compat Modes */
+}
+
+@font-face {
+    font-family: 'Roboto-Black';
+    src: url("../fonts/Roboto-Black.ttf");
+    /* IE9 Compat Modes */
+}
+
+html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+body {
+    font: 12px "Roboto";
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/*First Nav*/
+
+
+
+#firstrow-nav {
+    background-color: #111111;
+    border-radius: 0px;
+    margin: 0px;
+    /*border-top: 3px solid #67c067;*/
+    min-height: 40px;
+    border: none;
+}
+
+#firstrow-nav .navbar-brand {
+    padding: 15px;
+    display: inline-block;
+}
+
+#firstrow-nav .navbar-nav {
+    display: inline;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+}
+
+    #firstrow-nav .navbar-nav.navbar-right {
+        float: right!important;
+    }
+
+#firstrow-nav .navbar-nav>li {
+    border-right: 3px solid;
+    color: #1e1e1e;
+    height: 40px;
+    float: left;
+}
+
+#firstrow-nav .navbar-nav>li>a {
+    color: #fff;
+    display: block;
+    padding: 12px 15px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#firstrow-nav .navbar-brand img {
+    width:100px!important;
+    height:auto!important;
+    margin-top: -5px;
+}
+
+#firstrow-nav .navbar-nav>li>a:hover {
+    background-color: #1e1e1e;
+    color: #fff;
+    transition: .3s ease-in;
+    height: 40px;
+}
+
+#firstrow-nav .navbar-nav .active-1 a{
+    height: 40px;
+}
+
+#firstrow-nav .navbar-nav li>p {
+    margin-top: 11px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+    color: #fff;
+    padding: 1px 14px;
+}
+
+#firstrow-nav .navbar-nav>.active-1>a,
+#firstrow-nav .navbar-nav>.active-1>a:focus,
+#firstrow-nav .navbar-nav>.active-1>a:hover {
+    background-color: #1e1e1e;
+    color: #fff;
+    transition: .3s ease-in;
+}
+
+#firstrow-nav .navbar-toggle {
+    margin-top: 19px;
+}
+
+#firstrow-nav .navbar-header {
+  height: 40px!important;
+  float: left;
+}
+
+.dropzone {
+    display: table;
+    background-image: url('/images/2.0/drag-drop-icon.png');
+    background-repeat: no-repeat;
+    background-position: center 35%;
+    width: 100%;
+    height: 200px;
+    border: 1px dashed #ccc;
+    margin-bottom: 1em;
+}
+
+    .dz-message {
+        margin-top: 200px!important;
+        font-size: 14px;
+    }
+
+.h3-icon {
+  font-size: 20px;
+  color: #f26522;
+}
+
+.p0 {
+    padding: 0!important;
+}
+
+.mt40 {
+    margin-top: 40px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+
+
+
+
+
+

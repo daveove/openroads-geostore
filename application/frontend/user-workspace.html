@@ -1,0 +1,228 @@
+{% extends 'index.html' %}
+{% block title %}Workspaces | Geostore{% endblock %}
+{% block content %}
+<div class="mt40" id="content-container">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <h3 class="no-margin-top">
+                <i class="glyphicon glyphicon-folder-open h3-icon"></i> &nbsp;Workspaces
+            </h3>
+        </div>
+    </div>
+    <div class="row margin-top-5">
+        <div class="col-xs-12">
+            {% if workspaces %}
+            <table class="table table-hover" id="teams-table">
+                <thead>
+                    <tr>
+                        <th>Workspace Name</th>
+                        <th>Workspace Description</th>
+                        <th>Members</th>
+                        <th>Date Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-center loading-icon">
+                        <td colspan="1000"><i class="fa fa-fw fa-spin fa-circle-o-notch"></i> Loading workspaces...</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info"><i class="fa fa-fw fa-info"></i> You are currently not part of any Workspace. Once you are added to an workspace, you will see it here.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <script src="https://cdn.ravenjs.com/2.3.0/raven.min.js"></script>
+    <script type="text/javascript">
+        Raven.config('https://f10053f0c3304adf9f8655d35a669ad0@app.getsentry.com/75603').install();
+    </script>
+    <script>
+        var uacsID = "{{ user.uacs }}",
+        userEmail = "{{ user.email }}";
+        $.ajax({
+            url: "/workspace?fetch=all",
+            success: function(data){
+                if(data){
+                    if(data.workspaces.length > 0){
+                        $("#teams-table").children("tbody").children("tr.loading-icon").remove();
+                        for(i=0;i<data.workspaces.length;i++){
+                            var invite = true;
+                            if($.inArray(userID, data.workspaces[i].members) !== -1){
+                                if($.inArray(userEmail, data.workspaces[i].invited_users) === -1){
+                                    invite = false;
+                                }
+                            }
+                            renderWorkspaceRowToTable(data.workspaces[i], invite);
+                        }
+                        if("cursor" in data){
+                            $("#teams-table").children("tbody").append($("<tr>", { class: "text-center loading-icon"}).html($("<td>", { colspan: "1000"}).html($("<button>", { class: "btn btn-default btn-xs", type: "button", onclick: "loadMoreUsers(this, '"+data.cursor+"')", text: " Load More" }))));
+                        }
+                        $("[rel=tooltip]").tooltip();
+                        if($("body").height() > bodyHeight && $("body").height() > $(window).height()){
+                            $("footer").removeClass("footer-fixed-bottom");
+                        }
+                        else{
+                            $("footer").addClass("footer-fixed-bottom");
+                        }
+                    }
+                    else {
+                        $("#teams-table").children("tbody").children("tr.loading-icon").html($("<td>", { colspan: "1000", text: "You have not joined an workspace yet and no pending invitations."}));
+                    }
+                }
+            }
+        });
+
+        function renderWorkspaceRowToTable(data, invite, update){
+            if(update){
+                $("#row-" + data.id).html($("<td>").text(data.title).add($("<td>").text(data.description)).add($("<td>").text(data.member_count)).add($("<td>").text(data.created_time)).add($("<td>").html($("<button>", { class: "btn btn-info btn-xs btn-" + data.id, type: "button", text: " More Information", onclick: "moreInfo(this);", "data-workspace-id": data.id }).add((invite ? $("<button>", { class: "btn btn-danger btn-xs btn-" + data.id, type: "button", text: "Leave Workspace", "data-workspace-id": data.id, onclick: "leaveWorkspace(this);" }) : $("<button>", { class: "btn btn-success btn-xs btn-" + data.id, type: "button", text: " Accept Invitation", "data-workspace-id": data.id, onclick: "joinWorkspace(this);" }).add($("<button>", { class: "btn btn-danger btn-xs btn-" + data.id, type: "button", text: " Decline Invitation", "data-workspace-id": data.id, onclick: "declineWorkspace(this);" })))))));
+            }
+            else{
+                $("#teams-table").children("tbody").append($("<tr>", { id: data.id }).html($("<td>").text(data.title).add($("<td>").text(data.description)).add($("<td>").text(data.member_count)).add($("<td>").text(data.created_time)).add($("<td>").html($("<button>", { class: "btn btn-info btn-xs btn-" + data.id, type: "button", text: " More Information", onclick: "moreInfo(this);", "data-workspace-id": data.id }).add((invite ? $("<button>", { class: "btn btn-danger btn-xs btn-" + data.id, type: "button", text: "Leave Workspace", "data-workspace-id": data.id, onclick: "leaveWorkspace(this);" }) : $("<button>", { class: "btn btn-success btn-xs btn-" + data.id, type: "button", text: " Accept Invitation", "data-workspace-id": data.id, onclick: "joinWorkspace(this);" }).add($("<button>", { class: "btn btn-danger btn-xs btn-" + data.id, type: "button", text: " Decline Invitation", "data-workspace-id": data.id, onclick: "declineWorkspace(this);" }))))))));
+            }
+        }
+
+        function joinWorkspace(obj){
+            var workspaceID = $(obj).data("workspace-id");
+            $(".btn-" + workspaceID).prop("disabled", true);
+            $(obj).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+            $.ajax({
+                url: "/workspace/" + workspaceID,
+                type: "POST",
+                data: { action: "join_workspace"},
+                success: function (data){
+                    if(data){
+                        if(data.code == 200){
+                            if(data.success){
+                                showAlertMessage(data.description, 'alert-success', 'fa-check')
+                                $(obj).prop("disabled", false).children("i").remove();
+                                // $("#" + data.data.id).fadeOut( "slow", function() {
+                                //     $("#" + data.data.id).remove();
+                                //     if($("#teams-table").children("tbody").children("tr").length == 0){
+                                //         $("#teams-table").children("tbody").append($("<td>", { colspan: "1000", text: "You have not joined a team yet." }))
+                                //     }
+                                // });
+                            }
+                            else{
+                                showAlertMessage(data.description)
+                            }
+                            return
+                        }
+
+                    }
+                },
+                error: function (){
+                    $(".btn-" + workspaceID).prop("disabled", false);
+                    $(obj).children("i.fa-circle-o-notch").remove();
+                    showAlertMessage();
+                }
+            });
+        }
+
+        function moreInfo(obj){
+            if(!$(obj).data("workspace-id")){
+                console.log("No workspace ID.");
+                return
+            }
+            var workspaceID = $(obj).data("workspace-id"),
+            url = "/workspace/" + workspaceID;
+            $(".btn-" + workspaceID).prop("disabled", true);
+            $(obj).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+
+            $.ajax({
+                url: url,
+                dataType: "json",
+                success: function(data){
+                    $(".btn-" + workspaceID).prop("disabled", false);
+                    $(obj).children("i.fa-circle-o-notch").remove();
+                    if(data){
+                        $("body").append(
+                            $("<div>", { class: "modal fade", id: "updateTeamModal", "tabindex": "-1", "role": "dialog", "aria-labelledby": "updateTeamModalLabel", "aria-hidden": "true" }).html(
+                                $("<div>", { class: "modal-dialog" }).html(
+                                    $("<form>", { class: "form-horizontal" }).html(
+                                        $("<div>", { class: "modal-content" }).html(
+                                            $("<div>", { class: "modal-header" }).html(
+                                                $("<button>", { class: "close", "data-dismiss": "modal", type: "button", "aria-hidden": "true", text: "×" }).add(
+                                                $("<h3>", { class: "modal-title", id: "updateTeamModalLabel", text: "Team Information" }))
+                                            ).add(
+                                                $("<div>", { class: "modal-body" }).html(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-4", for: "teamName", text: "Workspace Name " }).add(
+                                                        $("<div>", { class: "col-xs-7" }).html(
+                                                            $("<p>", { class: "form-control-static", id: "teamName", text: (data.title || ""), required: "" })))).add(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-4", for: "teamDescription", text: "Workspace Description" }).add(
+                                                        $("<div>", { class: "col-xs-7" }).html(
+                                                            $("<p>", { class: "form-control-static", id: "teamDescription", text: (data.description || "") }))))).add(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-4", for: "teamMembers", text: "Workspace Members" }).add(
+                                                        $("<div>", { class: "col-xs-7", id: "teamMembersContainer" }).html(
+                                                            $("<p>", { class: "form-control-static" }).html($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch"})).append(" Loading team members...")))))
+                                                )
+                                            ).add(
+                                                $("<div>", { class: "modal-footer" }).html(
+                                                    $("<button>", { type: "button", "data-dismiss": "modal", class: "btn btn-default", text: "Cancel" }))
+                                                )
+                                            )
+                                        ))
+                                    )
+                                );
+                        if(data.members.length>0){
+                            $("#teamMembersContainer").empty();
+                            for(i=0;i<data.members.length;i++){
+                                if(data.members[i].id == userID){
+                                    $("#teamMembersContainer").append($("<p>", { class: "form-control-static", text: data.members[i].name }).append($("<button>", { class: "btn btn-xs btn-danger pull-right", type: "button", "data-team-id": workspaceID, "data-user-email": data.members[i].email, onclick: "leaveTeam(this);", text: " Leave Workspace"})).append($("<br>")).append(" (" + data.members[i].email + ")"));
+                                }
+                                else{
+                                    $("#teamMembersContainer").append($("<p>", { class: "form-control-static", text: data.members[i].name }).append($("<br>")).append(" (" + data.members[i].email + ")"));
+                                }
+                            }
+                        }
+                        else{
+                            $("#teamMembersContainer").html($("<p>", { class: "form-control-static", text: " No team members" }).prepend($("<i>", { class: "fa fa-fw fa-info"})));
+                        }
+                        $("#updateTeamModal").modal({ show: true, backdrop: "static", keyboard: false }).on("shown.bs.modal", function (){
+                            $(this).find("input.form-control:first").focus();
+                        }).on("hidden.bs.modal", function (){
+                            $(this).remove();
+                        });
+                    }
+                },
+                error: function (){
+                    $(".btn-" + workspaceID).prop("disabled", false);
+                    $(obj).children("i.fa-circle-o-notch").remove();
+                    showAlertMessage();
+                }
+            });
+        }
+        function leaveTeam(obj){
+            var teamID = $(obj).data("team-id");
+            $(obj).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" })).prop("disabled", true);
+            $.ajax({
+                url: "/team/" + teamID,
+                type: "POST",
+                data: { action: "leave_team"},
+                success: function (data){
+                    if(data){
+                        if(data.code == 200){
+                            $(obj).prop("disabled", false).children("i").remove();
+                            $("#" + data.data.id).fadeOut( "slow", function() {
+                                $("#" + data.data.id).remove();
+                                if($("#teams-table").children("tbody").children("tr").length == 0){
+                                    $("#teams-table").children("tbody").append($("<td>", { colspan: "1000", text: "You have not joined a team yet." }))
+                                }
+                            });
+                            return
+                        }
+                    }
+                },
+                error: function (){
+                    $(obj).prop("disabled", false).children("i").remove();
+                }
+            });
+        }
+    </script>
+{% endblock %}

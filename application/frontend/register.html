@@ -1,0 +1,128 @@
+{% extends 'index.html' %}
+{% block title %}Register | Geostore {% endblock %}
+{% block content %}
+<div class="mt40" id="content-container">
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2 register-form">
+            <form method="POST" id="registerAccountForm">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h2>REGISTRATION</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 no-padding-right">
+                        <div class="form-group">
+                            <label for="first_name">FIRST NAME <span class="text-danger">*</span></label>
+                            <input type="text" name="first_name" id="first_name" class="form-control input-lg" placeholder="Juan" {% if data.first_name %}value="{{ data.first_name }}"{% endif %} required>
+                            <input type="hidden" name="redirect" {% if redirect %}value="{{ redirect }}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 no-padding-right">
+                        <div class="form-group">
+                            <label for="last_name">MIDDLE NAME</label>
+                            <input type="text" name="middle_name" id="middle_name" class="form-control input-lg" {% if data.middle_name %}value="{{ data.middle_name }}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 no-padding-right">
+                        <div class="form-group">
+                            <label for="last_name">LAST NAME <span class="text-danger">*</span></label>
+                            <input type="text" name="last_name" id="last_name" class="form-control input-lg" placeholder="Dela Cruz" {% if data.last_name %}value="{{ data.last_name }}"{% endif %} required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label class="control-label" for="mobile_number">PERSONAL ADDRESS <span class="text-danger">*</span></label>
+                            <input type="text" name="street_address" id="street_address" class="form-control input-lg" placeholder="1st St. Brgy. Bayanihan" {% if data.street_address %}value="{{ data.street_address }}"{% endif %} required>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label class="control-label" for="mobile_number">AGENCY</label>
+                            <select name="agency" id="agency" class="form-control input-lg" required>
+                                <option disabled="" selected="">Select an Agency</option>
+                                {% for agency in agencies %}
+                                <option value="{{ agency.key.id() }}">{{ agency.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label class="control-label" for="province">PROVINCE <span class="text-danger">*</span></label>
+                            <select name="province" id="province" class="form-control input-lg" required>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label class="control-label" for="city">CITY/MUNICIPALITY <span class="text-danger">*</span></label>
+                            <select name="city" id="city" class="form-control input-lg" required>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label for="mobile_number">MOBILE <span class="text-danger">*</span></label>
+                            <input type="text" name="mobile_number" id="mobile_number" class="form-control input-lg" data-mask="+63 (999) 999-9999" data-mask-placeholder="+63 (XXX) XXX-XXXX" placeholder="+63 (XXX) XXX-XXXX" {% if data.mobile_number %}value="{{ data.mobile_number }}"{% endif %} required>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label for="email">EMAIL <span class="text-danger">*</span></label>
+                            {% if user_email %}
+                            <input type="email" name="email" id="email" class="form-control input-lg" value="{{ user_email }}" readonly required>
+                            {% else %}
+                            <input type="email" name="email" id="email" class="form-control input-lg" {% if data.email %}value="{{ data.email }}"{% endif %} placeholder="juandelacruz@mail.com" required>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label for="password">PASSWORD <span class="text-danger">*</span></label>
+                            <input type="password" name="password" id="password" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 no-padding-right">
+                        <div class="form-group">
+                            <label for="confirm_password">TYPE PASSWORD AGAIN <span class="text-danger">*</span></label>
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-control input-lg" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-inverse"> REGISTER</button>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        </div>
+                        <a href="/register/verify/send">Resend Verification Email</a> / <a href="/login">Login</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script src="/js/masked-input.js"></script>
+<script src="/js/city-municipality.js"></script>
+<script>
+    var submitted = {% if data %}true{% else %}false{% endif %},
+    submittedProvince = "{{ data.province|lower }}",
+    submittedCity = "{{ data.city|lower }}";
+</script>
+<script src="/js/register.js"></script>
+{% endblock %}

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Geostore Statistics Summary Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/statistics-summary-dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <section class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Geostore Statistics</h1>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <b>Budget Year:</b>
+                <select id="select_year">
+                    <option selected="">ALL</option>
+                </select>
+                <select style="display: none;" id="select_province"></select>
+                <select style="display: none;" id="select_municipality"></select>
+                <select style="display: none;" id="select_year"></select>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <table class="table table-striped" id="statistics-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Total Projects</th>
+                            <th>Total KML</th>
+                            <th>Total Geotag Images</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PRDP</td>
+                            <td id="total_projects_prdp">0</td>
+                            <td id="total_kmls_prdp">0</td>
+                            <td id="has_image_prdp">0</td>
+                        </tr>
+                        <tr>
+                            <td>BUB</td>
+                            <td id="total_projects_bub">0</td>
+                            <td id="total_kmls_bub">0</td>
+                            <td id="has_image_bub">0</td>
+                        </tr>
+                        <tr>
+                            <td>GAA</td>
+                            <td id="total_projects_gaa">0</td>
+                            <td id="total_kmls_gaa">0</td>
+                            <td id="has_image_gaa">0</td>
+                        </tr>
+                        <tr>
+                            <td>TRIP</td>
+                            <td id="total_projects_trip">0</td>
+                            <td id="total_kmls_trip">0</td>
+                            <td id="has_image_trip">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 style="margin-bottom: 25px;" class="text-center">Projects with one or more geotags</h2>
+            </div>
+            <div class="col-md-6">
+                <!-- <div class="table-heading">Projects with one or more geotags</div> -->
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td><b>PRDP</b></td>
+                            <td align="right"><span id="geotag_image_prdp">0</span>/<span id="total_geotag_image_prdp">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>BUB</b></td>
+                            <td align="right"><span id="geotag_image_bub">0</span>/<span id="total_geotag_image_bub">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>GAA</b></td>
+                            <td align="right"><span id="geotag_image_gaa">0</span>/<span id="total_geotag_image_gaa">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>TRIP</b></td>
+                            <td align="right"><span id="geotag_image_trip">0</span>/<span id="total_geotag_image_trip">0</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div class="graph-first"></div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">Histogram</h2>
+                <div id="placeholder"></div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 style="margin-bottom: 25px;" class="text-center">Projects Geoprocessed</h2>
+            </div>
+            <div class="col-md-6">
+                <!-- <div class="table-heading">Projects Geoprocessed</div> -->
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td><b>PRDP</b></td>
+                            <td align="right"><span id="prdp_geoprocessed_projects">0</span>/<span id="prdp_total_geoprocessed_projects">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>BUB</b></td>
+                            <td align="right"><span id="bub_geoprocessed_projects">0</span>/<span id="bub_total_geoprocessed_projects">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>GAA</b></td>
+                            <td align="right"><span id="gaa_geoprocessed_projects">0</span>/<span id="gaa_total_geoprocessed_projects">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>TRIP</b></td>
+                            <td align="right"><span id="trip_geoprocessed_projects">0</span>/<span id="trip_total_geoprocessed_projects">0</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div class="graph-second"></div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none;">
+        <span id="total_projects" title="total_projects">0</span>
+        <span id="total_projects_prdp" title="total_projects_prdp">0</span>
+        <span id="total_projects_bub" title="total_projects_bub">0</span>
+        <span id="total_projects_gaa" title="total_projects_gaa">0</span>
+        <span id="total_projects_trip" title="total_projects_trip">0</span>
+        <span id="total_kmls" title="total_kmls">0</span>
+        <span id="total_kmls_prdp" title="total_kmls_prdp">0</span>
+        <span id="total_kmls_bub" title="total_kmls_bub">0</span>
+        <span id="total_kmls_gaa" title="total_kmls_gaa">0</span>
+        <span id="total_kmls_trip" title="total_kmls_trip">0</span>
+        <span id="total_images" title="total_images">0</span>
+        <span id="total_images_prdp" title="total_images_prdp">0</span>
+        <span id="total_images_bub" title="total_images_bub">0</span>
+        <span id="total_images_gaa" title="total_images_gaa">0</span>
+        <span id="total_images_trip" title="total_images_trip">0</span>
+        <span id="has_kml_prdp" title="has_kml_prdp">0</span>
+        <span id="has_kml_bub" title="has_kml_bub">0</span>
+        <span id="has_kml_gaa" title="has_kml_gaa">0</span>
+        <span id="has_kml_trip" title="has_kml_trip">0</span>
+        <span id="kml_percentage_prdp" title="kml_percentage_prdp">0</span>
+        <span id="kml_percentage_bub" title="kml_percentage_bub">0</span>
+        <span id="kml_percentage_gaa" title="kml_percentage_gaa">0</span>
+        <span id="kml_percentage_trip" title="kml_percentage_trip">0</span>
+        <span id="image_percentage_prdp" title="image_percentage_prdp">0</span>
+        <span id="image_percentage_bub" title="image_percentage_bub">0</span>
+        <span id="image_percentage_gaa" title="image_percentage_gaa">0</span>
+        <span id="image_percentage_trip" title="image_percentage_trip">0</span>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/js/flot/jquery.flot.cust.js"></script>
+    <script src="/js/flot/jquery.flot.resize.js"></script>
+    <script src="/js/flot/jquery.flot.fillbetween.min.js"></script>
+    <script src="/js/flot/jquery.flot.orderBar.js"></script>
+    <script src="/js/flot/jquery.flot.pie.js"></script>
+    <script src="/js/flot/jquery.flot.tooltip.js"></script>
+    <script type="text/javascript">
+        var statistics = {{ statistics|safe }};
+        var generated_statistics = true;
+        if(statistics['bub_geotag_images'] == null) {
+            generated_statistics = false;
+            generate_statistics();
+        }
+        $(document).ready(function(){
+            for(var i = 2010; i < new Date().getFullYear(); i++) {
+                $('#select_year').append('<option value="' + i + '">' + i + '</option>');
+            }
+            $.getJSON('https://coageostore.appspot.com/dashboard/statistics2?callback=?', function(data){
+                if(data){
+                    window.data_stats = data.data;
+                    show_provinces();
+
+                    setTimeout(function(){
+                        render_values();
+                    }, 100);
+                }
+            })
+        });
+
+        function show_provinces(){
+            $('#select_province').empty();
+            $('#select_province')
+                .append($("<option></option>")
+                .attr("value",'ALL')
+                .text('ALL'));
+
+            var keys = [];
+
+            for (var key in window.data_stats) {
+                if (window.data_stats.hasOwnProperty(key)) {
+                    if(key){
+                        keys.push(key);
+                    }
+                }
+            }
+
+            keys.sort();
+
+            for (var i=0; i<keys.length; i++){
+                $('#select_province')
+                    .append($("<option></option>")
+                    .attr("value", keys[i])
+                    .text(toTitleCase(keys[i])));
+            }
+
+        }
+
+
+        function show_municipalities(province){
+            $('#select_municipality').empty();
+            $('#select_municipality')
+                .append($("<option></option>")
+                .attr("value",'ALL')
+                .text('ALL'));
+
+            var keys = [];
+
+            for (var key in window.data_stats[province]) {
+                if (window.data_stats[province].hasOwnProperty(key)) {
+                    if(key){
+                        keys.push(key);
+                    }
+                }
+            }
+
+            keys.sort();
+
+            for (var i=0; i<keys.length; i++){
+                $('#select_municipality')
+                    .append($("<option></option>")
+                    .attr("value", keys[i])
+                    .text(toTitleCase(keys[i])));
+            }
+
+        }
+
+
+        function show_years(province, municipality){
+            $('#select_year').empty();
+            $('#select_year')
+                .append($("<option></option>")
+                .attr("value",'ALL')
+                .text('ALL'));
+
+            var keys = [];
+
+            for (var key in window.data_stats[province][municipality]) {
+                if (window.data_stats[province][municipality].hasOwnProperty(key)) {
+                    keys.push(key);
+                }
+            }
+
+            keys.sort();
+
+            for (var i=0; i<keys.length; i++){
+                $('#select_year')
+                    .append($("<option></option>")
+                    .attr("value", keys[i])
+                    .text(keys[i]));
+            }
+
+        }
+
+        var total_projects_prdp = 0;
+        var total_projects_bub = 0;
+        var total_projects_gaa = 0;
+        var total_projects_trip = 0;
+
+        var total_kmls_prdp = 0;
+        var total_kmls_bub = 0;
+        var total_kmls_gaa = 0;
+        var total_kmls_trip = 0;
+
+        var total_images_prdp = 0;
+        var total_images_bub = 0;
+        var total_images_gaa = 0;
+        var total_images_trip = 0;
+
+        var total_has_kml_prdp = 0;
+        var total_has_kml_bub = 0;
+        var total_has_kml_gaa = 0;
+        var total_has_kml_trip = 0;
+
+        var total_has_image_prdp = 0;
+        var total_has_image_bub = 0;
+        var total_has_image_gaa = 0;
+        var total_has_image_trip = 0;
+
+
+        function add_single_data(province, municipality, year){
+            try{
+                total_projects_prdp += window.data_stats[province][municipality][year].PRDP.count;
+                total_kmls_prdp += window.data_stats[province][municipality][year].PRDP.kmls;
+                total_images_prdp += window.data_stats[province][municipality][year].PRDP.images;
+                total_has_kml_prdp += window.data_stats[province][municipality][year].PRDP.has_kml;
+                total_has_image_prdp += window.data_stats[province][municipality][year].PRDP.has_image;
+            }
+            catch(e){
+                // do nothing
+            }
+
+            try{
+                total_projects_bub += window.data_stats[province][municipality][year].BUB.count;
+                total_kmls_bub += window.data_stats[province][municipality][year].BUB.kmls;
+                total_images_bub += window.data_stats[province][municipality][year].BUB.images;
+                total_has_kml_bub += window.data_stats[province][municipality][year].BUB.has_kml;
+                total_has_image_bub += window.data_stats[province][municipality][year].BUB.has_image;
+            }
+            catch(e){
+                // do nothing
+            }
+
+            try{
+                total_projects_gaa += window.data_stats[province][municipality][year].GAA.count;
+                total_kmls_gaa += window.data_stats[province][municipality][year].GAA.kmls;
+                total_images_gaa += window.data_stats[province][municipality][year].GAA.images;
+                total_has_kml_gaa += window.data_stats[province][municipality][year].GAA.has_kml;
+                total_has_image_gaa += window.data_stats[province][municipality][year].GAA.has_image;
+            }
+            catch(e){
+                // do nothing
+            }
+
+            try{
+                total_projects_trip += window.data_stats[province][municipality][year].TRIP.count;
+                total_kmls_trip += window.data_stats[province][municipality][year].TRIP.kmls;
+                total_images_trip += window.data_stats[province][municipality][year].TRIP.images;
+                total_has_kml_trip += window.data_stats[province][municipality][year].TRIP.has_kml;
+                total_has_image_trip += window.data_stats[province][municipality][year].TRIP.has_image;
+            }
+            catch(e){
+                // do nothing
+            }
+        }
+
+
+        function add_year_data(province, municipality, year){
+            if(year == 'ALL'){
+                for (var year_key in window.data_stats[province][municipality]) {
+                    if (window.data_stats[province][municipality].hasOwnProperty(year_key)) {
+                        add_single_data(province, municipality, year_key);
+                    }
+                }
+            }
+            else {
+                add_single_data(province, municipality, year);
+            }
+        }
+
+
+        function add_municipality_data(province, municipality, year){
+            if(municipality == 'ALL'){
+                for (var municipality_key in window.data_stats[province]) {
+                    if (window.data_stats[province].hasOwnProperty(municipality_key)) {
+                        add_year_data(province, municipality_key, year);
+                    }
+                }
+            }
+            else {
+                add_year_data(province, municipality, year);
+            }
+        }
+
+
+        function add_province_data(province, municipality, year){
+            if(province == 'ALL'){
+                for (var province_key in window.data_stats) {
+                    if (window.data_stats.hasOwnProperty(province_key)) {
+                        add_municipality_data(province_key, municipality, year);
+                    }
+                }
+            }
+            else {
+                add_municipality_data(province, municipality, year);
+            }
+        }
+
+        window.cancel_increments = false;
+
+
+        function render_values(){
+            window.cancel_increments = true;
+
+            var province = 'ALL';
+            var municipality = 'ALL';
+            var year = $('#select_year').val();
+
+            total_projects_prdp = statistics['prdp_projects'];
+            total_projects_bub = statistics['bub_projects'];
+            total_projects_gaa = statistics['gaa_projects'];
+            total_projects_trip = statistics['trip_projects'];
+
+            total_kmls_prdp = 0;
+            total_kmls_bub = 0;
+            total_kmls_gaa = 0;
+            total_kmls_trip = 0;
+
+            total_images_prdp = 0;
+            total_images_bub = 0;
+            total_images_gaa = 0;
+            total_images_trip = 0;
+
+            total_has_kml_prdp = 0;
+            total_has_kml_bub = 0;
+            total_has_kml_gaa = 0;
+            total_has_kml_trip = 0;
+
+            total_has_image_prdp = statistics['prdp_images'];
+            total_has_image_bub = statistics['bub_images'];
+            total_has_image_gaa = statistics['gaa_images'];
+            total_has_image_trip = statistics['trip_images'];
+
+            var geotag_image_prdp = statistics['prdp_geotag_images'];
+            var geotag_image_bub = statistics['bub_geotag_images'];
+            var geotag_image_gaa = statistics['gaa_geotag_images'];
+            var geotag_image_trip= statistics['trip_geotag_images'];
+
+            var prdp_geoprocessed_projects = statistics['prdp_projects_geoprocessed']
+            var bub_geoprocessed_projects = statistics['bub_projects_geoprocessed']
+            var gaa_geoprocessed_projects = statistics['gaa_projects_geoprocessed']
+            var trip_geoprocessed_projects = statistics['trip_projects_geoprocessed']
+
+            add_province_data(province, municipality, year);
+
+            var total_projects = total_projects_prdp + total_projects_bub + total_projects_gaa + total_projects_trip;
+            var total_kmls = total_kmls_prdp + total_kmls_bub + total_kmls_gaa + total_kmls_trip;
+            var total_images = total_images_prdp + total_images_bub + total_images_gaa + total_images_trip;
+
+            var kml_percentage_prdp = total_has_kml_prdp / total_projects_prdp * 100;
+            var kml_percentage_bub = total_has_kml_bub / total_projects_bub * 100;
+            var kml_percentage_gaa = total_has_kml_gaa / total_projects_gaa * 100;
+            var kml_percentage_trip = total_has_kml_trip / total_projects_trip * 100;
+
+            var image_percentage_prdp = total_has_image_prdp / total_projects_prdp * 100;
+            var image_percentage_bub = total_has_image_bub / total_projects_bub * 100;
+            var image_percentage_gaa = total_has_image_gaa / total_projects_gaa * 100;
+            var image_percentage_trip = total_has_image_trip / total_projects_trip * 100;
+
+            setTimeout(function(){
+                window.cancel_increments = false;
+
+                change_number_with_effect('total_projects', total_projects);
+                change_number_with_effect('total_projects_prdp', total_projects_prdp);
+                change_number_with_effect('total_projects_bub', total_projects_bub);
+                change_number_with_effect('total_projects_gaa', total_projects_gaa);
+                change_number_with_effect('total_projects_trip', total_projects_trip);
+
+                change_number_with_effect('total_kmls', total_kmls);
+                change_number_with_effect('total_kmls_prdp', total_kmls_prdp);
+                change_number_with_effect('total_kmls_bub', total_kmls_bub);
+                change_number_with_effect('total_kmls_gaa', total_kmls_gaa);
+                change_number_with_effect('total_kmls_trip', total_kmls_trip);
+
+                change_number_with_effect('total_images', total_images);
+                change_number_with_effect('total_images_prdp', total_images_prdp);
+                change_number_with_effect('total_images_bub', total_images_bub);
+                change_number_with_effect('total_images_gaa', total_images_gaa);
+                change_number_with_effect('total_images_trip', total_images_trip);
+
+                change_number_with_effect('has_kml_prdp', total_has_kml_prdp);
+                change_number_with_effect('has_kml_bub', total_has_kml_bub);
+                change_number_with_effect('has_kml_gaa', total_has_kml_gaa);
+                change_number_with_effect('has_kml_trip', total_has_kml_trip);
+
+                change_float_with_effect('kml_percentage_prdp', kml_percentage_prdp);
+                change_float_with_effect('kml_percentage_bub', kml_percentage_bub);
+                change_float_with_effect('kml_percentage_gaa', kml_percentage_gaa);
+                change_float_with_effect('kml_percentage_trip', kml_percentage_trip);
+
+                change_number_with_effect('has_image_prdp', total_has_image_prdp);
+                change_number_with_effect('has_image_bub', total_has_image_bub);
+                change_number_with_effect('has_image_gaa', total_has_image_gaa);
+                change_number_with_effect('has_image_trip', total_has_image_trip);
+
+                change_number_with_effect('total_geotag_image_prdp', total_has_image_prdp);
+                change_number_with_effect('total_geotag_image_bub', total_has_image_bub);
+                change_number_with_effect('total_geotag_image_gaa', total_has_image_gaa);
+                change_number_with_effect('total_geotag_image_trip', total_has_image_trip);
+
+                change_float_with_effect('image_percentage_prdp', image_percentage_prdp);
+                change_float_with_effect('image_percentage_bub', image_percentage_bub);
+                change_float_with_effect('image_percentage_gaa', image_percentage_gaa);
+                change_float_with_effect('image_percentage_trip', image_percentage_trip);
+
+                change_number_with_effect('geotag_image_prdp', geotag_image_prdp);
+                change_number_with_effect('geotag_image_bub', geotag_image_bub);
+                change_number_with_effect('geotag_image_gaa', geotag_image_gaa);
+                change_number_with_effect('geotag_image_trip', geotag_image_trip);
+
+                change_number_with_effect('prdp_total_geoprocessed_projects', total_projects_prdp);
+                change_number_with_effect('bub_total_geoprocessed_projects', total_projects_bub);
+                change_number_with_effect('gaa_total_geoprocessed_projects', total_projects_gaa);
+                change_number_with_effect('trip_total_geoprocessed_projects', total_projects_trip);
+
+                change_number_with_effect('prdp_geoprocessed_projects', prdp_geoprocessed_projects);
+                change_number_with_effect('bub_geoprocessed_projects', bub_geoprocessed_projects);
+                change_number_with_effect('gaa_geoprocessed_projects', gaa_geoprocessed_projects);
+                change_number_with_effect('trip_geoprocessed_projects', trip_geoprocessed_projects);
+
+            }, 10);
+
+        }
+
+
+        $('#select_province').on('change', function(){
+            show_municipalities($('#select_province').val());
+            // $("#select_year").val('ALL');
+            render_values();
+        });
+
+        $('#select_municipality').on('change', function(){
+            // show_years($('#select_province').val(), $('#select_municipality').val());
+            // $("#select_year").val('ALL');
+            render_values();
+        });
+
+        $('body').on('change', '#select_year', function(){
+            render_values();
+        });
+
+        function render_charts() {
+            var data = [
+                {data: [[0, parseFloat(statistics['prdp_geotag_images'] / statistics['prdp_images']) * 100]], color: "#76D7C4", label: "PRDP"},
+                {data: [[1, parseFloat(statistics['bub_geotag_images'] / statistics['bub_images']) * 100]], color: "#DAF7A6", label: "BUB"},
+                {data: [[2, parseFloat(statistics['gaa_geotag_images'] / statistics['gaa_images']) * 100]], color: "#FFC300", label: "GAA"},
+                {data: [[3, parseFloat(statistics['trip_geotag_images'] / statistics['trip_images']) * 100]], color: "#FF5733", label: "TRIP"}
+            ];
+            var data2 = [
+                {data: [[0, parseFloat(statistics['prdp_projects_geoprocessed'] / statistics['prdp_projects']) * 100]], color: "#76D7C4", label: "PRDP"},
+                {data: [[1, parseFloat(statistics['bub_projects_geoprocessed'] / statistics['bub_projects']) * 100]], color: "#DAF7A6", label: "BUB"},
+                {data: [[2, parseFloat(statistics['gaa_projects_geoprocessed'] / statistics['gaa_projects']) * 100]], color: "#FFC300", label: "GAA"},
+                {data: [[3, parseFloat(statistics['trip_projects_geoprocessed'] / statistics['trip_projects']) * 100]], color: "#FF5733", label: "TRIP"}
+            ];
+            $.plot($(".graph-first"), data, {
+                grid: {
+                    show : true,
+                    hoverable : true,
+                    clickable : true,
+                    tickColor : "#efefef",
+                    borderWidth : 0,
+                    borderColor : "#efefef",
+                    labelMargin: 20
+                },
+                xaxis: {
+                    ticks: [[0,'PRDP'],[1,'BUB'],[2,'GAA'], [3,'TRIP']],
+                },
+                yaxis: {
+                    max: 100,
+                },
+                series: {
+                    bars : {
+                        show : true,
+                        barWidth : 0.3,
+                        fill: true,
+                        align: "center",
+                    }
+                },
+                legend : true,
+                tooltip : true,
+                tooltipOpts : {
+                    content : function getTooltip(label, x, y) {
+                        return '<div class="graph-tooltip">' + label + ': ' + y + '</div>';
+                    },
+                    defaultTheme : false
+                }
+            });
+            $.plot($(".graph-second"), data2, {
+                grid: {
+                    show : true,
+                    hoverable : true,
+                    clickable : true,
+                    tickColor : "#efefef",
+                    borderWidth : 0,
+                    borderColor : "#efefef",
+                    labelMargin: 20
+                },
+                xaxis: {
+                    ticks: [[0,'PRDP'],[1,'BUB'],[2,'GAA'], [3,'TRIP']],
+                },
+                yaxis: {
+                    max: 100,
+                },
+                series: {
+                    bars : {
+                        show : true,
+                        barWidth : 0.3,
+                        fill: true,
+                        align: "center",
+                    }
+                },
+                legend : true,
+                tooltip : true,
+                tooltipOpts : {
+                    content : function getTooltip(label, x, y) {
+                        return '<div class="graph-tooltip">' + label + ': ' + y + '</div>';
+                    },
+                    defaultTheme : false
+                }
+            });
+        }
+
+
+        function toTitleCase(str)
+        {
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        }
+
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+
+        Number.prototype.formatMoney = function(c, d, t){
+            var n = this,
+                c = isNaN(c = Math.abs(c)) ? 2 : c,
+                d = d == undefined ? "." : d,
+                t = t == undefined ? "," : t,
+                s = n < 0 ? "-" : "",
+                i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+                j = (j = i.length) > 3 ? j % 3 : 0;
+               return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+        };
+
+
+        function generate_statistics() {
+            if(!generated_statistics) {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: '/statistics/generate',
+                    timeout: 55,
+                    success: function() {
+                        location.reload();
+                    },
+                    error: function() {
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+
+        function change_number_with_effect(elementId, newValue){
+            el = document.getElementById(elementId);
+            try{
+                currentValue = parseInt(el.innerHTML.replace(/,/g, "")) || 0;
+            }
+            catch(e){
+                el.innerHTML = '0';
+                change_number_with_effect(elementId, newValue);
+                return;
+            }
+
+            difference = currentValue - newValue;
+            if(difference < 0){
+                difference = difference * -1;
+            }
+
+            increment = 1;
+
+            if(difference > 100){
+                increment = 10;
+            }
+            if(difference > 1000){
+                increment = 100;
+            }
+            if(difference > 10000){
+                increment = 1000;
+            }
+            if(difference > 100000){
+                increment = 10000;
+            }
+            if(difference > 1000000){
+                increment = 100000;
+            }
+            if(difference > 10000000){
+                increment = 1000000;
+            }
+
+            if(currentValue > newValue){
+                // higher. go down
+                currentValue -= increment;
+            }
+            else if(currentValue < newValue){
+                // lower. go up
+                currentValue += increment;
+            }
+            else if(currentValue == newValue) {
+                render_charts();
+            }
+
+            el.innerHTML = numberWithCommas(currentValue);
+
+            if(currentValue != newValue){
+                setTimeout(function(){
+                    if(window.cancel_increments){
+                        return;
+                    }
+                    change_number_with_effect(elementId, newValue);
+                }, 1);
+            }
+        }
+
+        function change_float_with_effect(elementId, newValue){
+            el = document.getElementById(elementId);
+            try{
+                currentValue = parseFloat(el.innerHTML.replace(/,/g, "")) || 0;
+            }
+            catch(e){
+                el.innerHTML = '0.0';
+                change_float_with_effect(elementId, newValue);
+                return;
+            }
+
+            difference = currentValue - newValue;
+            if(difference < 0){
+                difference = difference * -1;
+            }
+
+            increment = .01;
+
+            if(difference > 1){
+                increment = .1;
+            }
+            if(difference > 10){
+                increment = 1;
+            }
+            if(difference > 100){
+                increment = 10;
+            }
+            if(difference > 1000){
+                increment = 100;
+            }
+            if(difference > 10000){
+                increment = 1000;
+            }
+            if(difference > 100000){
+                increment = 10000;
+            }
+
+            if(currentValue > newValue){
+                // higher. go down
+                currentValue -= increment;
+            }
+            else if(currentValue < newValue){
+                // lower. go up
+                currentValue += increment;
+            }
+
+            el.innerHTML = currentValue.formatMoney(2);
+            newValueString = newValue.formatMoney(2);
+
+            if(el.innerHTML != newValueString){
+                setTimeout(function(){
+                    if(window.cancel_increments){
+                        return;
+                    }
+                    change_float_with_effect(elementId, newValue);
+                }, 1);
+            }
+        }
+        var v = []
+        var p = ['prdp', 'bub', 'gaa', 'trip']
+        for(var i = 0; i < 4; i++) {
+            var t = [];
+            for (var j = 0; j < statistics[p[i] + '_projects']; j++) {
+                t.push([j, statistics[p[i] + '_geotag_images']]);
+            }
+            v.push(t);
+        }
+        $.plot("#placeholder", v);
+    </script>
+</body>
+</html>

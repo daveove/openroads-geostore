@@ -1,0 +1,147 @@
+{% extends 'index.html' %}
+{% block title %}Dashboard | Geostore{% endblock %}
+{% block content %}
+    <div class="col-xs-12">
+        <table class="table table-hover" id="teams-table">
+            <thead>
+                <tr>
+                    <th>Team Name</th>
+                    <th>Team Description</th>
+                    <th>Members</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center loading-icon">
+                    <td colspan="1000"><i class="fa fa-fw fa-spin fa-circle-o-notch"></i> Loading teams...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        var userID = "{{ user.id }}",
+        uacsID = "{{ user.uacs }}";
+        $.ajax({
+            url: "/team?fetch=all",
+            success: function(data){
+                if(data){
+                    if(data.data.length > 0){
+                        $("#teams-table").children("tbody").children("tr.loading-icon").remove();
+                        for(i=0;i<data.data.length;i++){
+                            $("#teams-table").children("tbody").append($("<tr>", { id: data.data[i].id }).html($("<td>").text(data.data[i].team_name).add($("<td>").text(data.data[i].team_description)).add($("<td>").text(data.data[i].member_count)).add($("<td>").text(data.data[i].created_time)).add($("<td>").html($("<button>", { class: "btn btn-info btn-xs", type: "button", text: "More Information", onclick: "moreInfo(this);", "data-team-id": data.data[i].id }).add($("<button>", { class: "btn btn-danger btn-xs", type: "button", text: "Leave Team", "data-team-id": data.data[i].id, onclick: "leaveTeam(this);" }))))));
+                        }
+                        if("cursor" in data){
+                            $("#teams-table").children("tbody").append($("<tr>", { class: "text-center loading-icon"}).html($("<td>", { colspan: "1000"}).html($("<button>", { class: "btn btn-default btn-xs", type: "button", onclick: "loadMoreUsers(this, '"+data.cursor+"')", text: " Load More" }))));
+                        }
+                        $("[rel=tooltip]").tooltip();
+                        if($("body").height() > bodyHeight && $("body").height() > $(window).height()){
+                            $("footer").removeClass("footer-fixed-bottom");
+                        }
+                        else{
+                            $("footer").addClass("footer-fixed-bottom");
+                        }
+                    }
+                    else {
+                        $("#teams-table").children("tbody").children("tr.loading-icon").html($("<td>", { colspan: "1000", text: "You have not joined a team yet."}));
+                    }
+                }
+            }
+        });
+
+        function moreInfo(obj){
+            if(!$(obj).data("team-id")){
+                console.log("No team ID.");
+                return
+            }
+            var teamID = $(obj).data("team-id");
+            $.ajax({
+                url: "/team/" + teamID,
+                dataType: "json",
+                success: function(data){
+                    if(data){
+                        console.log(data)
+                        $("body").append(
+                            $("<div>", { class: "modal fade", id: "updateTeamModal", "tabindex": "-1", "role": "dialog", "aria-labelledby": "updateTeamModalLabel", "aria-hidden": "true" }).html(
+                                $("<div>", { class: "modal-dialog" }).html(
+                                    $("<form>", { class: "form-horizontal" }).html(
+                                        $("<div>", { class: "modal-content" }).html(
+                                            $("<div>", { class: "modal-header" }).html(
+                                                $("<button>", { class: "close", "data-dismiss": "modal", type: "button", "aria-hidden": "true", text: "×" }).add(
+                                                $("<h3>", { class: "modal-title", id: "updateTeamModalLabel", text: "Team Information" }))
+                                            ).add(
+                                                $("<div>", { class: "modal-body" }).html(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-3", for: "teamName", text: "Team Name " }).add(
+                                                        $("<div>", { class: "col-xs-8" }).html(
+                                                            $("<p>", { class: "form-control-static", id: "teamName", text: (data.team_name || ""), required: "" })))).add(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-3", for: "teamDescription", text: "Team Description" }).add(
+                                                        $("<div>", { class: "col-xs-8" }).html(
+                                                            $("<p>", { class: "form-control-static", id: "teamDescription", text: (data.team_description || "") }))))).add(
+                                                    $("<div>", { class: "form-group" }).html(
+                                                        $("<label>", { class: "control-label col-xs-3", for: "teamMembers", text: "Team Members" }).add(
+                                                        $("<div>", { class: "col-xs-8", id: "teamMembersContainer" }).html(
+                                                            $("<p>", { class: "form-control-static" }).html($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch"})).append(" Loading team members...")))))
+                                                )
+                                            ).add(
+                                                $("<div>", { class: "modal-footer" }).html(
+                                                    $("<button>", { type: "button", "data-dismiss": "modal", class: "btn btn-default", text: "Cancel" }))
+                                                )
+                                            )
+                                        ))
+                                    )
+                                );
+                        if(data.members.length>0){
+                            $("#teamMembersContainer").empty();
+                            for(i=0;i<data.members.length;i++){
+                                if(data.members[i].id == userID){
+                                    $("#teamMembersContainer").append($("<p>", { class: "form-control-static", text: data.members[i].name }).append($("<button>", { class: "btn btn-xs btn-danger pull-right", type: "button", "data-team-id": teamID, "data-user-email": data.members[i].email, onclick: "leaveTeam(this);", text: " Leave Team"})).append($("<br>")).append(" (" + data.members[i].email + ")"));
+                                }
+                                else{
+                                    $("#teamMembersContainer").append($("<p>", { class: "form-control-static", text: data.members[i].name }).append($("<br>")).append(" (" + data.members[i].email + ")"));
+                                }
+                            }
+                        }
+                        else{
+                            $("#teamMembersContainer").html($("<p>", { class: "form-control-static", text: " No team members" }).prepend($("<i>", { class: "fa fa-fw fa-info"})));
+                        }
+                        $("#updateTeamModal").modal({ show: true, backdrop: "static", keyboard: false }).on("shown.bs.modal", function (){
+                            $(this).find("input.form-control:first").focus();
+                        }).on("hidden.bs.modal", function (){
+                            $(this).remove();
+                        });
+                    }
+                }
+            });
+        }
+        function leaveTeam(obj){
+            var teamID = $(obj).data("team-id");
+            $(obj).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" })).prop("disabled", true);
+            $.ajax({
+                url: "/team/" + teamID,
+                type: "POST",
+                data: { action: "leave_team"},
+                success: function (data){
+                    if(data){
+                        if(data.code == 200){
+                            $(obj).prop("disabled", false).children("i").remove();
+                            $("#" + data.data.id).fadeOut( "slow", function() {
+                                $("#" + data.data.id).remove();
+                                if($("#teams-table").children("tbody").children("tr").length == 0){
+                                    $("#teams-table").children("tbody").append($("<td>", { colspan: "1000", text: "You have not joined a team yet." }))
+                                }
+                            });
+                            return
+                        }
+                    }
+                },
+                error: function (){
+                    $(obj).prop("disabled", false).children("i").remove();
+                }
+            });
+        }
+    </script>
+{% endblock %}

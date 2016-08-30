@@ -1,0 +1,61 @@
+{% extends 'index.html' %}
+{% block title %}Login | Geostore{% endblock %}
+{% block style %}
+    <style>
+        .alert {
+            margin-top: 20px;
+            margin-bottom: 0px;
+        }
+        .navbar-custom {
+            margin-bottom: 0px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="col-xs-8 col-xs-offset-2 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3 login-form-api">
+        <form method="POST" id="loginAccountForm" class="form-horizontal">
+            <div class="form-group">
+                <label for="exampleInputEmail1" class="col-xs-3 col-sm-2 control-label">EMAIL</label>
+                <div class="col-xs-9 col-sm-10">
+                    <input type="email" name="email" class="form-control" required>
+                    <input type="hidden" name="login_window" value="1">
+                    <input type="hidden" name="url" value="{{ redirect }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1" class="col-xs-3 col-sm-2 control-label">PASSWORD</label>
+                <div class="col-xs-9 col-sm-10">
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-9 col-xs-offset-3 col-sm-10">
+                    <button type="submit" class="btn btn-inverse">LOGIN</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+    {% if logged_in %}
+    window.close();
+    window.onunload = refreshParent;
+    function refreshParent() {
+        window.opener.location = "{{ verify_url|safe }}";
+    }
+    {% endif %}
+    {% if error %}
+    window.resizeTo(615,390);
+    {% endif %}
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('input[name=email]').focus();
+        });
+        $("#loginAccountForm").submit(function (){
+            $(".form-control").prop("readonly", true);
+            $(".btn-inverse").prop("disabled", true).html($("<i>", { class: "fa fa-spin fa-circle-o-notch" })).append(" LOGIN");
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,54 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+}
+section:not(:first-child) {
+    margin-top: 25px;
+}
+.table-heading {
+    background: #000;
+    color: #fff;
+    border-radius: 5px 5px 0 0;
+    padding: 8px 10px;
+    text-transform: uppercase;
+}
+#placeholder {
+    height: 500px;
+}
+.graph-first, .graph-second {
+    height: 250px;
+}
+#statistics-table > thead > tr > th {
+    background: #F06406;
+    color: #fff;
+}
+#statistics-table > thead > tr > th:first-child {
+    border-radius: 5px 0 0 0;
+}
+#statistics-table > thead > tr > th:last-child {
+    border-radius: 0 5px 0 0;
+}
+table td, table th {
+    border: 0 !important;
+}
+th {
+    text-align: right;
+}
+.graph-tooltip {
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    border-radius: 3px;
+    padding: 5px 8px;
+}
+.legendColorBox > div > div {
+    border-width: 6px !important;
+}
+.legendLabel {
+    font-size: 13px;
+}
+.legend > table td:nth-child(odd) {
+    padding-left: 8px;
+}
+.legend > table td:nth-child(even) {
+    padding-left: 4px;
+}

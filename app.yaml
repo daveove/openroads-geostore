@@ -1,0 +1,47 @@
+application: openroads-geostore
+version: master
+runtime: python27
+api_version: 1
+threadsafe: yes
+instance_class: F2
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+- url: /images
+  static_dir: application/frontend/images
+- url: /img
+  static_dir: application/frontend/images
+- url: /js
+  static_dir: application/frontend/js
+- url: /css
+  static_dir: application/frontend/css
+- url: /font
+  static_dir: application/frontend/fonts
+- url: /fonts
+  static_dir: application/frontend/fonts
+
+- url: /_ah/queue/deferred
+  script: google.appengine.ext.deferred.deferred.application
+  login: admin
+    
+- url: /tasks/.*
+  script: main.app
+  login: admin
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: jinja2
+  version: "2.6"
+
+- name: lxml
+  version: "latest"
+
+- name: ssl
+  version: 2.7
+
+builtins:
+- deferred: on

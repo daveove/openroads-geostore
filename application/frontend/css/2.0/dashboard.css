@@ -1,0 +1,556 @@
+
+html, body {
+	font-family: 'Roboto', sans-serif;
+	min-width: 960px;
+}
+textarea {
+	resize: none;
+}
+
+.row {
+    padding: 0px!important;
+}
+
+.head-nav {
+	padding: 20px;
+	background: url('/images/2.0/head-bg.jpg') #000 center center;
+    padding: 0;
+}
+.head-nav, .head-nav a {
+	color: #fff;
+	text-decoration: none;
+}
+.head-nav:not(:last-child) {
+	font-size: 16px;
+	text-transform: uppercase;
+}
+.head-nav .pull-right {
+	font-size: 11px;
+	color: #ccc;
+	text-align: right;
+}
+.head-nav-container {
+	background: url('/images/2.0/coalogo.gif') no-repeat 25px center;
+	background-size: 45px;
+	padding: 20px 0 13px 85px;
+}
+.head-nav-container .list-inline li:not(:nth-child(3)) {
+	border-right: 1px solid #fff;
+	padding-right: 15px;
+	padding-right: 10px;
+}
+.head-nav-container .list-inline li:last-child {
+	border-right: none;
+}
+.head-nav-container ul:first-child {
+	margin-top: 5px;
+}
+.main-nav {
+    display: none;
+	background: #FFF9F6;
+	padding: 0 45px 0 130px;
+}
+.main-nav a {
+	color: #242328;
+    text-decoration: none;
+    padding: 15px 20px 15px 50px;
+    background: url('/images/2.0/coa-logo.png') no-repeat 10px center;
+    background-size: 30px;
+    display: inline-block;
+}
+.main-nav a.active {
+	font-weight: bold;
+    background-color: #fff;
+    color: #f26522;
+}
+
+	.main-nav a:hover {
+		color: #f26522;
+	}
+
+.sub-nav {
+	background: #fff;
+}
+
+	.sub-nav .list-inline {
+		padding-left: 135px;
+	}
+
+	.sub-nav li a {
+	margin-top: 15px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    padding: 3px 10px;
+    display: inline-block;
+	}
+
+		.sub-nav li a.active {
+			background: #f26522;
+			color: #fff
+		}
+
+
+/*geoprocessing nav style*/
+.geopro-main-nav {
+	background: #000;
+	padding: 0 25px;
+}
+.geopro-main-nav a {
+	color: #fff;
+	text-decoration: none;
+	padding: 15px 20px 15px 20px;
+	background: #000 no-repeat 10px center;
+	background-size: 30px;
+	display: inline-block;
+}
+.geopro-main-nav a.active {
+	background-color: #242328;
+}
+.geopro-main-nav a:hover, a:active{
+	text-decoration: none!important;
+}
+/**/
+
+.breadcrumb {
+	background-color: transparent;
+}
+.col-xs-6 input, .col-xs-12 textarea {
+	border-radius: 0;
+	padding: 1.5em 1em;
+}
+.subproject-preview {
+	font-size: 12px;
+}
+.preview-type {
+	float: left;
+	width: 40%;
+}
+.preview-id {
+	float: right;
+	width: 60%;
+	text-align: right;
+}
+.preview-name {
+	font-weight: bold;
+	font-size: 1.3em;
+	vertical-align: middle;
+}
+.preview-status {
+	white-space: nowrap;
+	background-color: #4B9500;
+	font-size: 0.8em;
+	color: #fff;
+	padding: 3px 5px;
+	text-transform: uppercase;
+	border-radius: 3px;
+	vertical-align: middle;
+}
+.preview-description {
+	margin: 1em 0;
+}
+.preview-pso, .preview-label,.preview-type, .preview-id, .preview-description {
+	color: #666;
+}
+.preview-pso, .preview-region, .preview-province, .preview-municipality, .preview-sp-status, .preview-date {
+	color: #000;
+	font-weight: bold;
+}
+.preview-estimated-cost, .preview-actual-cost {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+.label-2 {
+	color: #F26371;
+	display: block;
+}
+.btn-success {
+	border-radius: 0;
+}
+input.btn-success {
+	margin-top: 25px;
+}
+.dropzone {
+	display: table;
+    background-image: url('/images/2.0/drag-drop-icon.png');
+    background-repeat: no-repeat;
+    background-position: center 35%;
+    width: 100%;
+    height: 200px;
+    border: 1px dashed #ccc;
+    margin-bottom: 1em;
+}
+.dropzone .dz-message {
+	margin-top: 150px;
+}
+form h4 {
+	color: #f26522;
+	font-size: 11px;
+}
+form h4.background {
+	position: relative;
+	z-index: 1;
+	padding: 1em 0;
+}
+form h4.background:before {
+	border-top: 1px solid #dfdfdf;
+	content: "";
+	margin: 0 auto;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	z-index: -1;
+}
+form h4.background span {
+	/*background:  #F1F0F0;*/
+	background:  #fff;
+	padding: 0 15px 0 0;
+}
+
+	#dashboard-sidebar h4.background span {
+		background:  #F1F0F0;
+	}
+
+
+.datasets-list li span, .subprojects-list li span {
+	font-size: 11px;
+	margin-top: 3px;
+}
+#table_id thead, .black-head thead {
+	background: #242328;
+	color: #fff;
+}
+.cf:before, .cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+.cf:after {
+    clear: both;
+}
+.humane-custom {
+	font-size: 12px !important;
+	left: 46% !important;
+	width: 10% !important;
+	color: #FFF !important;
+	background-color: #242328 !important;
+	cursor: pointer !important;
+}
+#loading-projects {
+	position: fixed;
+	bottom: 50px;
+	right: 15px;
+	text-align: center;
+	background: transparent;
+	color: #fff;
+	padding: 10px 20px;
+}
+.loader, .loader:before, .loader:after {
+	border-radius: 50%;
+}
+.loader:before, .loader:after {
+	position: absolute;
+	content: '';
+}
+.loader:before {
+	width: 5.2em;
+	height: 10.2em;
+	background: #fff;
+	border-radius: 10.2em 0 0 10.2em;
+	top: -0.1em;
+	left: -0.1em;
+	-webkit-transform-origin: 5.2em 5.1em;
+	transform-origin: 5.2em 5.1em;
+	-webkit-animation: load2 2s infinite ease 1.5s;
+	animation: load2 2s infinite ease 1.5s;
+}
+.loader {
+	font-size: 5px;
+	text-indent: -99999em;
+	margin: 0 auto;
+	position: relative;
+	width: 10em;
+	height: 10em;
+	box-shadow: inset 0 0 0 1em #242328;
+	-webkit-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	transform: translateZ(0);
+}
+.loader:after {
+	width: 5.2em;
+	height: 10.2em;
+	background: #fff;
+	border-radius: 0 10.2em 10.2em 0;
+	top: -0.1em;
+	left: 5.1em;
+	-webkit-transform-origin: 0px 5.1em;
+	transform-origin: 0px 5.1em;
+	-webkit-animation: load2 2s infinite ease;
+	animation: load2 2s infinite ease;
+}
+@-webkit-keyframes load2 {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+@keyframes load2 {
+	0% {
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	100% {
+		-webkit-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+
+/*Helper classes*/
+
+.navbar-default {
+    border: none;
+}
+
+.row {
+    padding:0px 30px;
+}
+
+.br0 {
+    border-right: 0px!important;
+}
+
+.bl3{
+    border-left:3px solid #1e1e1e;
+}
+
+.bl3 {
+    border-left: 3px solid #1e1e1e;
+}
+
+.mr-14{
+    margin-right:-14px;
+}
+
+.p0{
+    padding:0;
+}
+
+.mw-actions {
+	min-width: 142px;
+}
+
+/*First Nav*/
+
+#firstrow-nav {
+    background-color: #111111;
+    border-radius: 0px;
+    margin: 0px;
+    /*border-top: 3px solid #67c067;*/
+    min-height: 40px!important;
+}
+
+#firstrow-nav .navbar-nav>li {
+    border-right: 3px solid;
+    color: #1e1e1e;
+    height: 40px!important;
+}
+
+#firstrow-nav .navbar-nav>li>a {
+    padding-top: 14px;
+    color: #fff;
+}
+
+#firstrow-nav .navbar-brand img {
+    width:100px!important;
+    height:auto!important;
+    margin-top: -5px;
+}
+
+#firstrow-nav .navbar-nav>li>a:hover {
+    background-color: #1e1e1e;
+    color: #fff;
+    transition: .3s ease-in;
+    height: 40px!important;
+}
+
+#firstrow-nav .navbar-nav .active-1 a{
+    height: 40px!important;
+}
+
+#firstrow-nav .navbar-nav li>p {
+    color: #fff;
+    padding: 12px 14px;
+}
+
+#firstrow-nav .navbar-nav>.active-1>a,
+#firstrow-nav .navbar-nav>.active-1>a:focus,
+#firstrow-nav .navbar-nav>.active-1>a:hover {
+    background-color: #1e1e1e;
+    color: #fff;
+    transition: .3s ease-in;
+}
+
+#firstrow-nav .navbar-toggle {
+    margin-top: 19px;
+}
+
+#firstrow-nav .navbar-header {
+	height: 40px!important;
+}
+
+
+/*Viewer*/
+
+#onenav {
+    margin-left: -15px;
+}
+
+
+#onenav #fourthrow-nav {
+    background-color: #252525;
+    height: 100vh;
+    border-radius: 0;
+    margin-bottom: 0;
+    width:100%;
+    overflow: hidden;
+}
+
+#onenav #menu-nav {
+    position: absolute;
+    top: 53px;
+    background: #111111;
+}
+
+#onenav #menu-nav {
+    position: absolute;
+    top: 53px;
+    background: #111111;
+    margin:0;
+    height:232px;
+    transition: .3s ease-in;
+    overflow: hidden;
+    width: 93.5%;
+    border-radius: 0px;
+    transition: .3s ease-in;
+}
+
+#onenav #menu-nav ul {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+
+#onenav #menu-nav ul li {
+    border-bottom: 3px solid #252525;
+    padding: 14px 0px;
+}
+
+#onenav #menu-nav ul li:last-child {
+    border-bottom: 0px;
+    display: inline-block;
+    border-left: 3px solid #252525;
+    padding-right: 15px;
+}
+
+
+#onenav #menu-nav ul li> a,
+#onenav #menu-nav ul li> p{
+    color: #fff;
+    margin-left: 50px;
+    display: block;
+    text-decoration: none;
+}
+
+#onenav #menu-nav ul li:hover:not(:nth-child(5)),
+#onenav #menu-nav ul li:focus {
+    background-color: #252525;
+    transition: .3s ease-in;
+}
+
+#onenav #menu-nav ul li:nth-child(5){
+    display: inline-block;
+}
+.list-inline > li:not(:first-child) {
+	padding-left: 0px;
+}
+#dataset-photos, #dataset-kmls, #dataset-files {
+	min-height: 350px;
+	max-height: 400px;
+	overflow-x: auto;
+}
+#dashboard-tab-contents {
+	margin-top: 20px;
+}
+.hidden {
+	display: none;
+}
+
+#dataset_environment {
+    float: right;
+}
+
+
+#sample-label {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%,-50%) rotate(-25deg);
+    left: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    /*font-style: italic;*/
+    opacity: 0.8;
+    background: #eee;
+    z-index: 99999;
+    color: #f26522;
+}
+
+.select2-container--default .select2-selection--single {
+	border-radius: 0;
+	border: 1px solid #ccc;
+	height: 40px;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+	padding-left: 13px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+	line-height: 38px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 35px;
+	width: 26px;
+}
+
+#dashboard-sidebar {
+    background: #F1F0F0;
+}
+
+#red-flags-wrapper {
+	margin-bottom: 20px;
+}
+
+	#red-flags-wrapper li {
+		margin-bottom: 10px;
+	}
+
+
+
+
+.log-item {
+    border-bottom: 1px solid #cecece;
+    margin-bottom: 10px;
+    font-style: italic;
+    padding-bottom: 5px;
+}
+#agency-programs li a {
+    padding: 0.5em;
+    background: #eee;
+    text-decoration: none;
+    width: 100%;
+}

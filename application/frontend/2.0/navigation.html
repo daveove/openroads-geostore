@@ -1,0 +1,21 @@
+</div>
+</div>
+<div class="main-nav">
+		<!-- <a class="active" href="/dashboard/all">All Projects</a></li> -->
+		<a {% if program == 'coa' %}class="active"{% endif %} href="/projects/coa">COA</a></li>
+		<a {% if program == 'da' %}class="active"{% endif %} style="background-image: url('/images/2.0/prdp-logo.png');" href="/projects/da">DA-PRDP</a>
+		<a {% if program == 'bub' %}class="active"{% endif %} style="background-image: url('/images/2.0/openbub-logo.png');" href="/projects/bub">OpenBUB</a>
+		<a {% if program == 'trip' %}class="active"{% endif %} style="background-image: url('/images/2.0/trip-logo.png');" href="/projects/trip">TRIP</a>
+		<a {% if program == 'gaa' %}class="active"{% endif %} style="background-image: url('/images/2.0/DBM.png');" href="/projects/gaa">GAA FMR Regular</a>
+		<a {% if program == 'local' %}class="active"{% endif %} style="background-image: url('/images/2.0/local-logo.png');" href="/projects/local">Local</a>
+</div>
+<!-- <div class="sub-nav">
+		<ul class="list-inline">
+			<li><a href="/projects/{{ program }}" class="active">Projects List</a></li>
+			{% if program in ['gaa', 'local'] %}
+			<li><a href="/projects/local">LOCAL</a></li>
+			{% endif %}
+		</ul>
+</div> -->
+<div class="container">
+    <div class="row">

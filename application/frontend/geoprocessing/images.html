@@ -1,0 +1,93 @@
+{% extends 'index.html' %}
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css?v={{ v }}">
+	<link rel="stylesheet" type="text/css" href="/css/geoprocessing/style.css?v={{ v }}">
+
+	<link rel="stylesheet" href="/css/geoprocessing/mystyle.css?v={{ v }}">
+{% endblock %}
+{% block content %}
+{% include 'geoprocessing/geoprocessing-navigation.html' %}
+
+<div class="container" style="position:relative;">
+
+	<div class="" style="">
+        <div class="bs-callout bs-callout-info" id="callout-navbar-breakpoint" style="border-bottom: 4px solid #1b809e;">
+            <h3 style="font-size: 17px !important; text-align:left;"><strong>Geoprocessing Dashboard Tool</strong> | Project Code: <span id="projID">{{project_code}}</span></h5><br>
+        </div>
+
+		<div class="col-lg-8 " style="float: left; margin-top: 20px;">
+			<div id="projectImg"></div>
+			<input type="hidden" value="<?php echo $_GET['cursor']; ?>" id="cursorVal">
+		</div>
+
+	</div>
+
+
+	<div class="col-lg-4" style="float: right;">
+		<table id="geoprocessing_controls" style="width:100%;">
+			<tr>
+				<td class="table-td geoprocess-buttons">
+					<h4 style="font-weight:600px;">Road or Not?</h4>
+					<input type="radio" class="isRoad" accesskey="1" name="type" id="isRoad"> <label for="isRoad">[1] This is a Road</label><br>
+					<input type="radio" class="isRoad" accesskey="2" name="type" id="isNotRoad"> <label for="isNotRoad">[2] Not a Road</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-td geoprocess-buttons">
+					<h4 style="font-weight:600px;">Surface Type</h4>
+					<input name="surface_type_radio" type="radio" value="Concrete" class="surface_type" id="concrete" disabled accesskey="q"> <label for="concrete">[Q] Concrete</label><br>
+					<input name="surface_type_radio" type="radio" value="Asphalt" class="surface_type" id="asphalt" disabled accesskey="w"> <label for="asphalt">[W] Asphalt</label><br>
+					<input name="surface_type_radio" type="radio" value="Gravel" class="surface_type" id="gravel" disabled accesskey="e"> <label for="gravel">[E] Gravel</label><br>
+					<input name="surface_type_radio" type="radio" value="Earth" class="surface_type" id="earth" disabled accesskey="r"> <label for="earth">[R] Earth</label><br>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-td geoprocess-buttons" style="border-right:none;">
+					<h4 style="font-weight:600px;">Surface Quality</h4>
+					<input type="radio" value="Good" name="surfacequality" id="good" class="surface_qty" disabled accesskey="a"> <label for="good">[A] Good</label><br>
+					<input type="radio" value="Fair" name="surfacequality" id="fair" class="surface_qty" disabled accesskey="s"> <label for="fair">[S] Fair</label><br>
+					<input type="radio" value="Poor" name="surfacequality" id="poor" class="surface_qty" disabled accesskey="d"> <label for="poor">[D] Poor</label><br>
+					<input type="radio" value="Bad" name="surfacequality" id="bad" class="surface_qty" disabled accesskey="f"> <label for="bad">[F] Bad</label><br>
+				</td>
+			</tr>
+			<tr>
+				<td class="table-td geoprocess-buttons" style="border-right:none;">
+					<h4 style="font-weight:600px;">Road Width</h4>
+					<select name="road_width_select">
+						<option value="1">1 meter or less</option>
+						<option value="2">2 meters</option>
+						<option value="3">3 meters</option>
+						<option value="4">4 meters</option>
+						<option value="5">5 meters</option>
+						<option value="6">6 meters</option>
+						<option value="7">7 meters or more</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button name="subnext" id="subnext" class="btn btn-primary" disabled>Submit & Next</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+    <div style="text-align: center; display:none;" id="go_back_button">
+        <a href="/geoprocessing/for_geoprocessing" id="subnext" class="btn btn-primary">Done! Go Back to Project list</a>
+    </div>
+	<!-- <div class="bs-callout bs-callout-info" id="callout-navbar-breakpoint" style="margin-top:-40px;border-top: 4px solid #1b809e;height:40px;">
+	</div> -->
+</div>
+{% endblock %}
+{% block script %}
+		<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+		<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+	<script src="/js/geoprocessing/jquery.min.js"></script>
+<script type="text/javascript">
+	window.project_code = document.getElementById('projID').innerHTML;
+</script>
+	<script src="/js/geoprocessing/myjs.js?v={{ v }}"></script>
+{% endblock %}

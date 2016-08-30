@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Geostore Statistics Summary Dashboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/statistics-summary-dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <section class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Geostore Statistics</h1>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <b>Budget Year:</b>
+                <select id="select_year">
+                    <option value="ALL" selected="">ALL</option>
+                </select>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <table class="table table-striped" id="statistics-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Total Projects</th>
+                            <th>Total KML</th>
+                            <th>Total Geotag Images</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 style="margin-bottom: 50px;" class="text-center">Projects with one or more geotags</h2>
+            </div>
+            <div class="col-md-6">
+                <!-- <div class="table-heading">Projects with one or more geotags</div> -->
+                <table class="table table-striped" id="geotag-table">
+                    <thead>
+                        <th></th>
+                        <th>Geotagged Images</th>
+                        <th>Total Images</th>
+                        <th>Percentage</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div class="graph-first"></div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 class="text-center" style="margin-bottom: 50px;">Histogram</h2>
+                <div id="placeholder"></div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-md-12">
+                <h2 style="margin-bottom: 50px;" class="text-center">Projects Geoprocessed</h2>
+            </div>
+            <div class="col-md-6">
+                <!-- <div class="table-heading">Projects Geoprocessed</div> -->
+                <table class="table table-striped" id="geoprocess-table">
+                    <thead>
+                        <th></th>
+                        <th>Geoprocessed Projects</th>
+                        <th>Total Projects</th>
+                        <th>Percentage</th>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <div class="graph-second"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/js/flot/jquery.flot.cust.js"></script>
+    <script src="/js/flot/jquery.flot.resize.js"></script>
+    <script src="/js/flot/jquery.flot.fillbetween.min.js"></script>
+    <script src="/js/flot/jquery.flot.orderBar.js"></script>
+    <script src="/js/flot/jquery.flot.pie.js"></script>
+    <script src="/js/flot/jquery.flot.tooltip.js"></script>
+    <script type="text/javascript">
+        Number.prototype.withCommas = function() {
+            return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        var statistics = {{ statistics|safe }};
+        if('statistics' in statistics) {
+            statistics = statistics.statistics;
+        }
+        function listStatistics() {
+            var year = $('#select_year').val();
+            var totals = {
+                projects: 0,
+                kml: 0,
+                geotag_images: 0,
+            };
+            for(var x in statistics) {
+                var keys = Object.keys(statistics[x]).length;
+                if(!(year in statistics[x])) {
+                    continue;
+                }
+                if(keys == 3) {
+                    continue;
+                }
+                var tr = '<tr>';
+                tr += '<td><b>' + x + '</b></td>';
+                tr += '<td align="right">' + statistics[x][year].projects.withCommas() + '</td>';
+                tr += '<td align="right">' + statistics[x].kml.withCommas() + '</td>';
+                tr += '<td align="right">' + statistics[x].total_geotag_images.withCommas() + '</td>';
+                tr += '</tr>';
+                $('#statistics-table tbody').append(tr);
+                totals.projects += statistics[x][year].projects;
+                totals.kml += statistics[x].kml;
+                totals.geotag_images += statistics[x].total_geotag_images;
+            }
+            var tr = '<tr>';
+            tr += '<td><b>Total</b></td>';
+            tr += '<td align="right">' + totals.projects.withCommas() + '</td>';
+            tr += '<td align="right">' + totals.kml.withCommas() + '</td>';
+            tr += '<td align="right">' + totals.geotag_images.withCommas() + '</td>';
+            tr += '</tr>';
+            $('#statistics-table tbody').append(tr);
+            fillGeotags();
+        }
+        function fillGeotags() {
+            var year = $('#select_year').val();
+            var data = [];
+            var programs_length = Object.keys(statistics).length;
+            var i = 0;
+            var totals = {
+                geotag_images: 0,
+                total_geotag_images: 0,
+                percent: 0,
+            };
+            for(var x in statistics) {
+                var keys = Object.keys(statistics[x]).length;
+                if(!(year in statistics[x])) {
+                    continue;
+                }
+                if(keys == 3) {
+                    continue;
+                }
+                var percent = (parseFloat(statistics[x].geotag_images) / parseFloat(statistics[x].total_geotag_images) * 100).toFixed(2);
+                if(isNaN(percent)) {
+                    percent = 0;
+                }
+                var tr = '<tr>';
+                tr += '<td><b>' + x + '</b></td>';
+                tr += '<td align="right"><span title="Geotagged Images">' + statistics[x].geotag_images.withCommas() + '</span></td>';
+                tr += '<td align="right"><span title="Total Geotagged Images">' + statistics[x].total_geotag_images.withCommas() + '</span></td>';
+                tr += '<td align="right">' + percent + ' %</td>';
+                tr += '</tr>';
+                $('#geotag-table tbody').append(tr);
+                var tmp = {data: [], hoverable: true, label: x, bars: {show: true}};
+                tmp.data.push([i, percent]);
+                i++;
+                data.push(tmp);
+                totals.geotag_images += statistics[x].geotag_images;
+                totals.total_geotag_images += statistics[x].total_geotag_images;
+            }
+            totals.percent = (totals.geotag_images / totals.total_geotag_images).toFixed(2)
+            if(isNaN(totals.percent)) {
+                totals.percent = 0;
+            }
+            var tr = '<tr>';
+            tr += '<td><b>Total</b></td>';
+            tr += '<td align="right">' + totals.geotag_images.withCommas() + '</td>';
+            tr += '<td align="right">' + totals.total_geotag_images.withCommas() + '</td>';
+            tr += '<td align="right">' + totals.percent + ' %</td>';
+            tr += '</tr>';
+            $('#geotag-table tbody').append(tr);
+            $.plot('.graph-first', data, {yaxis: {max: 100}, xaxis: {show: false}});
+            fillGeoprocesses();
+        }
+        function fillGeoprocesses() {
+            var year = $('#select_year').val();
+            var data = [];
+            var programs_length = Object.keys(statistics).length;
+            var i = 0;
+            var totals = {
+                geoprocessed_projects: 0,
+                projects: 0,
+            };
+            for(var x in statistics) {
+                var keys = Object.keys(statistics[x]).length;
+                if(!(year in statistics[x])) {
+                    continue;
+                }
+                if(keys == 3) {
+                    continue;
+                }
+                var percent = (parseFloat(statistics[x][year].geoprocessed_projects) / parseFloat(statistics[x][year].projects) * 100).toFixed(2);
+                if(isNaN(percent)) {
+                    percent = 0;
+                }
+                var tr = '<tr>';
+                tr += '<td><b>' + x + '</b></td>';
+                tr += '<td align="right"><span title="Geoprocessed Projects">' + statistics[x][year].geoprocessed_projects.withCommas() + '</span></td>';
+                tr += '<td align="right"><span title="Total Projects">' + statistics[x][year].projects.withCommas() + '</span></td>';
+                tr += '<td align="right">' + percent + ' %</td>';
+                tr += '</tr>';
+                $('#geoprocess-table tbody').append(tr);
+                var tmp = {data: [], hoverable: true, label: x, bars: {show: true}};
+                tmp.data.push([i, percent]);
+                i++;
+                data.push(tmp);
+                totals.geoprocessed_projects += statistics[x][year].geoprocessed_projects;
+                totals.projects += statistics[x][year].projects;
+            }
+            var tr = '<tr>';
+            tr += '<td><b>Total</b></td>';
+            tr += '<td align="right">' + totals.geoprocessed_projects.withCommas() + '</td>';
+            tr += '<td align="right">' + totals.projects.withCommas() + '</td>';
+            tr += '<td align="right">' + (totals.geoprocessed_projects / totals.projects).toFixed(2) + ' %</td>';
+            tr += '</tr>';
+            $('#geoprocess-table tbody').append(tr);
+            $.plot('.graph-second', data, {yaxis: {max: 100}, xaxis: {show: false}});
+            fillHistogram();
+        }
+        function fillHistogram() {
+            var year = $('#select_year').val();
+            var data = {}
+            var lines = [];
+            for(var x in statistics) {
+                if(!(year in statistics[x])) {
+                    continue;
+                }
+                var keys = Object.keys(statistics[x]).length;
+                if(keys == 3) {
+                    continue;
+                }
+                var tmp = [];
+                data[x] = [];
+                for(var y in statistics[x][year].geoprocessed_projects_details) {
+                    data[x].push(statistics[x][year].geoprocessed_projects_details[y]);
+                }
+                data[x].sort(function(a,b){return a - b});
+                for(var i = 0; i < data[x].length; i++) {
+                    tmp.push([i, data[x][i]]);
+                }
+                lines.push({label: x, data: tmp, hoverable: true});
+            }
+            $.plot('#placeholder', lines);
+        }
+        $(document).ready(function(){
+            var years = [];
+            for(var x in statistics) {
+                for(var y in statistics[x]) {
+                    if(y == 'geotag_images' || y == 'kml' || y == 'total_geotag_images' || y == 'ALL') {
+                        continue;
+                    }
+                    if(!('ALL' in statistics[x])) {
+                        statistics[x]['ALL'] = {}
+                        statistics[x]['ALL']['geoprocessed_images'] = 0;
+                        statistics[x]['ALL']['geoprocessed_projects'] = 0;
+                        statistics[x]['ALL']['projects'] = 0;
+                        statistics[x]['ALL']['geoprocessed_projects_details'] = {};
+                    }
+                    statistics[x]['ALL']['geoprocessed_images'] += statistics[x][y]['geoprocessed_images'];
+                    statistics[x]['ALL']['geoprocessed_projects'] += statistics[x][y]['geoprocessed_projects'];
+                    statistics[x]['ALL']['projects'] += statistics[x][y]['projects'];
+                    for(var z in statistics[x][y]['geoprocessed_projects_details']) {
+                        if(!(z in statistics[x]['ALL']['geoprocessed_projects_details'])) {
+                            statistics[x]['ALL']['geoprocessed_projects_details'][z] = 0;
+                        }
+                        statistics[x]['ALL']['geoprocessed_projects_details'][z] += statistics[x][y]['geoprocessed_projects_details'][z];
+                    }
+                    if(years.indexOf(parseInt(y)) == -1) {
+                        years.push(parseInt(y));
+                    }
+                }
+            }
+            years.sort();
+            for(var i = 0; i < years.length; i++) {
+                $('#select_year').append('<option value="' + years[i] + '">' + years[i] + '</option>');
+            }
+            listStatistics();
+        });
+        $('#select_year').on('change', function() {
+            $('#statistics-table tbody, #geotag-table tbody, #geoprocess-table tbody').empty();
+            listStatistics();
+        });
+    </script>
+</body>
+</html>

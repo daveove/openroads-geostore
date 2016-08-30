@@ -1,0 +1,110 @@
+{% extends 'index.html' %}
+{% block title %}Program Details | Geostore{% endblock %}
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dropzone.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/2.0/bootstrap-datepicker.min.css">
+    <link href="/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+{% endblock %}
+{% block content %}
+{% include '2.0/navigation.html' %}
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="/">Geostore</a></li>
+        <li><a href="/programs">Programs</a></li>
+        {% if program %}
+        <li><a href="/programs/{{ agency.slug }}">{{ agency.name }}</a></li>
+        <li><a href="/programs/{{ agency.slug }}/{{ program.slug }}">{{ program.name }}</a></li>
+        {% endif %}
+    </ol>
+    <div class="col-xs-12">
+        {% if error %}
+        {% if error == '1' %}
+            <div class="alert alert-danger"><strong>Error!</strong> The program slug is already taken.</div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <h3><i class="glyphicon glyphicon-info-sign h3-icon"></i> Program Details</h3>
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12"><h4 class="background"><span>Main Details</span></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Agency</label>
+                            <select name="agency" class="form-control">
+                                {% for agency in agencies %}
+                                <option value="{{ agency.key.id() }}">{{ agency.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" required="required" name="name" class="form-control" value="{% if program %}{{ program.name }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" rows="6">{% if program %}{{ program.description }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <input type="hidden" required="required" name="slug" class="form-control" readonly value="{% if program %}{{ program.slug }}{% endif %}">
+                        <button type="submit" class="btn btn-sm btn-success pull-right">{% if program %}Update{% else %}Add{% endif %} Program</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="/js/2.0/dropzone.min.js"></script>
+<script type="text/javascript" src="/js/2.0/moment.min.js"></script>
+<script type="text/javascript" src="/js/2.0/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="/js/select2.min.js"></script>
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-72730623-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+    function generateSlug(value) {
+      return value.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    }
+    $('input[name="name"]').on('keyup', function() {
+        var val = $(this).val();
+        {% if not program %}
+        $('input[name="slug"]').val(generateSlug(val));
+        {% endif %}
+    });
+    $(document).ready(function() {
+        $('select[name="agency"]').select2();
+        {% if program %}
+        $('select[name="agency"]').val({{ program.agency }}).trigger('change');
+        {% endif %}
+    });
+</script>
+{% endblock %}

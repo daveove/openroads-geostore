@@ -1,0 +1,1426 @@
+{% extends 'index.html' %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+
+<link rel="stylesheet" type="text/css" media="screen" href="/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" media="screen" href="/css/smartadmin-production.css">
+<!-- <link rel="stylesheet" type="text/css" media="screen" href="/css/smartadmin-skins.css"> -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css">
+
+
+<link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
+<link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
+<style>
+    div.dataTables_filter {
+        position: relative;
+        float: right;
+        right: 0;
+        left: 0;
+        top: 4px;
+    }
+    .lightboxOverlay {
+        display: block;‘
+    }
+    header {
+        background-color: rgba(25,144,189,0.9);
+    }
+    body {
+        overflow: auto;
+    }
+    #projID {
+        font-size: 13px;
+    }
+    td div {
+        display: inline-block;
+        width: 50%;
+        text-align: right;
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include 'geoprocessing/geoprocessing-navigation.html' %}
+
+		<div class="container" role="main">
+			<div class="row">
+                {% if project_code %}
+				    <h2>
+	                <div class="col-md-12">Project Name: <b><span id="project-name">Loading...</span></b>
+	                	<div style="font-size: 13px;">Project Code: <b><span id="projID">{{ project_code }}</span></b></div>
+	                	<div>
+                            <span style="font-size: 15px;">Selected Dataset: &nbsp;</span>&nbsp;
+	                		<select class="" id="dataset-select">
+                            {% for dataset in datasets %}
+                                <option value="{{ dataset['code'] }}">{{ dataset['title'] }}</option>
+                            {% endfor %}
+	   	                	</select>
+	                	</div>
+	                </div>
+                </h2>
+                {% else %}
+                <h2>All Projects</h2>
+                <span id="projID" style="display: none;"></span>
+                {% endif %}
+                <div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12">
+							<h3>Project Summary</h3>
+							<table class="table table-bordered">
+								<tbody><tr style="font-weight: bold;">
+									<td></td>
+									<td align="center">Good (%)</td>
+									<td align="center">Good (KM)</td>
+									<td align="center">Fair (%)</td>
+									<td align="center">Fair (KM)</td>
+									<td align="center">Poor (%)</td>
+									<td align="center">Poor (KM)</td>
+									<td align="center">Bad (%)</td>
+									<td align="center">Bad (KM)</td>
+									<td align="center">Total (%)</td>
+									<td align="center">Total (KM)</td>
+								</tr>
+								<tr>
+									<td align="center" style="font-weight: bold;">Concrete</td>
+									<td align="right"><div id="concrete-good">0</div></td>
+									<td align="right"><div id="concrete-good-km">0</div></td>
+									<td align="right"><div id="concrete-fair">0</div></td>
+									<td align="right"><div id="concrete-fair-km">0</div></td>
+									<td align="right"><div id="concrete-poor">0</div></td>
+									<td align="right"><div id="concrete-poor-km">0</div></td>
+									<td align="right"><div id="concrete-bad">0</div></td>
+									<td align="right"><div id="concrete-bad-km">0</div></td>
+									<td align="right"><div id="total-good-concrete">0</div></td>
+									<td style="font-weight: bold;" align="right"><div id="total-good-concrete-km">0</div></td>
+								</tr>
+								<tr>
+									<td align="center" style="font-weight: bold;">Asphalt</td>
+									<td align="right"><div id="asphalt-good">0</div></td>
+									<td align="right"><div id="asphalt-good-km">0</div></td>
+									<td align="right"><div id="asphalt-fair">0</div></td>
+									<td align="right"><div id="asphalt-fair-km">0</div></td>
+									<td align="right"><div id="asphalt-poor">0</div></td>
+									<td align="right"><div id="asphalt-poor-km">0</div></td>
+									<td align="right"><div id="asphalt-bad">0</div></td>
+									<td align="right"><div id="asphalt-bad-km">0</div></td>
+									<td align="right"><div id="total-good-asphalt">0</div></td>
+									<td style="font-weight: bold;" align="right"><div id="total-good-asphalt-km">0</div></td>
+								</tr>
+								<tr>
+									<td align="center" style="font-weight: bold;">Gravel</td>
+									<td align="right"><div id="gravel-good">0</div></td>
+									<td align="right"><div id="gravel-good-km">0</div></td>
+									<td align="right"><div id="gravel-fair">0</div></td>
+									<td align="right"><div id="gravel-fair-km">0</div></td>
+									<td align="right"><div id="gravel-poor">0</div></td>
+									<td align="right"><div id="gravel-poor-km">0</div></td>
+									<td align="right"><div id="gravel-bad">0</div></td>
+									<td align="right"><div id="gravel-bad-km">0</div></td>
+									<td align="right"><div id="total-good-gravel">0</div></td>
+									<td style="font-weight: bold;" align="right"><div id="total-good-gravel-km">0</div></td>
+								</tr>
+								<tr>
+									<td align="center" style="font-weight: bold;">Earth</td>
+									<td align="right"><div id="dirt-good">0</div></td>
+									<td align="right"><div id="dirt-good-km">0</div></td>
+									<td align="right"><div id="dirt-fair">0</div></td>
+									<td align="right"><div id="dirt-fair-km">0</div></td>
+									<td align="right"><div id="dirt-poor">0</div></td>
+									<td align="right"><div id="dirt-poor-km">0</div></td>
+									<td align="right"><div id="dirt-bad">0</div></td>
+									<td align="right"><div id="dirt-bad-km">0</div></td>
+									<td align="right"><div id="total-good-dirt">0</div></td>
+									<td style="font-weight: bold;" align="right"><div id="total-good-dirt-km">0</div></td>
+								</tr>
+								<tr style="font-weight: bold;">
+									<td align="center" style="font-weight: bold;">Total</td>
+									<td align="right"><div id="total-good">0</div></td>
+									<td align="right"><div id="total-good-km">0</div></td>
+									<td align="right"><div id="total-fair">0</div></td>
+									<td align="right"><div id="total-fair-km">0</div></td>
+									<td align="right"><div id="total-poor">0</div></td>
+									<td align="right"><div id="total-poor-km">0</div></td>
+									<td align="right"><div id="total-bad">0</div></td>
+									<td align="right"><div id="total-bad-km">0</div></td>
+									<td align="right"><div id="total-total"></div></td>
+									<td style="font-weight: bold;" align="right"><div id="total-total-km"></div></td>
+								</tr>
+							</tbody></table>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="row">
+						<div class="col-md-12">
+                            <h3>Surface Chart</h3>
+                            <div id="surface-chart" class="chart"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <h3>Quality Chart</h3>
+                            <div id="quality-chart" class="chart"></div>
+                        </div>
+						<div class="col-md-12">
+							<h3>Summary</h3>
+							<h5>Geometry Length: <span class="geometry-length"><b>Loading...</b></span></h5>
+							<h5>Total Temporal Points: <span class="total-temporal-points"><b>Loading...</b></span></h5>
+							<h5>Total Classifications : <span class="total-tags"><b>Counting...</b></span></h5>
+                            <h5>Total Unique Images : <span class="total-unique-images"><b>Counting...</b></span></h5>
+							<!-- <h5>Approximate Asset Value : <span class="approximate-asset-value"><b>Loading...</b></span></h5> -->
+                        </div>
+				    </div>
+                </div>
+				<div class="col-md-7">
+					<h3>Map</h3><div id="geotagging-canvass" style="width: 100%;height: 700px;"></div>
+				</div>
+			</div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Project Summary</h3>
+                    <table class="table table-bordered">
+                        <tbody><tr>
+                            <td></td>
+                            <td align="center">Good (%)</td>
+                            <td align="center">Good (KM)</td>
+                            <td align="center">Fair (%)</td>
+                            <td align="center">Fair (KM)</td>
+                            <td align="center">Poor (%)</td>
+                            <td align="center">Poor (KM)</td>
+                            <td align="center">Bad (%)</td>
+                            <td align="center">Bad (KM)</td>
+                            <td align="center">Total (%)</td>
+                            <td align="center">Total (KM)</td>
+                        </tr>
+                        <tr>
+                            <td align="center">Concrete</td>
+                            <td align="right"><div id="concrete-good">0 %</div></td>
+                            <td align="right"><div id="concrete-good-km">0 KM</div></td>
+                            <td align="right"><div id="concrete-fair">0 %</div></td>
+                            <td align="right"><div id="concrete-fair-km">0 KM</div></td>
+                            <td align="right"><div id="concrete-poor">0 %</div></td>
+                            <td align="right"><div id="concrete-poor-km">0 KM</div></td>
+                            <td align="right"><div id="concrete-bad">0 %</div></td>
+                            <td align="right"><div id="concrete-bad-km">0 KM</div></td>
+                            <td align="right"><div id="total-good-concrete">0 %</div></td>
+                            <td align="right"><div id="total-good-concrete-km">0 KM</div></td>
+                        </tr>
+                        <tr>
+                            <td align="center">Asphalt</td>
+                            <td align="right"><div id="asphalt-good">0 %</div></td>
+                            <td align="right"><div id="asphalt-good-km">0 KM</div></td>
+                            <td align="right"><div id="asphalt-fair">0 %</div></td>
+                            <td align="right"><div id="asphalt-fair-km">0 KM</div></td>
+                            <td align="right"><div id="asphalt-poor">0 %</div></td>
+                            <td align="right"><div id="asphalt-poor-km">0 KM</div></td>
+                            <td align="right"><div id="asphalt-bad">0 %</div></td>
+                            <td align="right"><div id="asphalt-bad-km">0 KM</div></td>
+                            <td align="right"><div id="total-good-asphalt">0 %</div></td>
+                            <td align="right"><div id="total-good-asphalt-km">0 KM</div></td>
+                        </tr>
+                        <tr>
+                            <td align="center">Gravel</td>
+                            <td align="right"><div id="gravel-good">0 %</div></td>
+                            <td align="right"><div id="gravel-good-km">0 KM</div></td>
+                            <td align="right"><div id="gravel-fair">0 %</div></td>
+                            <td align="right"><div id="gravel-fair-km">0 KM</div></td>
+                            <td align="right"><div id="gravel-poor">0 %</div></td>
+                            <td align="right"><div id="gravel-poor-km">0 KM</div></td>
+                            <td align="right"><div id="gravel-bad">0 %</div></td>
+                            <td align="right"><div id="gravel-bad-km">0 KM</div></td>
+                            <td align="right"><div id="total-good-gravel">0 %</div></td>
+                            <td align="right"><div id="total-good-gravel-km">0 KM</div></td>
+                        </tr>
+                        <tr>
+                            <td align="center">Earth</td>
+                            <td align="right"><div id="dirt-good">0 %</div></td>
+                            <td align="right"><div id="dirt-good-km">0 KM</div></td>
+                            <td align="right"><div id="dirt-fair">0 %</div></td>
+                            <td align="right"><div id="dirt-fair-km">0 KM</div></td>
+                            <td align="right"><div id="dirt-poor">0 %</div></td>
+                            <td align="right"><div id="dirt-poor-km">0 KM</div></td>
+                            <td align="right"><div id="dirt-bad">0 %</div></td>
+                            <td align="right"><div id="dirt-bad-km">0 KM</div></td>
+                            <td align="right"><div id="total-good-dirt">0 %</div></td>
+                            <td align="right"><div id="total-good-dirt-km">0 KM</div></td>
+                        </tr>
+                        <tr>
+                            <td align="center">Total</td>
+                            <td align="right"><div id="total-good">0 %</div></td>
+                            <td align="right"><div id="total-good-km">0 KM</div></td>
+                            <td align="right"><div id="total-fair">0 %</div></td>
+                            <td align="right"><div id="total-fair-km">0 KM</div></td>
+                            <td align="right"><div id="total-poor">0 %</div></td>
+                            <td align="right"><div id="total-poor-km">0 KM</div></td>
+                            <td align="right"><div id="total-bad">0 %</div></td>
+                            <td align="right"><div id="total-bad-km">0 KM</div></td>
+                            <td align="right"><div id="total-total"></div></td>
+                            <td align="right"><div id="total-total-km"></div></td>
+                        </tr>
+                    </tbody></table>
+                </div>
+                <div class="col-md-6">
+                    <div class="well well-sm">
+                        <div><b>Standard Approximate Asset Values</b></div>
+                        <small>(Estimated Cost of a Kilometer of Road Based on Quality and Program)</small>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td></td>
+                                <td>GOOD</td>
+                                <td>FAIR</td>
+                                <td>POOR</td>
+                                <td>BAD</td>
+                            </tr>
+                            <tr>
+                                <td>CONCRETE</td>
+                                <td id="computed2-concrete-good"></td>
+                                <td id="computed2-concrete-fair"></td>
+                                <td id="computed2-concrete-poor"></td>
+                                <td id="computed2-concrete-bad"></td>
+                            </tr>
+                            <tr>
+                                <td>ASPHALT</td>
+                                <td id="computed2-asphalt-good"></td>
+                                <td id="computed2-asphalt-fair"></td>
+                                <td id="computed2-asphalt-poor"></td>
+                                <td id="computed2-asphalt-bad"></td>
+                            </tr>
+                            <tr>
+                                <td>GRAVEL</td>
+                                <td id="computed2-gravel-good"></td>
+                                <td id="computed2-gravel-fair"></td>
+                                <td id="computed2-gravel-poor"></td>
+                                <td id="computed2-gravel-bad"></td>
+                            </tr>
+                            <tr>
+                                <td>EARTH</td>
+                                <td id="computed2-earth-good"></td>
+                                <td id="computed2-earth-poor"></td>
+                                <td id="computed2-earth-fair"></td>
+                                <td id="computed2-earth-bad"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <b>Calculated Actual Value of Project Based on Approximate Asset Value</b>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td></td>
+                            <td>GOOD</td>
+                            <td>FAIR</td>
+                            <td>POOR</td>
+                            <td>BAD</td>
+                            <td>TOTAL</td>
+                        </tr>
+                        <tr>
+                            <td>CONCRETE</td>
+                            <td id="value2-concrete-good"></td>
+                            <td id="value2-concrete-fair"></td>
+                            <td id="value2-concrete-poor"></td>
+                            <td id="value2-concrete-bad"></td>
+                            <td id="total2-concrete"></td>
+                        </tr>
+                        <tr>
+                            <td>ASPHALT</td>
+                            <td id="value2-asphalt-good"></td>
+                            <td id="value2-asphalt-fair"></td>
+                            <td id="value2-asphalt-poor"></td>
+                            <td id="value2-asphalt-bad"></td>
+                            <td id="total2-asphalt"></td>
+                        </tr>
+                        <tr>
+                            <td>GRAVEL</td>
+                            <td id="value2-gravel-good"></td>
+                            <td id="value2-gravel-fair"></td>
+                            <td id="value2-gravel-bad"></td>
+                            <td id="value2-gravel-poor"></td>
+                            <td id="total2-gravel"></td>
+                        </tr>
+                        <tr>
+                            <td>EARTH</td>
+                            <td id="value2-earth-good"></td>
+                            <td id="value2-earth-fair"></td>
+                            <td id="value2-earth-poor"></td>
+                            <td id="value2-earth-bad"></td>
+                            <td id="total2-earth"></td>
+                        </tr>
+                        <tr>
+                            <td>TOTAL</td>
+                            <td id="total2-good"></td>
+                            <td id="total2-fair"></td>
+                            <td id="total2-poor"></td>
+                            <td id="total2-bad"></td>
+                            <td id="total2-total"></td>
+                        </tr>
+                    </table>
+                    <small style="display: none;">
+                        <div>CONCRETE-GOOD: <span id="value-concrete-good"></span> (Computed at <span id="computed-concrete-good"></span> per KM)</div>
+                        <div>CONCRETE-FAIR: <span id="value-concrete-fair"></span> (Computed at <span id="computed-concrete-fair"></span> per KM)</div>
+                        <div>CONCRETE-POOR: <span id="value-concrete-poor"></span> (Computed at <span id="computed-concrete-poor"></span> per KM)</div>
+                        <div>CONCRETE-BAD: <span id="value-concrete-bad"></span> (Computed at <span id="computed-concrete-bad"></span> per KM)</div>
+                        <div>ASPHALT-GOOD: <span id="value-asphalt-good"></span> (Computed at <span id="computed-asphalt-good"></span> per KM)</div>
+                        <div>ASPHALT-FAIR: <span id="value-asphalt-fair"></span> (Computed at <span id="computed-asphalt-fair"></span> per KM)</div>
+                        <div>ASPHALT-POOR: <span id="value-asphalt-poor"></span> (Computed at <span id="computed-asphalt-poor"></span> per KM)</div>
+                        <div>ASPHALT-BAD: <span id="value-asphalt-bad"></span> (Computed at <span id="computed-asphalt-bad"></span> per KM)</div>
+                        <div>GRAVEL-GOOD: <span id="value-gravel-good"></span> (Computed at <span id="computed-gravel-good"></span> per KM)</div>
+                        <div>GRAVEL-FAIR: <span id="value-gravel-fair"></span> (Computed at <span id="computed-gravel-fair"></span> per KM)</div>
+                        <div>GRAVEL-POOR: <span id="value-gravel-poor"></span> (Computed at <span id="computed-gravel-poor"></span> per KM)</div>
+                        <div>GRAVEL-BAD: <span id="value-gravel-bad"></span> (Computed at <span id="computed-gravel-bad"></span> per KM)</div>
+                        <div>EARTH-GOOD: <span id="value-earth-good"></span> (Computed at <span id="computed-earth-good"></span> per KM)</div>
+                        <div>EARTH-FAIR: <span id="value-earth-fair"></span> (Computed at <span id="computed-earth-fair"></span> per KM)</div>
+                        <div>EARTH-POOR: <span id="value-earth-poor"></span> (Computed at <span id="computed-earth-poor"></span> per KM)</div>
+                        <div>EARTH-BAD: <span id="value-earth-bad"></span> (Computed at <span id="computed-earth-bad"></span> per KM)</div>
+                    </small>
+                    <!-- <h5>Total Unique Projects : <span class="total-unique-projects">Counting...</span></h5> -->
+                </div>
+            </div>
+			<div class="row mb75" id="data-table-for-images" style="">
+				<div class="col-md-12">
+				<!-- <table class="table table-data">
+					<tbody>
+						<tr>
+							<td>Total Classifications</td>
+							<td class="total-tags"></td>
+						</tr>
+						<tr>
+							<td>Total Unique Images</td>
+							<td class="total-unique-images"></td>
+						</tr>
+						<tr>
+							<td>Total Unique Projects</td>
+							<td class="total-unique-projects"></td>
+						</tr>
+					-->
+					<h3>Resources</h3>
+					<div>
+		            	<h5>KMLs</h5>
+		                {% for kml in kmls %}
+                        {% if 'ACCESS' in kml.filename %}
+                        <div><a href="{{ kml.file_url }}" target="_blank" class="btn btn-sucess">Geometry for Project Access Road{{ kml.filename }}</a></div<<a>
+                        <div><a href="/geoprocessing/kml/download?parent_code={{ kml.parent_code }}&kml_id={{ kml.kml_id }}" target="_blank" class="btn btn-sucess">State Geometry for Project Access Road - {{ kml.filename }}</a></div>
+                        {% else %}
+                        <div><a href="{{ kml.file_url }}" target="_blank" class="btn btn-sucess">Geometry for Project - {{ kml.filename }}</a></div>
+                        <div><a href="/geoprocessing/kml/download?parent_code={{ kml.parent_code }}&kml_id={{ kml.kml_id }}" target="_blank" class="btn btn-sucess">State Geometry of Project - {{ kml.filename }}</a></div>
+                        {% endif %}
+                        {% endfor %}
+		            </div>
+		            <div>
+						<table class="hover statistics">
+                            <thead style="background-color: #070000; color:#eee;">
+                                <tr>
+                                    <th>IMAGE</th>
+                                    <th>PROJECT CODE</th>
+                                    <th>QUALITY</th>
+                                    <th>SURFACE</th>
+                                    <th>USER</th>
+                                    <th>DATE</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+		            </div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.0.3/js/buttons.flash.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.0.3/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.0.3/js/buttons.print.min.js"></script>
+<script src="/js/flot/jquery.flot.cust.js"></script>
+<script src="/js/flot/jquery.flot.resize.js"></script>
+<script src="/js/flot/jquery.flot.fillbetween.min.js"></script>
+<script src="/js/flot/jquery.flot.orderBar.js"></script>
+<script src="/js/flot/jquery.flot.pie.js"></script>
+<script src="/js/flot/jquery.flot.tooltip.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script type="text/javascript" src="/js/markerclusterer_compiled.js"></script>
+<script src="https://cdn.ravenjs.com/2.3.0/raven.min.js"></script>
+<script type="text/javascript">
+    Raven.config('https://f10053f0c3304adf9f8655d35a669ad0@app.getsentry.com/75603').install();
+    String.prototype.reverse=function(){
+      return this.split("").reverse().join("");
+    }
+    Number.prototype.withCommas=function(){
+      var x=6,y=parseFloat(this).toFixed(2).toString().reverse();
+      while(x<y.length){y=y.substring(0,x)+","+y.substring(x);x+=4;}
+      return y.reverse();
+    }
+    Number.prototype.toCurrency=function(){
+      return(arguments[0]?arguments[0]:"$")+this.withCommas();
+    }
+    window.project_code = document.getElementById('projID').innerHTML;
+
+    var project = window.project_code;
+    var table = $('.statistics').DataTable({
+        bPaginate: true,
+        pageLength: 50,
+        bSort: false,
+        dom: 'Bfrtip',
+        buttons: ['csv']
+    });
+    var $concretePoints = "#C7CBCC";
+    var $goodPoints = "#59DF26";
+    var $badPoints = "#EE1712";
+    var $poorPoints = "#E09309";
+    var $fairPoints = "#C6DF23";
+    var $asphaltPoints = "#434748"
+    var $gravelPoints = "#3b2104";
+    var $dirtPoints = "#633503";
+    var $chartBorderColor = "#efefef";
+
+
+    var thisMap;
+    var markers = [];
+    var asset_values = {{ asset_values|safe }};
+
+    function init(){
+        pull_new_classifications_from_server();
+        get_geometry_length();
+        init_map();
+        get_kmls();
+        // setInterval(function() { pull_new_classifications_from_server(); }, 10000);
+    }
+
+    function init_map() {
+        var map = {
+            init: function(){
+                var location = new google.maps.LatLng(11.6978351, 122.6217542);
+                var canvass = document.getElementById("geotagging-canvass");
+                var options = {
+                    center: location,
+                    zoom: 6,
+                    mapTypeId: google.maps.MapTypeId.SATELLITE,
+                    streetViewControl: false,
+                    mapTypeControl: false,
+                }
+                thisMap = new google.maps.Map(canvass, options);
+            }
+        };
+        map.init();
+    }
+    window.project_data = {};
+    get_project_datasets();
+    window.dataset_code = $('#dataset-select').val();
+    $('#dataset-select').on('change', function() {
+        window.dataset_code = $('#dataset-select').val();
+        init();
+    });
+    if(window.project_code){
+        var base_url ="/api/v1/data?type=CLASSIFICATION&n=100&project_code=" + window.project_code + "&callback=?";
+        console.log(base_url);
+        $.getJSON('/api/v1/data?&type=PROJECT&code=' + window.project_code + '&callback=?', function(data) {
+            if(data.data) {
+                window.project_data = data.data[0];
+                $('#project-name').text(window.project_data.title);
+                console.log(asset_values['PROGRAMS'][window.project_data.program]);
+                $('.approximate-asset-value').html('<b>' + asset_values['PROGRAMS'][window.project_data.program].toCurrency('P ') + '</b>');
+                var _asset_values_ = ['CONCRETE-GOOD', 'CONCRETE-FAIR', 'CONCRETE-POOR', 'CONCRETE-BAD', 'ASPHALT-GOOD', 'ASPHALT-FAIR', 'ASPHALT-POOR', 'ASPHALT-BAD', 'GRAVEL-GOOD', 'GRAVEL-FAIR', 'GRAVEL-POOR', 'GRAVEL-BAD', 'EARTH-GOOD', 'EARTH-FAIR', 'EARTH-POOR', 'EARTH-BAD'];
+                for(var i = 0; i < _asset_values_.length; i++) {
+                    $('#computed-' + _asset_values_[i].toLowerCase()).text((asset_values['PROGRAMS'][window.project_data.program] * asset_values['VALUES'][_asset_values_[i]]).toCurrency(' P'));
+                }
+            }
+        });
+    }
+    else {
+        var base_url ="/api/v1/data?&type=CLASSIFICATION&n=100&callback=?"
+    }
+    var db_ = {};
+    var images_ = {};
+    var totals_ = {};
+    var geometry_length = 0;
+
+
+    function get_geometry_length() {
+        $.getJSON('/api/v1/length?callback=?&project=' + window.project_code + '&dataset=' + window.dataset_code, function(data) {
+            var length = 0;
+            for(var x in data.data) {
+                for(var i = 0; i < data.data[x]['length'].length; i++) {
+                    length += data.data[x]['length'][i];
+                }
+            }
+            geometry_length = length;
+            $('.total-temporal-points').html('<b>' + Object.keys(data.data).length + '</b>');
+            $('.geometry-length').html('<b>' + length.toFixed(2) + '</b>');
+        });
+    }
+
+    function get_project_road() {
+        var url = '.api/v1/data?type=KML&project_code={{ project_code }}&road_type=PROJECT&callback=?';
+        console.log('get_project_road()', url);
+        $.getJSON(url, function(data) {
+            console.log(data[0]);
+            get_geometry_length_by_affected_classification(data[0].id);
+        });
+    }
+
+    function get_geometry_length_by_affected_classification(kml) {
+        var url = '/geoprocessing/kml/download?project_code={{ project_code }}&kml_id=' + kml + '&output=json';
+        console.log('get_geometry_length_by_affected_classification()', url);
+        $.getJSON(url, function(data) {
+            console.log(data);
+        });
+    }
+
+    function pull_new_classifications_from_server(){
+        pull_new_surface_type_classifications_from_server();
+    }
+
+
+    function pull_new_surface_type_classifications_from_server(cursor){
+        params = '&parent_code=' + window.dataset_code + '&classification_type=SURFACE';
+        if(cursor) {
+            params += '&cursor=' + cursor;
+        }
+        console.log(base_url + params);
+        $.getJSON(base_url + params, function(data) {
+            //console.log(data);
+            add_classifications_to_stats_if_new(data.data);
+            if(data.cursor && data.cursor.length > 0) {
+                pull_new_surface_type_classifications_from_server(data.cursor);
+            }
+            else {
+                pull_new_surface_quality_classifications_from_server();
+            }
+            if(window.project_code){
+                refresh_views();
+            }
+        });
+    }
+
+
+    function pull_new_surface_quality_classifications_from_server(cursor){
+        params = '&parent_code=' + window.dataset_code + '&classification_type=QUALITY';
+        if(cursor) {
+            params += '&cursor=' + cursor;
+        }
+        console.log(base_url + params);
+        $.getJSON(base_url + params, function(data) {
+            add_classifications_to_stats_if_new(data.data);
+            if(data.cursor && data.cursor.length > 0) {
+                pull_new_surface_quality_classifications_from_server(data.cursor);
+            }
+            else {
+                setTimeout(function() {
+                    render_project_summary()
+                }, 500);
+            }
+            if(window.project_code){
+                refresh_views();
+            }
+            else if(!data.cursor || data.cursor.length == 0) {
+                // no project code. only render when everything is loaded.
+                refresh_views();
+                render_map();
+            }
+        });
+    }
+
+
+    function refresh_views(){
+        // render_quality_stats();
+        // render_surface_type_stats();
+        render_quality_chart();
+        render_surface_chart();
+        if(window.project_code){
+            // only render table when there is a specific project, coz it lags
+            render_table();
+            $("#data-table-for-images").show();
+            render_map();
+        }
+        else {
+            $("#data-table-for-images").hide();
+        }
+
+        render_counts();
+    }
+
+    window.kml_layers = [];
+    window.kml_data = []
+
+
+    function get_kmls(){
+        window.kml_data = [];
+        $.getJSON('/api/v1/data?&type=KML&parent_code=' + window.dataset_code, function(data) {
+            if(data.data) {
+                results = data.data;
+                for(var i=0; i<results.length; i++){
+                    window.kml_data.push(results[i]);
+                }
+            }
+            render_kmls();
+        });
+    }
+
+
+    function render_kmls(){
+        // clear all kmls
+        unrender_kmls_in_map();
+
+        // iterate over kmls and render each one of them
+        for(var i=0; i<window.kml_data.length; i++){
+            render_kml_in_map(window.kml_data[i].id);
+        }
+    }
+
+
+    function unrender_kmls_in_map(){
+        for(var i=0; i<window.kml_layers.length; i++){
+            window.kml_layers[i].setMap(null);
+        }
+    }
+
+
+    function render_kml_in_map(kml_id){
+        pathArray = location.href.split( '/' );
+        protocol = pathArray[0];
+        host = pathArray[2];
+        var url = protocol + '//' + host;
+        url += '/geoprocessing/kml/download?render=1&parent_code=' + window.dataset_code + '&kml_id=' + kml_id;
+        window.kml_layers.push(new google.maps.KmlLayer({    
+            url: url,  
+            map: thisMap  
+        }));
+    }
+
+
+    function render_map(){
+        render_kmls();
+        // get_markers_from_db();
+    }
+
+    function get_project_datasets() {
+        var dataset_url = '/api/v1/data?callback=?&n=100&type=DATASET&parent_code=' + window.project_code;
+        console.log(dataset_url);
+        $.getJSON(dataset_url, function(data) {
+            console.log('get_project_datasets', data);
+            if(data.data) {
+                for(var i = 0; i < data.data.length; i++) {
+                    var check = $('#dataset-select option[value="' + data.data[i].code + '"]');
+                    if(check.length == 0) {
+                        var option = $('<option>', {'value': data.data[i].code, 'text': data.data[i].title});
+                        $('#dataset-select').push(option);
+                    }
+                }
+                $('#dataset-select').trigger('change');
+            }
+        });
+    }
+
+
+    function render_counts(){
+        var db = [];
+        var images = [];
+        var projects = [];
+
+        for(x in db_) {
+            if(db_.hasOwnProperty(x)){
+                db.push(db_[x])
+            }
+        }
+
+        var db_length = db.length;
+
+        for(var i=0; i<db_length; i++){
+            if(db[i].project_code && projects.indexOf(db[i].project_code) == -1){
+                projects.push(db[i].project_code);
+            }
+
+            if(db[i].image_serving_url && images.indexOf(db[i].image_serving_url) == -1){
+                images.push(db[i].image_serving_url);
+            }
+        }
+        // render_project_summary();
+        $('.total-tags').html('<b>' + db.length + '</b>');
+        $('.total-unique-images').html('<b>' + images.length + '</b>');
+        $('.total-unique-projects').html('<b>' + projects.length + '</b>');
+
+    }
+
+
+    function add_classifications_to_stats_if_new(classifications){
+        for(var i = 0; i < classifications.length; i++) {
+            db_[classifications[i].id] = classifications[i];
+        }
+        console.log(Object.keys(db_).length);
+    }
+
+
+    function render_quality_stats(){
+        var counts = get_quality_counts();
+        $('.total-good-points').html('<b>' + counts['good'] + '</b>');
+        $('.total-fair-points').html('<b>' + counts['fair'] + '</b>');
+        $('.total-poor-points').html('<b>' + counts['poor'] + '</b>');
+        $('.total-bad-points').html('<b>' + counts['bad'] + '</b>');
+    }
+
+
+    function get_surface_type_counts(){
+        var count_concrete = 0;
+        var count_asphalt = 0;
+        var count_gravel = 0;
+        var count_dirt = 0;
+
+        for(x in db_) {
+            try {
+                if(db_[x].classification_type == "SURFACE"){
+                    var surface = db_[x].classification;
+                    if(!(db_[x].image_id in images_)) {
+                        images_[db_[x].image_id] = {}
+                    }
+                    images_[db_[x].image_id]['SURFACE'] = surface;
+                    if(surface == 'CONCRETE'){
+                        count_concrete++;
+                    }
+                    if(surface == 'ASPHALT'){
+                        count_asphalt++;
+                    }
+                    if(surface == 'GRAVEL'){
+                        count_gravel++;
+                    }
+                    if(surface == 'EARTH'){
+                        count_dirt++;
+                    }
+                    if(surface && surface != 'NA') {
+                        if(!('SURFACE' in totals_)) {
+                            totals_['SURFACE'] = 0;
+                        }
+                        totals_['SURFACE']++;
+                    }
+                }
+            }
+            catch(e){
+                console.log(e);
+            }
+        }
+
+
+        return {
+            'concrete': count_concrete,
+            'asphalt': count_asphalt,
+            'gravel': count_gravel,
+            'dirt': count_dirt
+        }
+    }
+
+
+    function get_quality_counts(){
+        var count_good = 0;
+        var count_fair = 0;
+        var count_poor = 0;
+        var count_bad = 0;
+
+        for(x in db_) {
+            try {
+                if(db_[x].classification_type == "QUALITY"){
+                    var quality = db_[x].classification;
+                    if(!(db_[x].image_id in images_)) {
+                        images_[db_[x].image_id] = {}
+                    }
+                    images_[db_[x].image_id]['QUALITY'] = quality;
+                    if(quality == 'GOOD'){
+                        count_good++;
+                    }
+                    if(quality == 'FAIR'){
+                        count_fair++;
+                    }
+                    if(quality == 'POOR'){
+                        count_poor++;
+                    }
+                    if(quality == 'BAD'){
+                        count_bad++;
+                    }
+                    if(quality && quality != 'NA') {
+                        if(!('QUALITY' in totals_)) {
+                            totals_['QUALITY'] = 0;
+                        }
+                        totals_['QUALITY']++;
+                    }
+                }
+            }
+            catch(e){
+                console.log(e);
+            }
+        }
+
+        return {
+            'good': count_good,
+            'fair': count_fair,
+            'poor': count_poor,
+            'bad': count_bad
+        }
+    }
+
+    function render_project_summary() {
+        var counts = {};
+        var percentages = {};
+        var surfaces = get_surface_type_counts();
+        var qualities = get_quality_counts();
+        for(surface in surfaces) {
+            if(!(surface in percentages)) {
+                percentages[surface] = 0;
+            }
+            percentages[surface] = parseFloat(surfaces[surface]) / parseFloat(totals_['SURFACE']);
+        }
+        for(quality in qualities) {
+            if(!(quality in percentages)) {
+                percentages[quality] = 0;
+            }
+            percentages[quality] = parseFloat(qualities[quality]) / parseFloat(totals_['QUALITY']);
+        }
+        for(x in images_) {
+            var surface = 'na';
+            var quality = 'na';
+            if('SURFACE' in images_[x]) {
+                surface = images_[x]['SURFACE'];
+            }
+            if('QUALITY' in images_[x]) {
+                quality = images_[x]['QUALITY'];
+            }
+            var _classification_ = surface.toLowerCase() + '-' + quality.toLowerCase();
+            if(!(_classification_ in counts)) {
+                counts[_classification_] = 0;
+            }
+            counts[_classification_]++;
+        }
+        render_project_summary_data(counts, percentages)
+    }
+
+    function render_project_summary_data(counts, percentages) {
+        if(geometry_length) {
+            for(var x in counts) {
+                var surface = x.split('-')[0];
+                var quality = x.split('-')[1];
+                if(surface == 'earth') {
+                    surface = 'dirt';
+                }
+                x = surface + '-' + quality;
+                var val = parseFloat(percentages[surface]) + parseFloat(percentages[quality]);
+                if(!val) {
+                    $('#' + x).html('0');
+                    $('#' + x + '-km').html('0');
+                }
+                else {
+                    $('#' + x).html((Math.round((val * 100) * 100) / 100) + ' %');
+                    $('#' + x + '-km').html((Math.round((val * geometry_length) * 100) / 100) + ' KM');
+                }
+            }
+            for(var x in get_surface_type_counts()) {
+                var els = $('[id^=' + x + ']');
+                var total = {
+                    'percent': 0,
+                    'km': 0,
+                };
+                for(var i = 0; i < els.length; i++) {
+                    if(!els[i].textContent) {
+                        continue;
+                    }
+                    if(els[i].id.indexOf('-km') == -1) {
+                        total['percent'] += parseFloat(els[i].textContent.replace(' %', ''));
+                    }
+                    else if(els[i].id.indexOf('-km') > -1) {
+                        total['km'] += parseFloat(els[i].textContent.replace(' KM', ''));
+                    }
+                }
+                $('[id$=' + x + ']').html((Math.round(total['percent'] * 100) / 100) + ' %');
+                $('[id$=' + x + '-km]').html((Math.round(total['km'] * 100) / 100) + ' KM');
+                // console.log($('[id^=total-' + x + ']'));
+            }
+            var surfaces = ['concrete', 'asphalt', 'gravel', 'dirt'];
+            var qualities = ['good', 'fair', 'poor', 'bad'];
+            for(var i = 0; i < qualities.length; i++) {
+                var total = {
+                    'percent': 0,
+                    'km': 0,
+                }
+                for(var j = 0; j < surfaces.length; j++) {
+                    var val_p = parseFloat($('#' + surfaces[j] + '-' + qualities[i])[0].textContent);
+                    var val_k = parseFloat($('#' + surfaces[j] + '-' + qualities[i] + '-km')[0].textContent);
+                    if(val_p && val_k) {
+                        total['percent'] += val_p;
+                        total['km'] += val_k;
+                    }
+                }
+                if(total.percent && total.km) {
+                    $('#total-' + qualities[i]).html((Math.round(total.percent * 100) / 100) + ' %');
+                    $('#total-' + qualities[i] + '-km').html((Math.round(total.km * 100) / 100) + ' KM');
+                }
+                console.log(qualities[i], total);
+            }
+            var _asset_values_ = ['CONCRETE-GOOD', 'CONCRETE-FAIR', 'CONCRETE-POOR', 'CONCRETE-BAD', 'ASPHALT-GOOD', 'ASPHALT-FAIR', 'ASPHALT-POOR', 'ASPHALT-BAD', 'GRAVEL-GOOD', 'GRAVEL-FAIR', 'GRAVEL-POOR', 'GRAVEL-BAD', 'EARTH-GOOD', 'EARTH-FAIR', 'EARTH-POOR', 'EARTH-BAD'];
+            var _total_values_ = {
+                'CONCRETE': 0.0,
+                'ASPHALT': 0.0,
+                'GRAVEL': 0.0,
+                'EARTH': 0.0,
+                'GOOD': 0.0,
+                'FAIR': 0.0,
+                'POOR': 0.0,
+                'BAD': 0.0,
+            }
+            for(var i = 0; i < _asset_values_.length; i++) {
+                var asset_value_name = _asset_values_[i].replace('EARTH', 'DIRT');
+                var _KM_ = parseFloat($('#' + asset_value_name.toLowerCase() + '-km').text().replace(' KM', ''));
+                var _COMPUTED_ = parseFloat($('#computed-' + _asset_values_[i].toLowerCase()).text().replace('P', '').replace(/,/g, ''));
+                var _KMCOMPUTED_ = _KM_ * _COMPUTED_;
+                if(!(isNaN(_KMCOMPUTED_))) {
+                    console.log(_KMCOMPUTED_);
+                    $('#value-' + _asset_values_[i].toLowerCase()).text(_KMCOMPUTED_.toCurrency('P '));
+                    $('#value2-' + _asset_values_[i].toLowerCase()).text(_KMCOMPUTED_.toCurrency('P '));
+                    $('#value2-' + _asset_values_[i].toLowerCase()).attr('title', 'Computed at ' + _COMPUTED_.toCurrency('P ') + ' per KM');
+                    $('#computed2-' + _asset_values_[i].toLowerCase()).text(_COMPUTED_.toCurrency('P '));
+                }
+                else {
+                    $('#value-' + _asset_values_[i].toLowerCase()).text('P 0.00');
+                }
+            }
+            console.log(_total_values_);
+            for(var x in _total_values_) {
+                for(var i = 0; i < _asset_values_.length; i++) {
+                    var asset_value_name = _asset_values_[i].replace('DIRT', 'EARTH');
+                    if(asset_value_name.indexOf(x) != -1) {
+                        _total_values_[x] += parseFloat($('#value2-' + asset_value_name.toLowerCase()).text().replace('P ', '').replace(/,/g, ''));
+                    }
+                }
+            }
+            var total2_total = 0.0;
+            for(var x in _total_values_) {
+                $('#total2-' + x.toLowerCase()).text(_total_values_[x].toCurrency('P '));
+                if(['CONCRETE', 'ASPHALT', 'GRAVEL', 'EARTH'].indexOf(x) != -1) {
+                    total2_total += _total_values_[x];
+                }
+            }
+            $('#total2-total').text(total2_total.toCurrency('P '));
+        }
+        else {
+            setTimeout(function() {
+                render_project_summary_data(counts, percentages);
+            }, 500);
+        }
+    }
+
+
+    function render_surface_type_stats(){
+
+        var counts = get_surface_type_counts();
+
+        $('.total-concrete-points').html('<b>' + counts['concrete'] + '</b>');
+        $('.total-asphalt-points').html('<b>' + counts['asphalt'] + '</b>');
+        $('.total-gravel-points').html('<b>' + counts['gravel'] + '</b>');
+        $('.total-dirt-points').html('<b>' + counts['dirt'] + '</b>');
+    }
+
+
+    function render_surface_chart(){
+        // if(surfaceChart) {
+        //  surfaceChart.destroy();
+        // }
+        // var surface_chart_data = [
+        //  {
+        //      value: 0,
+        //      color:"#F7464A",
+        //      highlight: "#FF5A5E",
+        //      label: "Concrete"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#46BFBD",
+        //      highlight: "#5AD3D1",
+        //      label: "Tarmac"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#FDB45C",
+        //      highlight: "#FFC870",
+        //      label: "Gravel"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#2980b9",
+        //      highlight: "#3498db",
+        //      label: "Dirt"
+        //  }
+        // ];
+
+
+        var counts = get_surface_type_counts();
+        var data = [
+            {data: [[0,counts['concrete']]], color: $concretePoints, label: "Concrete Points"},
+            {data: [[1,counts['asphalt']]], color: $asphaltPoints, label: "Asphalt Points"},
+            {data: [[2,counts['gravel']]], color: $gravelPoints, label: "Gravel Points"},
+            {data: [[3,counts['dirt']]], color: $dirtPoints, label: "Earth Points"}
+        ];
+        $.plot($("#surface-chart"), data, {
+            // colors : ["#F7464A", "#46BFBD", "#FDB45C", "#2980B9"],
+            grid : {
+                show : true,
+                hoverable : true,
+                clickable : true,
+                tickColor : $chartBorderColor,
+                borderWidth : 0,
+                borderColor : $chartBorderColor,
+            },
+            xaxis: {
+                ticks: [[0,'Concrete Points'],[1,'Asphalt Points'],[2,'Gravel Points'], [3,'Earth Points']],
+            },
+            labelWidth: 500,
+            alignTicksWithAxis: true,
+            tickLength: 100,
+            series: {
+                bars : {
+                    show : true,
+                    barWidth : 0.3,
+                    fill: 1,
+                    align: "center"
+                }
+            },
+            legend : true,
+            tooltip : true,
+            tooltipOpts : {
+                content : function getTooltip(label, x, y) {
+                    return label + " : " + y;
+                },
+                defaultTheme : false
+            }
+        });
+
+        // var ctx = document.getElementById("surface_chart").getContext("2d");
+        // var surfaceChart = new Chart(ctx).Doughnut(surface_chart_data, {animation : false, segmentStrokeColor : "#3E4350"});
+    }
+
+
+
+    function render_quality_chart(){
+        // var quality_chart_data = [
+        //  {
+        //      value: 0,
+        //      color:"#F7464A",
+        //      highlight: "#FF5A5E",
+        //      label: "Good"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#46BFBD",
+        //      highlight: "#5AD3D1",
+        //      label: "Fair"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#FDB45C",
+        //      highlight: "#FFC870",
+        //      label: "Poor"
+        //  },
+        //  {
+        //      value: 0,
+        //      color: "#2980b9",
+        //      highlight: "#3498db",
+        //      label: "Bad"
+        //  }
+        // ];
+
+        var counts = get_quality_counts();
+
+        // quality_chart_data[0].value = counts['good'];
+        // quality_chart_data[1].value = counts['fair'];
+        // quality_chart_data[2].value = counts['poor'];
+        // quality_chart_data[3].value = counts['bad'];
+
+        var data = [
+            {data: [[0,counts['good']]], color: $goodPoints, label: "Good Points"},
+            {data: [[1,counts['fair']]], color: $fairPoints, label: "Fair Points"},
+            {data: [[2,counts['poor']]], color: $poorPoints, label: "Poor Points"},
+            {data: [[3,counts['bad']]], color: $badPoints, label: "Bad Points"}
+        ];
+        $.plot($("#quality-chart"), data, {
+            // colors : ["#F7464A", "#46BFBD", "#FDB45C", "#2980B9"],
+            grid : {
+                show : true,
+                hoverable : true,
+                clickable : true,
+                tickColor : $chartBorderColor,
+                borderWidth : 0,
+                borderColor : $chartBorderColor,
+                labelMargin: 20
+            },
+            xaxis: {
+                ticks: [[0,'Good Points'],[1,'Fair Points'],[2,'Poor Points'], [3,'Bad Points']],
+            },
+            series: {
+                bars : {
+                    show : true,
+                    barWidth : 0.3,
+                    fill: 1,
+                    align: "center",
+                }
+            },
+            legend : true,
+            tooltip : true,
+            tooltipOpts : {
+                content : function getTooltip(label, x, y) {
+                    return label + " : " + y;
+                },
+                defaultTheme : false
+            }
+        });
+
+        // if(qualityChart) {
+        //  qualityChart.update();
+        // }
+        // else {
+        //  var ctx = document.getElementById("quality_chart").getContext("2d");
+        //  var qualityChart = new Chart(ctx).Doughnut(quality_chart_data, {animation : false, segmentStrokeColor : "#3E4350"});
+        // }
+    }
+
+
+    function render_table(){
+        table.clear().draw();
+        var db = [];
+        var images = [];
+        var projects = [];
+        for(x in db_) {
+            db.push(db_[x])
+        }
+
+        // db.sort(function(a, b) {
+        //  return moment(b.updated) - moment(a.updated);
+        // });
+
+
+        for(var i = 0; i < db.length; i++) {
+            try {
+                var quality = '';
+                var surface = '';
+                var project_code = '';
+                var user = '';
+                var created = '';
+                var image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png';
+
+                if(db[i].project_code && projects.indexOf(db[i].project_code) == -1){
+                    projects.push(db[i].project_code);
+                }
+
+                if(db[i].image_serving_url && images.indexOf(db[i].image_serving_url) == -1){
+                    images.push(db[i].image_serving_url);
+                }
+
+                if(db[i].classification_type == 'QUALITY'){
+                    quality = db[i].classification;
+                }
+
+                if(db[i].classification_type == 'SURFACE'){
+                    surface = db[i].classification;
+                }
+
+                if(quality == 'NA'){
+                    continue;
+                }
+                if(surface == 'NA'){
+                    continue;
+                }
+
+                if(db[i].project_code){
+                    project = db[i].project_code;
+                }
+
+                if(db[i].user){
+                    user = db[i].user.name;
+                }
+
+                if(db[i].created){
+                    created = db[i].created;
+                }
+
+                if(db[i].image_serving_url) {
+                    image = db[i].image_serving_url + '=s64-c';
+                }
+
+                image_url = (db[i].image_serving_url) ? db[i].image_serving_url : image;
+
+                var tr_tmp = [
+                    '<a href="' + db[i].image_serving_url + '" data-lightbox="images"><img style="width: 64px;" src="' + image + '" alt="' + image + '" id="'+db[i].id+'"></a>',
+                    // latlng,
+                    project,
+                    quality,
+                    surface,
+                    user,
+                    created,
+                    '<span style="display: none;">' + image + '</span>',
+                ];
+                table.row.add(tr_tmp).draw();
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+    }
+
+    function get_markers_from_db() {
+        // get all existing markers from all classifications
+        remove_markers_from_map();
+        for(x in db_) {
+            if(db_[x].lat && db_[x].lng) {
+                var lat = db_[x].lat;
+                var lng = db_[x].lng;
+                if(lat && lng) {
+                    var lat_lng = new google.maps.LatLng(lat, lng);
+                    if(db_[x].classification_type == 'SURFACE') {
+                        switch(db_[x].classification) {
+                            case 'CONCRETE':
+                                add_a_concrete_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'ASPHALT':
+                                add_a_tarmac_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'GRAVEL':
+                                add_a_gravel_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'EARTH':
+                                add_an_earth_marker(lat_lng, db_[x].id);
+                                break;
+                        }
+                    }
+                    if(db_[x].classification_type == 'QUALITY') {
+                        switch(db_[x].classification) {
+                            case 'GOOD':
+                                add_a_good_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'FAIR':
+                                add_a_fair_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'POOR':
+                                add_a_poor_marker(lat_lng, db_[x].id);
+                                break;
+                            case 'BAD':
+                                add_a_bad_marker(lat_lng, db_[x].id);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        render_markers_on_map();
+    }
+
+    function remove_markers_from_map(){
+        // setMap(null) on all markers
+        for(var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        markers = [];
+    }
+
+    function add_a_good_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-good2.png',
+        })
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_fair_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-fair2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_poor_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-poor2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_bad_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-bad2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_concrete_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-concrete2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_tarmac_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-tarmac2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_a_gravel_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-gravel2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function add_an_earth_marker(latlng, data_id) {
+        var marker = new google.maps.Marker({
+            position: latlng,
+            icon: '/images/icn-dirt2.png',
+        });
+        marker.addListener('click', function() {
+            $("#" + data_id).click();
+        });
+        markers.push(marker);
+    }
+
+    function render_markers_on_map(){
+        // loop through db and call_marker
+        var markerCluster = new MarkerClusterer(thisMap, markers);
+        markerCluster.setMaxZoom(14);
+    }
+
+    init();
+        /* chart colors default */
+
+
+</script>
+
+{% endblock %}

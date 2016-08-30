@@ -1,0 +1,101 @@
+{% extends 'index.html' %}
+{% block title %}Agency Details | Geostore{% endblock %}
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dropzone.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/2.0/bootstrap-datepicker.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+{% endblock %}
+{% block content %}
+{% include '2.0/navigation.html' %}
+<div class="container">
+    <ol class="breadcrumb">
+        <li><a href="/">Geostore</a></li>
+        <li><a href="/agencies">Agencies</a></li>
+        {% if agency %}
+        <li><a href="/agencies/{{ agency.slug }}">{{ agency.name }}</a></li>
+        {% endif %}
+    </ol>
+    <h3><i class="glyphicon glyphicon-info-sign h3-icon"></i> Agency Details</h3>
+    <form method="post">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12"><h4 class="background"><span>Main Details</span></h4></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" required="required" name="name" class="form-control" autofocus value="{% if agency %}{{ agency.name }}{% endif %}">
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label>slug</label>
+                            <input type="text" required="required" {% if not agency %}name="slug"{% endif %} class="form-control" readonly="" value="{% if agency %}{{ agency.slug }}{% endif %}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" rows="6">{% if agency %}{{ agency.description }}{% endif %}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        {% if agency %}<input type="hidden" name="slug" value="{{ agency.slug }}">{% endif %}
+                        <button type="submit" class="btn btn-sm btn-success pull-right">{% if not agency %}Add{% else %}Update{% endif %} Agency</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-12"><h4 class="background"><span>Programs</span></h4></div>
+                <div class="col-md-12">
+                    <ul class="list-unstyled" id="agency-programs">
+                        {% for program in programs %}
+                        <li><a href="/programs/{{ agency.slug }}/{{ program.slug }}">{{ program.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <a class="btn btn-sm btn-success" href="/programs/new?agency={{ agency.name }}">Add Program</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="/js/2.0/dropzone.min.js"></script>
+<script type="text/javascript" src="/js/2.0/moment.min.js"></script>
+<script type="text/javascript" src="/js/2.0/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js"></script>
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-72730623-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+    function generateSlug(value) {
+      return value.toLowerCase().replace(/-+/g, '').replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    }
+    $('input[name="name"]').on('keyup', function() {
+        var val = $(this).val();
+        $('input[name="slug"]').val(generateSlug(val));
+    });
+</script>
+{% endblock %}

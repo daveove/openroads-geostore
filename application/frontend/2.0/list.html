@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/flatty.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dataTables.bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css">
+{% endblock %}
+{% block content %}
+{% include '2.0/navigation.html' %}
+<div class="container" style="margin-bottom: 75px;">
+	<ol class="breadcrumb">
+		<li><a href="/">Geostore</a></li>
+		<li><a href="/projects">Projects</a></li>
+		<li><a href="/projects/{{ program }}" class="active">{{ program.upper() }}</a></li>
+	</ol>
+	<h3>
+		<i class="glyphicon glyphicon-list-alt h3-icon"></i> Projects
+		{% if program != 'all' %}
+		{% if program == 'coa' %}
+		<a href="/projects/{{ program }}/new" class="btn btn-success btn-sm pull-right">Add Project under COA CPA</a>
+		{% else %}
+		<a href="/projects/{{ program }}/new" class="btn btn-success btn-sm pull-right">Add New {{ program.upper() }} Project</a>
+		{% endif %}
+		{% else %}
+		<a href="/projects/new" class="btn btn-success btn-sm pull-right">Add Project</a>
+		{% endif %}
+	</h3>
+	<table id="table_id" class="table table-hover table-bordered">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Location</th>
+				<th>Tag</th>
+				<th>Has Data</th>
+				<th class="mw-actions">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			
+		</tbody>
+	</table>
+</div>
+<div id="datatables-buttons"></div>
+<div id="loading-projects" style="display: none;"><div class="loader"></div></div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.1.0/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script type="text/javascript" src="/js/2.0/dashboard.js"></script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-72730623-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+	var config = {
+		'program': '{{ program }}',
+		'url': '{{ app_url }}/api/v1/data?callback=?&type=PROJECT&n=100',
+		'db': {{ projects|safe }},
+	};
+	var table;
+	$(document).ready(function() {
+		table = $('#table_id').DataTable({
+			'pageLength': 100,
+			'autoWidth': false,
+			'language': {
+				'lengthMenu': '_MENU_',
+				'search': '<i class="glyphicon glyphicon-search"></i>',
+			},
+			'bSort': false,
+			'dom': 'Bfrtip',
+			'buttons': [
+	            {
+	            	'text': 'Export to CSV',
+	            	'action': function() {
+	            		console.log('EXPORT TO CSV');
+	            		var blob = new Blob([Papa.unparse(config.db)], {type: "text/csv"});
+						saveAs(blob, 'GEOSTORE-' + moment().format('YYYYMMDDHHmmss') + '.csv');
+	            	},
+	            }
+	        ],
+		});
+		for (x in config.db){
+			var row = []
+			row.push(x);
+			row.push(config.db[x].title);
+			row.push(config.db[x].location);
+			row.push(config.db[x].agency + ' (' + config.db[x].program + ')');
+			row.push(parseInt(config.db[x].has_data) ? 'YES': 'NO');
+			row.push('<div style="width: 141px;"><a href="/projects/' + config.db[x].program  + '/' + x + '" class="btn btn-xs btn-success">Update</a> <a href="/viewer?project_id=' + x + '" class="btn btn-xs btn-success">View on Map</a></div>');
+			table.row.add(row);
+		}
+		table.draw();
+		get_projects(config.program);
+		console.log(JSON.parse(localStorage.getItem('projects_database')));
+	});
+</script>
+{% endblock %}

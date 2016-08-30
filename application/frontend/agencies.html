@@ -1,0 +1,70 @@
+{% extends 'index.html' %}
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="/css/2.0/flatty.css">
+    <link rel="stylesheet" type="text/css" href="/css/2.0/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css">
+{% endblock %}
+{% block content %}
+{% include '2.0/navigation.html' %}
+<div class="container" style="margin-bottom: 75px;">
+    <ol class="breadcrumb">
+        <li><a href="/">Geostore</a></li>
+        <li><a href="/agencies">Agencies</a></li>
+    </ol>
+    <h3>
+        <i class="glyphicon glyphicon-list-alt h3-icon"></i> Agencies
+        <a href="/agencies/new" class="btn btn-success btn-sm pull-right">Add Agency</a>
+    </h3>
+    <table id="main-table" class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th class="mw-actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agency in agencies %}
+            <tr>
+                <td>{{ agency.name }}</td>
+                <td>{{ agency.description }}</td>
+                <td><a href="/agencies/{{ agency.slug }}" class="btn btn-xs btn-success">Update</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.9/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.1.0/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/buttons/1.1.0/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-72730623-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        table = $('#main-table').DataTable({
+            'pageLength': 100,
+            'autoWidth': false,
+        });
+    });
+</script>
+{% endblock %}

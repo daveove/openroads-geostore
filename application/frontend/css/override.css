@@ -1,0 +1,114 @@
+body {
+	background-color: #252830;
+	font-family: helvetica;
+}
+
+.navbar-header a {
+	color: #fff!important;
+}
+
+.navbar {
+	background-color: rgba(25,144,189,0.9);
+}
+
+.table-data {
+	color: #b0b2ba;
+	border: none!important;
+	margin-bottom: 50px;
+	margin-top: 50px
+}
+
+.chart-circle {
+	margin-top: 50px!important;
+}
+.table-data td {
+	border-top: 1px solid #b0b2ba!important;
+	border-bottom: 1px solid #b0b2ba!important;
+}
+
+.table-data td:nth-child(2) {
+	text-align: right;
+}
+
+.table-data tr:hover {
+	background-color: #b0b2ba!important;
+	color: #fff!important;
+	transition: .2s ease-in-out;
+}
+
+.dt-button:hover {
+	background-color: #1b7da3!important;
+	color: #fff!important;
+	background-image: none!important
+}
+
+.dt-button {
+	background-color: #252830!important;
+	border: 1px solid #1b7da3!important;
+	border-radius: 5px!important;
+	background-image: none!important;
+	color: #1b7da3!important;
+	padding: 5px 15px!important;
+	margin-bottom: 20px;
+}
+
+.table-stat th {
+	color: #1b7da3!important;
+	background-color: #252830!important;
+	background-image: none!important;
+}
+
+.table-stat {
+	background-image: none!important;
+	background-color: #cfd2da!important;
+}
+
+.table-stat {
+	margin-bottom: 50px;
+}
+
+.table-stat tbody {
+	background-color: rgba(30,33,39,1.0);
+	background-image: none!important;
+	color: #b0b2ba!important;
+}
+
+.table.dataTable tbody tr {
+	background-color: rgba(30,33,39,0.8)!important;
+}
+
+.current {
+	background-image: none!important;
+	background-color: #1b7da3!important;
+	border: 1px solid #1b7da3!important;
+	color: #1b7da3!important;
+}
+
+a.paginate_button:hover {
+	background-image: none!important;
+	background-color: #1b7da3!important;
+}
+
+.dataTables_info,
+.DataTables_Table_0_filter label,
+.dataTables_filter label,
+.dataTables_paginate a,
+.dataTables_paginate,
+#DataTables_Table_0_paginate a,
+.paging_simple_numbers {
+	color: #b0b2ba!important;
+}
+
+#DataTables_Table_0_wrapper {
+	margin-bottom: 100px;
+}
+
+#DataTables_Table_0_filter input {
+	color: #252525;
+	border-radius: 5px;
+	border: 1px solid #1b7da3!important;
+}
+
+#DataTables_Table_0_paginate {
+	display: none;
+}

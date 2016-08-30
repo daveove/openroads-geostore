@@ -1,0 +1,318 @@
+{% extends 'index.html' %}
+{% block title %}User Management | Geostore{% endblock %}
+{% block content %}
+    <div class="container mt40">
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-12 col-lg-12">
+                <h3 class="no-margin-top">
+                    <i class="glyphicon glyphicon-user h3-icon"></i> User Management
+                </h3>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-info">Did you want to manage <a href="/users/registration">User Registrations</a>?</div>
+            </div>
+        </div>
+        <table class="table table-hover table-bordered statistics dataTable no-footer black-head" id="users-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Access Key</th>
+                    <th>Level</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center loading-icon">
+                    <td colspan="1000"><i class="fa fa-fw fa-spin fa-circle-o-notch"></i> Loading users...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block script %}
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script>
+    var currentUserUpdating = {};
+    var userID = "{{ user.id }}";
+    var cursor = '';
+    $.ajax({
+        url: "/api/v1/users",
+        success: function(data){
+            if(data){
+                $("#users-table").children("tbody").children("tr.loading-icon").remove();
+                for(i=0;i<data.data.length;i++){
+                    renderUserToTable(data.data[i]);
+                }
+                if("cursor" in data){
+                    cursor = data.cursor;
+
+                }
+                return
+            }
+            $("#users-table").children("tbody").children("tr.loading-icon").children('td').addClass('text-danger').text(' An unexpected error occured. Please refresh the page and try again.').prepend($('<i>', { class: 'fa fa-fw fa-warning' }));
+        },
+        error: function (){
+            $("#users-table").children("tbody").children("tr.loading-icon").children('td').addClass('text-danger').text(' An unexpected error occured. Please refresh the page and try again.').prepend($('<i>', { class: 'fa fa-fw fa-warning' }));
+        }
+    })
+    function loadMoreUsers(){
+        $.ajax({
+            url: "/api/v1/users?cursor=" + cursor,
+            success: function(data){
+                console.log(data)
+                if(data){
+                    $("#users-table").children("tbody").children("tr.loading-icon").remove();
+                    for(i=0;i<data.data.length;i++){
+                        renderUserToTable(data.data[i]);
+                    }
+                    if("cursor" in data){
+                        cursor = data.cursor;
+                    }
+                    if($("body").height() > bodyHeight && $("body").height() > $(window).height()){
+                        $("footer").removeClass("footer-fixed-bottom");
+                    }
+                    else{
+                        $("footer").addClass("footer-fixed-bottom");
+                    }
+                    return
+                }
+                $("#users-table").children("tbody").children("tr.loading-icon").children('td').addClass('text-danger').text(' An unexpected error occured. Please refresh the page and try again.').prepend($('<i>', { class: 'fa fa-fw fa-warning' }));
+            },
+            error: function (){
+                $("#users-table").children("tbody").children("tr.loading-icon").children('td').addClass('text-danger').text(' An unexpected error occured. Please refresh the page and try again.').prepend($('<i>', { class: 'fa fa-fw fa-warning' }));
+            }
+        });
+    }
+    function updateUser(obj){
+        if(!$(obj).data("user-id")){
+            console.log("No user ID.");
+            return
+        }
+        var userID = $(obj).data("user-id");
+        $.ajax({
+            url: "/api/v1/users/" + userID,
+            dataType: "json",
+            success: function(data){
+                if(data){
+                    $("body").append(
+                        $("<div>", { class: "modal fade", id: "updateUserModal", "tabindex": "-1", "role": "dialog", "aria-labelledby": "flagDatasetModalLabel", "aria-hidden": "true" }).html(
+                            $("<div>", { class: "modal-dialog" }).html(
+                                $("<form>", { action: "/api/v1/users/" + data.data.id, method: "POST", id: "updateUserForm" }).html(
+                                    $("<div>", { class: "modal-content" }).html(
+                                        $("<div>", { class: "modal-header" }).html(
+                                            $("<button>", { class: "close", "data-dismiss": "modal", type: "button", "aria-hidden": "true", text: "×" }).add(
+                                            $("<h3>", { class: "modal-title", id: "flagDatasetModalLabel", text: "Update User" }))
+                                        ).add(
+                                            $("<div>", { class: "modal-body" }).html(
+                                                $("<div>", { class: "row" }).html(
+                                                    $("<div>", { class: "form-group col-xs-4" }).html(
+                                                        $("<label>", { for: "firstName", text: "First Name " }).append(
+                                                            $("<span>", { class: "text-danger", text: "*"})).add(
+                                                        $("<input>", { class: "form-control", id: "firstName", name: "first_name", placeholder: "First Name", type: "text", value: (data.data.first_name || ""), required: "" })).add(
+                                                        $("<input>", { name: "action", value: "update", type: "hidden" }))).add(
+                                                    $("<div>", { class: "form-group col-xs-4" }).html(
+                                                        $("<label>", { for: "middleName", text: "Middle Name" }).add(
+                                                        $("<input>", { class: "form-control", id: "middleName", name: "middle_name", placeholder: "Middle Name", type: "text", value: (data.data.middle_name || "") })))).add(
+                                                    $("<div>", { class: "form-group col-xs-4" }).html(
+                                                        $("<label>", { for: "lastName", text: "Last Name " }).append(
+                                                            $("<span>", { class: "text-danger", text: "*"})).add(
+                                                        $("<input>", { class: "form-control", id: "lastName", name: "last_name", placeholder: "Last Name", type: "text", value: (data.data.last_name || "") }))))).add(
+                                                $("<div>", { class: "row" }).html(
+                                                    $("<div>", { class: "form-group col-xs-6" }).html(
+                                                        $("<label>", { for: "userRole", text: "Role " }).append(
+                                                            $("<span>", { class: "text-danger", text: "*"})).add(
+                                                        $("<select>", { class: "form-control", id: "userRole", name: "role", required: "" }).html(
+                                                            $("<option>", { value: "1", text: "USER (1)", selected: (data.data.level == 1 ? true : false ) }).add(
+                                                            $("<option>", { value: "2", text: "CLUSTER/REGIONAL DIRECTOR (2)", selected: (data.data.level == 2 ? true : false ) })).add(
+                                                            $("<option>", { value: "3", text: "AGENCY ADMIN (3)", selected: (data.data.level == 3 ? true : false ) })).add(
+                                                            $("<option>", { value: 4, text: "GEOSTORE ADMIN (4)", selected: (data.data.level == 4 ? true : false ) }))))).add(
+                                                    $("<div>", { class: "form-group col-xs-6" }).html(
+                                                        $("<label>", { for: "userEmail", text: "Email " }).append(
+                                                            $("<span>", { class: "text-danger", text: "*"})).add(
+                                                        $("<input>", { class: "form-control", id: "userEmail", name: "email", type: "email", required: "", value: (data.data.email || "") }))))))
+                                            )
+                                        ).add(
+                                            $("<div>", { class: "modal-footer" }).html(
+                                                $("<div>", { class: "row" }).html(
+                                                $("<div>", { class: "col-lg-4" }).html(
+                                                    $("<button>", { type: "button", "data-dismiss": "modal", class: "btn btn-block btn-default", text: "Cancel" })).add(
+                                                $("<div>", { class: "col-lg-4" }).html(
+                                                    $("<button>", { type: "button", class: "btn btn-block btn-danger", text: "Reset", id: "btn-reset" })).add(
+                                                $("<div>", { class: "col-lg-4" }).html(
+                                                    $("<button>", { type: "submit", class: "btn btn-block btn-success", text: " Save Changes" })))))))
+                                        )
+                                    ))
+                                )
+                            );
+                    $("#updateUserModal").modal({ show: true, backdrop: "static", keyboard: false }).on("shown.bs.modal", function (){
+                        $("#updateUserForm").submit(function (e) {
+                            $(this).find("button").prop("disabled", true);
+                            $(this).find("button:submit").prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+                        });
+                        $(this).find("input.form-control:first").focus();
+                    }).on("hidden.bs.modal", function (){
+                        $(this).remove();
+                    });
+                }
+            }
+        });
+    }
+
+    function disableUser(obj){
+        if(!$(obj).data("user-id")){
+            console.log("No user ID.");
+            return
+        }
+        var userID = $(obj).data("user-id");
+        $(obj).prop("disabled", true).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+        $.ajax({
+            url: "/api/v1/users/" + userID,
+            type: "POST",
+            data: {"action": "disable"},
+            dataType: "json",
+            success: function(data){
+                $(obj).prop("disabled", false).text(" Disable");
+                if(data){
+                    renderUserToTable(data.data);
+                }
+            }
+        });
+    }
+     function enableUser(obj){
+        if(!$(obj).data("user-id")){
+            console.log("No user ID.");
+            return
+        }
+        var userID = $(obj).data("user-id");
+        $(obj).prop("disabled", true).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+        $.ajax({
+            url: "/api/v1/users/" + userID,
+            type: "POST",
+            data: {"action": "enable"},
+            dataType: "json",
+            success: function(data){
+                $(obj).prop("disabled", false).text(" Disable");
+                if(data){
+                    renderUserToTable(data.data);
+                }
+            }
+        });
+    }
+    function approveUser(obj){
+        if(!$(obj).data("user-id")){
+            console.log("No user ID.");
+            return
+        }
+        var userID = $(obj).data("user-id");
+        $(obj).prop("disabled", true).prepend($("<i>", { class: "fa fa-fw fa-spin fa-circle-o-notch" }));
+        $.ajax({
+            url: "/api/v1/users/" + userID,
+            type: "POST",
+            data: {"action": "approve"},
+            dataType: "json",
+            success: function(data){
+                $(obj).prop("disabled", false).text(" Disable");
+                if(data){
+                    renderUserToTable(data.data);
+                }
+            }
+        });
+    }
+    function renderUserToTable(user){
+        var enableButton = $("<button>", { class: "btn btn-success btn-xs", type: "button", text: " Enable", "data-user-id": user.id, onclick: "enableUser(this);" }),
+        disableButton = $("<button>", { class: "btn btn-danger btn-xs", type: "button", text: " Disable", "data-user-id": user.id, onclick: "disableUser(this);" }), statusClass, tooltip, status = user.status.toUpperCase(),
+        approveButton = $("<button>", { class: "btn btn-success btn-xs", type: "button", text: " Approve", "data-user-id": user.id, onclick: "approveUser(this);" }), statusClass, tooltip, status = user.status.toUpperCase(),
+        updateButton = $("<button>", { class: "btn btn-primary btn-xs", type: "button", text: "Update", onclick: "updateUser(this);", "data-user-id": user.id });
+        if(status == 'PENDING'){
+            statusClass = "label-default";
+            tooltip = "Account has not been verified.";
+        }
+        else if(status == 'VERIFIED'){
+            statusClass = "label-info";
+            tooltip = "Account has been verified and awaiting approval.";
+        }
+        else if(status == 'APPROVED'){
+            statusClass = "label-success";
+            tooltip = "Account has been approved and is able to login.";
+        }
+        else if(status == 'INVITE'){
+            statusClass = "label-warning";
+            tooltip = "Account has not responded to the invitation.";
+        }
+        else{
+            statusClass = "label-danger";
+            tooltip = "Account has been disabled.";
+        }
+        if($("#" + user.id).length > 0){
+            $("#" + user.id).html($("<td>", { text: " " + [user.last_name, user.first_name].join(', ').toUpperCase() }).prepend($("<img>", { class: "navbar-avatar", src: "https://www.gravatar.com/avatar/"+user.email_md5+"?s=22"})).add($("<td>").text(user.email)).add($("<td>", { text: user.access_key})).add($("<td>").text(user.level)).add($("<td>").html($("<span>", { class: "label " + statusClass, text: status, rel: "tooltip", title: tooltip}))).add($("<td>").html($("<button>", { class: "btn btn-primary btn-xs", type: "button", text: "Update", onclick: "updateUser(this);", "data-user-id": user.id }).add((status == "DISABLED" ? enableButton : disableButton )).add((status == "VERIFIED" ? approveButton : '' )))));
+        }
+        else{
+            $("#users-table").children("tbody").append($("<tr>", { id: user.id }).html($("<td>", { text: " " + [user.last_name, user.first_name].join(', ').toUpperCase() }).prepend($("<img>", { class: "navbar-avatar", src: "https://www.gravatar.com/avatar/"+user.email_md5+"?s=22"})).add($("<td>").text(user.email)).add($("<td>", { text: user.access_key})).add($("<td>").text(user.level)).add($("<td>").html($("<span>", { class: "label " + statusClass, text: status, rel: "tooltip", title: tooltip}))).add($("<td>").html((status == "VERIFIED" ? approveButton : updateButton ).add((status == "DISABLED" ? enableButton : disableButton ))))));
+        }
+
+        $("[rel=tooltip]").tooltip();
+    }
+    // Function to search user(s) by email address, first, middle, and last name. Queries the backend for results.
+    function searchUser(str) {
+        $.getJSON('/api/v1/users?search=' + str, function(data) {
+            console.log('searchUser', str, data);
+            $('#searchTextInput').val('').removeAttr('readonly');
+            $('#searchUser button.btn-inverse').text('Search').removeAttr('disabled');
+            $('#users-table tbody').empty();
+            for(var i = 0; data.data.length; i++) {
+                var user = data.data[i];
+                renderUserToTable(user);
+            }
+        });
+    }
+    // Form trigger to search user.
+    $('#searchUser').on('submit', function(e) {
+        e.preventDefault();
+        var value = $('#searchTextInput').val();
+        searchUser(value);
+    });
+    $('body').on('keyup', '#firstName, #lastName', function() {
+        var checkInputs = $('#firstName, #lastName');
+        var valid = true;
+        var check = /^[A-Za-z\s]+$/;
+        for(var i = 0; i < checkInputs.length; i++) {
+            if(!check.test(checkInputs[i].value)) {
+                valid = false;
+            }
+        }
+        (valid) ?
+            $('div.modal-footer button.btn-success').removeAttr('disabled'):
+            $('div.modal-footer button.btn-success').attr('disabled', '');
+    });
+    // Load more users when at the bottom of the page. a.k.a. Infinite scroll
+    $(window).scroll(function() {
+        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+            console.log('Reached bottom of page. Loading more users...');
+            loadMoreUsers();
+        }
+    });
+    // Event when updating user email. Check first if email already exist.
+    $('body').on('keyup', '.modal #userEmail', function() {
+        $('div.modal-footer button.btn-success').attr('disabled', '');
+        var email = $(this).val();
+        $.getJSON('/api/v1/users?check_email=' + email, function(data) {
+            (email && (!data.exist || email == currentUserUpdating.email)) ?
+                $('div.modal-footer button.btn-success').removeAttr('disabled'):
+                $('div.modal-footer button.btn-success').attr('disabled', '');
+        });
+    });
+    // Reset the current values to the data that was on the update form fields.
+    $('body').on('click', '#btn-reset', function() {
+        $('#firstName').val(currentUserUpdating.first_name);
+        $('#middleName').val(currentUserUpdating.middle_name);
+        $('#lastName').val(currentUserUpdating.last_name);
+        $('#userRole').val(currentUserUpdating.role);
+        $('#userEmail').val(currentUserUpdating.email);
+    });
+</script>
+{% endblock %}

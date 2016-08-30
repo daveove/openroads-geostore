@@ -1,0 +1,435 @@
+{% extends 'index.html' %}
+
+{% block title %}Dataset | Geostore{% endblock %}
+{% block style %}
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dropzone.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/bootstrap-datepicker.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/swipebox.css">
+	<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+{% endblock %}
+{% block content %}
+{% include '2.0/navigation.html' %}
+<div class="container">
+	<a href="/projects/{{ program }}/{{ code }}" class="back-to-main-btn"><i class="glyphicon glyphicon-chevron-left"></i> back to main project</a>
+	<ol class="breadcrumb">
+		<li><a href="/">Geostore</a></li>
+		<li><a href="/projects">Dashboard</a></li>
+		<li><a href="/projects/{{ program }}">{{ program.upper() }}</a></li>
+		<li><a href="/projects/{{ program }}/{{ code }}">{{ code.upper() }}</a></li>
+		{% if report %}
+		<li><a href="/projects/{{ program }}/{{ code }}/dataset/{{ dataset }}" class="active">{{ report.upper() }}</a></li>
+		{% endif %}
+		{% if subproject %}
+		<li><a href="/projects/{{ program }}/{{ code }}/subproject/{{ subproject }}" class="active">{{ subproject.upper() }}</a></li>
+		{% endif %}
+		{% if report2 %}
+		<li><a href="/projects/{{ program }}/{{ code }}/subproject/{{ subproject }}/dataset/{{ dataset }}" class="active">{{ dataset }}</a></li>
+		{% endif %}
+	</ol>
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 p0">
+	{% if updated %}
+        <div class="alert alert-success"><strong>Success!</strong> The Dataset has been successfully updated!</div>
+	{% endif %}
+		<div class="alert alert-info">To upload files to this dataset, you must fill up the <strong>Data Collectors</strong> textbox. This allows other people to identify who uploaded the file(s).</div>
+    </div>
+	<h3><i class="glyphicon glyphicon-info-sign h3-icon"></i> Dataset Details {% if project_id %}<a class="btn btn-success" href="/viewer?project_id={{ project_id }}">View on Map</a>{% endif %}
+
+        <small>
+            <div id="dataset_environment" style="display: none;">
+                <span><em>Workspace:</em></span> <a href="#" class="label label-success" id="environment_title"></a> <span class="label label-info" id="environment_status"></span>
+            </div>
+        </small>
+
+
+    </h3>
+
+	<form method="post">
+		<div class="col-md-8">
+			<div class="row">
+                <div id="environment_picker">
+    				<div class="col-md-12"><h4 class="background"><span>Workspace</span></h4></div>
+    				<div class="col-xs-6">
+    					<div class="form-group">
+    						<select name="environment_key" class="form-control">
+    						</select>
+    					</div>
+    				</div>
+                </div>
+				<div class="col-md-12"><h4 class="background"><span>Main Details</span></h4></div>
+				{% if subproject %}
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label>Subproject Code</label>
+						<input type="text" name="subproject-code" class="form-control" readonly="" value="{{ subproject.upper() }}">
+						<input type="hidden" name="project-code" value="{{ code.upper() }}">
+					</div>
+				</div>
+				{% else %}
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label>Project Code</label>
+						<input type="text" name="project-code" class="form-control" readonly="" value="{{ code.upper() }}">
+					</div>
+				</div>
+				{% endif %}
+				<div class="col-xs-6">
+					<div class="form-group">
+						<label>Title</label>
+						<input type="text" name="title" class="form-control" placeholder="Enter title here...">
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" rows="6" name="description"></textarea>
+					</div>
+				</div>
+				{% if not report and not report2 %}
+				<div class="col-md-offset-9 col-md-3">
+					<input type="submit" class="btn btn-block btn-success" style="margin-top: 25px;" value="Continue" disabled="">
+				</div>
+				{% else %}
+				<div class="col-xs-12">
+					<div class="form-group">
+						<label>Data Collectors</label>
+						<textarea class="form-control" name="data-collectors" rows="6" autofocus></textarea>
+					</div>
+				</div>
+				<div class="dropzone-container" style="display: none;">
+					<div class="col-md-12"><h4 class="background"><span>Upload Pictures & KML Files</span></h4></div>
+                    <div class="col-md-12">
+                        <div class="alert alert-warning">
+                            <strong>Important!</strong>
+                            <div>Access Road KML - Filename should start with "ACCESS-". Example "ACCESS-PRDP-XXXX-XXXX.kml"</div>
+                            <div>Project Road KML - Filename should start with "PROJECT-". Example "PROJECT-PRDP-XXXX-XXXX.kml"</div>
+                        </div>
+                    </div>
+					<div class="col-xs-12">
+						<div class="dropzone" id="dropzone-1">
+							<div class="dz-message">Click or Drop Image & KML Files here to upload</div>
+						</div>
+					</div>
+					<div class="col-md-12"><h4 class="background"><span>Upload Audit Report, Special Findings, Observations, and Other Files</span></h4></div>
+					<div class="col-xs-12">
+						<div class="dropzone" id="dropzone-2">
+							<div class="dz-message">Click or Drop Special Findings Images here to upload</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<div class="col-md-4" id="dashboard-sidebar">
+			{% if report or report2 %}
+			<h4 class="background"><span>Files</span></h4>
+			<ul class="nav nav-pills">
+				<li class="active"><a href="#" id="photos-tab">Photos</a></li>
+				<li><a href="#" id="kml-tab">KML</a></li>
+				<li><a href="#" id="files-tab">Special Findings & Other Files</a></li>
+			</ul>
+			<div id="dashboard-tab-contents">
+				<div id="dataset-photos"></div>
+				<div id="dataset-kmls" class="hidden">
+					<ul class="list-unstyled"></ul>
+				</div>
+				<div id="dataset-files" class="hidden"></div>
+			</div>
+			{% endif %}
+			{% if report or report2 %}
+			<div class="form-group">
+				<input type="submit" class="btn btn-block btn-success" style="margin-top: 25px;" value="Update">
+			</div>
+			<input type="hidden" name="data">
+
+            <div id="red-flags-wrapper">
+            </div>
+			{% endif %}
+		</div>
+
+		<div class="col-md-4">
+			<!-- <a href="#" class="flag-this"><i class="fa fa-flag"></i> Flag this Dataset</a> -->
+
+		</div>
+
+		<input type="hidden" name="code" value="{{ dataset }}">
+		<input type="hidden" name="dataset-id">
+		<input type="hidden" name="project-id">
+		{% if subproject %}
+		<input type="hidden" name="subproject-id">
+		{% endif %}
+	</form>
+</div>
+
+<div class="container">
+    <h4 id="audit-logs-click-to-view">Audit Logs <small>Click to view</small></h4>
+
+    <div id="content-logs-container">
+    </div>
+
+    <div id="dataset-logs-container">
+    </div>
+<br />
+<br />
+<br />
+<br />
+    
+</div>
+{% endblock %}
+{% block script %}
+
+<script type="text/template" id="template-log">
+    <div class='log-item'>
+        <span class='log-type'>%%type%%</span> 
+        <span class='log-operation label label-%%label_class%%'>%%operation%%</span> 
+        <span class='log-username'>by %%username%%</span> 
+        <span class='log-time'>on %%time%%</span>
+        <br />
+        <br />
+        <span class="log-details">%%details%%</span>
+    </div>
+</script>
+
+<script type="text/javascript" src="/js/2.0/dropzone.min.js"></script>
+<script type="text/javascript" src="/js/2.0/swipebox-for-datasets.js?v={{ v }}"></script>
+<script type="text/javascript" src="/js/2.0/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="/js/2.0/dashboard.js?v={{ v }}"></script>
+<script type="text/javascript" src="/js/2.0/dashboard.item.events.js"></script>
+<script type="text/javascript" src="/js/2.0/moment.min.js"></script>
+<script type="text/javascript" src="/js/spin.min.js?v={{ v }}"></script>
+<script type="text/javascript" src="/js/2.0/jszip.min.js?v={{ v }}"></script>
+<script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
+<script type="text/javascript">
+	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
+</script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-72730623-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $("body").on('change', '#swipebox-permission input[type=radio]', function(){
+            // do a check here if it's different from the original permission before making the change.
+            var new_permission = $(this).filter(':checked').val();
+            var data_id = $(this).data('data_id');
+
+            if(new_permission != window.data_objects[data_id].permission){
+                // save
+                var post_data = {};
+                post_data['target'] = 'DATA';
+                post_data['id'] = data_id;
+                post_data['permission'] = new_permission;
+
+                var that = $(this);
+
+                $('body').spin("modal");
+
+                $.post('/api/v1/permissions', post_data, function(data){
+                    // update the  current one.
+                    window.data_objects[data_id].permission = new_permission;
+                    $('body').spin("modal");
+                }).fail(function() {
+                    // revert
+                    if(new_permission == 'PUBLIC'){
+                        // revert back to private
+                        $('#permission_public').prop('checked', false);
+                        $('#permission_private').prop('checked', true);
+                    }
+                    else {
+                        // revert back to public
+                        $('#permission_public').prop('checked', true);
+                        $('#permission_private').prop('checked', false);
+                    }
+                    $('body').spin("modal");
+                });
+            }
+            console.log(new_permission);
+            console.log(data_id);
+            $(this).blur();
+        });
+
+        console.log('hello');
+    });
+
+	var config = {
+		'program': '{{ program }}',
+		'code': '{{ code }}',
+		'dataset': '{{ dataset }}',
+		'loaded': {},
+		'api': 'https://open-data-network.appspot.com/api/v1/data?callback=?',
+		'subproject': '{{ subproject }}',
+		'url': '{{ app_url }}',
+		'files': [],
+		'last_kml': 1,
+	};
+	$('.swipebox').swipebox({
+        hideBarsDelay : 300000000,
+    });
+	$('input[name*="-date"]').datepicker();
+	Dropzone.autoDiscover = false;
+	dropzone_url = "/upload/{{ program }}/{{ code }}/{{ dataset }}";
+	if(config.subproject) {
+		dropzone_url = "/upload/{{ program }}/{{ code }}/{{ subproject }}/{{ dataset }}";
+	}
+
+	// DROPZONE EVENTS
+    {% if not existing_dataset %}
+    get_environments();
+    {% endif %}
+	{% if subproject and dataset or dataset %}
+	get_dataset(config.program, config.code, config.dataset, config.subproject);
+    var dropzone_1 = new Dropzone("#dropzone-1", { url: dropzone_url});
+    var dropzone_2 = new Dropzone("#dropzone-2", { url: dropzone_url + "?special=1"});
+	dropzone_1.on('sending', function(file, xhr, formData) {
+		formData.append('data-collectors', $('textarea[name=data-collectors]').val());
+		formData.append('project-id', $('input[name=project-id]').val());
+
+        formData.append('last_modified_date', (file.lastModifiedDate.getTime() / 1000));
+
+		formData.append('dataset-id', config.loaded.id);
+		if(config.subproject) {
+			formData.append('subproject', '1');
+			formData.append('subproject-id', $('textarea[name=subproject-id]').val());
+		}
+		if(endsWith(file.name, '.kmz') || endsWith(file.name, '.kml')) {
+			config.last_kml > 1 ? formData.append('kml', config.last_kml + 1) : formData.append('kml', config.last_kml);
+		}
+		config.last_kml++;
+	});
+	dropzone_2.on('sending', function(file, xhr, formData) {
+		if(config.files.indexOf(file.name) != -1) {
+			if(!(confirm('Filename already exist: "' + file.name + '". Do you want to continue?'))) {
+				dropzone_2.removeFile(file);
+				return;
+			}
+		}
+		formData.append('data-collectors', $('textarea[name=data-collectors]').val());
+		formData.append('project-id', $('input[name=project-id]').val());
+
+        formData.append('last_modified_date', (file.lastModifiedDate.getTime() / 1000));
+
+		formData.append('dataset-id', config.loaded.id);
+		if(config.subproject) {
+			formData.append('subproject', '1');
+			formData.append('subproject-id', $('input[name=subproject-id]').val());
+		}
+	});
+	dropzone_2.on('success', function(file) {
+		config.files.push(file.name);
+	});
+	{% else %}
+	{% if report %}
+		get_dataset(config.program, config.code, config.dataset);
+	{% endif %}
+	{% endif %}
+</script>
+
+<script type="text/javascript">
+
+    function toTitleCase(str)
+    {
+        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }
+
+    function convert_json_to_normal(json_object){
+        var normal_strings = [];
+        for(var key in json_object){
+            if(json_object[key] !== null && typeof json_object[key] === 'object'){
+                normal_strings.push(convert_json_to_normal(json_object[key]));
+            }
+            else {
+                normal_strings.push(toTitleCase(key).replace('/_/g', ' ') + ': ' + json_object[key]);
+            }
+        }
+        return normal_strings.join('<br />');
+    }
+
+
+    function set_to_loading(){
+        $("#content-logs-container").html("Loading...");
+    }
+
+
+    function pull_audit_logs(){
+        set_to_loading();
+
+        // get contents
+        var url = '/api/v1/logs?dataset_code={{ dataset }}';
+        $.getJSON(url, function(data){
+            if(data){
+                console.log('logs', data);
+                var logs = data.data;
+
+                var html = '';
+
+                for(var i=0; i<logs.length; i++){
+                    template = $('#template-log').html();
+                    template = template.replace('%%username%%', logs[i].username);
+                    template = template.replace('%%operation%%', logs[i].operation);
+                    template = template.replace('%%type%%', logs[i].details.type);
+                    template = template.replace('%%time%%', logs[i].created);
+
+                    template = template.replace('%%details%%', convert_json_to_normal(logs[i].details));
+
+                    if(logs[i].operation == 'CREATED'){
+                        template = template.replace('%%label_class%%', 'success');
+                    }
+                    else {
+                        template = template.replace('%%label_class%%', 'info');
+                    }
+
+                    html += template;
+                }
+
+                $("#content-logs-container").html(html);
+            }
+        });
+
+        // get dataset changes
+        url2 = '/api/v1/logs?code={{ dataset }}';
+        $.getJSON(url2, function(data){
+            if(data){
+                console.log('logs 2', data);
+                var logs = data.data;
+
+                var html = '';
+
+                for(var i=0; i<logs.length; i++){
+                    template = $('#template-log').html();
+                    template = template.replace('%%username%%', logs[i].username);
+                    template = template.replace('%%operation%%', logs[i].operation);
+                    template = template.replace('%%type%%', logs[i].details.type);
+                    template = template.replace('%%time%%', logs[i].created);
+
+                    template = template.replace('%%details%%', convert_json_to_normal(logs[i].details));
+
+                    if(logs[i].operation == 'CREATED'){
+                        template = template.replace('%%label_class%%', 'success');
+                    }
+                    else {
+                        template = template.replace('%%label_class%%', 'info');
+                    }
+
+                    html += template;
+                }
+
+                $("#dataset-logs-container").html(html);
+            }
+        });
+    }
+
+
+    $(document).ready(function(){
+        $("#audit-logs-click-to-view").on('click', function(){
+            pull_audit_logs();
+        });
+    });
+</script>
+
+{% endblock %}

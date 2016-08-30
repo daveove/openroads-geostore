@@ -1,0 +1,113 @@
+
+body {
+	font-family: 'roboto', sans-serif;
+	color: #1b1e24;
+}
+
+section{
+	padding: 100px 0;
+    padding-top: 0px;
+}
+
+hr{
+	color: black;
+    margin-top: 30px;
+    background-color: black;
+    height: 1px;
+    width: 106px;
+    border: 0;
+}
+
+
+h1{
+	font-weight: bold;
+	font-size: 60px;
+}
+
+h2{
+	font-weight: bold;
+	font-size: 28px;
+}
+
+h3{
+	font-weight: regular;
+	font-size: 18px;
+}
+
+p{
+	font-weight: regular;
+	font-size: 14px;
+}
+
+
+
+
+/* PRESETS*/
+.center{
+	text-align: center;
+}
+.center-vertical{
+	top:50%;
+	transform: translateY(-50%);
+}
+
+
+.mt10{margin-top: 10px;}
+.mt20{margin-top: 20px;}
+.mt30{margin-top: 30px;}
+.mt40{margin-top: 40px;}
+.mt50{margin-top: 50px;}
+.mt60{margin-top: 60px;}
+.mt70{margin-top: 70px;}
+.mt80{margin-top: 80px;}
+.mt90{margin-top: 90px;}
+.mt100{margin-top: 100px;}
+.mt110{margin-top: 110px;}
+.mt120{margin-top: 120px;}
+.mt130{margin-top: 130px;}
+.mt140{margin-top: 140px;}
+.mt150{margin-top: 150px;}
+
+.color-blue{
+	color:#195084;
+}
+.color-green{
+	color:#59b248;
+}
+.color-orange{
+	color:#f4773b;
+}
+
+
+
+/*
+OVERRIDE*/
+h2{
+	margin-bottom: 0;
+}
+p{
+	margin-bottom: 20px;
+}
+
+
+.project{
+	min-height: 110px;
+}
+.parent{
+	position: relative;
+}
+
+
+.logo{
+	text-align: right;
+	top:50%;
+	transform: translateY(-50%);
+}
+
+.description{
+	text-align: left;
+
+	top:50%;
+	transform: translateY(-50%);
+}
+
