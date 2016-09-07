@@ -13,7 +13,6 @@ class LoginHandler(BaseHandler):
         """
             Handles the /login endpoint
         """
-        logging.debug('HELLO')
         if self.user:
             self.redirect("/viewer")
         else:

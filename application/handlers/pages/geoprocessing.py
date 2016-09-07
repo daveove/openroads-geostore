@@ -38,7 +38,7 @@ class GeoprocessingDashboardHandler(BaseHandler):
         else:
             with gcs.open(filename) as f:
                 self.tv['projects'] = f.read()
-        logging.debug(self.tv['projects'])
+        # logging.debug(self.tv['projects'])
         self.render('geoprocessing/geoprocessing-dashboard.html')
 
 

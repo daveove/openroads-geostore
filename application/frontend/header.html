@@ -1,56 +1,52 @@
-
-<div class="fluid-container">
-    <section>
-        <nav class="navbar navbar-default" id="firstrow-nav">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="/"> <img src="/images/geostore-logo.png" alt="COA Geostore"></a>
-                    </div>
-
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                        {% if user %}
-                        {% if user.level == 4 %}
-                            <li class="agency{% if page_agencies %} active-1{% endif %}"><a href="/agencies">Agencies</a></li>
-                        {% endif %}
-                        {% if user.level == 3 or user.level == 4 %}
-                            <li class="program{% if page_programs %} active-1{% endif %}"><a href="/programs">Programs</a></li>
-                        {% endif %}
-                        {% if user.level >= 1 %}
-                            <li class="dashboard{% if page_dashboard %} active-1{% endif %}"><a href="/projects/all">Projects</a></li>
-                            <li class="viewer"><a href="/viewer">Viewer</a></li>
-                            <!-- <li class="geoprocessing{% if page_geoprocessing %} active-1{% endif %}"><a href="/geoprocessing/dashboard">Geoprocessing</a></li> -->
-                            <li class="environments{% if page_environments %} active-1{% endif %}"><a href="/workspace?current_workspace=all">Workspaces</a></li>
-                        {% endif %}
-                        {% if user.level == 2 %}
-                            <li class="user_groups{% if page_user_groups %} active-1{% endif %}"><a href="/groups">User Groups</a></li>
-                        {% endif %}
-                        {% if user.level == 4 %}
-                            <li><a href="/geoprocessing/dashboard">Geoprocessing Dashboard</a></li>
-                            <li><a href="/dashboard">User Management</a></li>
-                            <!-- <li><a href="/users/registration">User Registrations</a></li> -->
-                        {% endif %}
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                        {% endif %}
-                        {% if user %}
-                            <li> <p> {{ user.name }} ({{ role }}) </p> </li>
-                            <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
-                            {% else %}
-                            <li class="{% if page_register %}active{% endif %}"><a href="/register">Register</a></li>
-                            <li class="{% if page_login %}active{% endif %}"><a href="/login">Login</a></li>
-                        {% endif %}
-                        </ul>
-                    </div>
-                </div>
+<nav class="navbar navbar-default" id="firstrow-nav">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"> <img src="/images/geostore-logo.png" alt="COA Geostore"></a>
             </div>
-        </nav>
-    </section>
-</div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                {% if user %}
+                    <li class="viewer"><a href="/viewer">Viewer</a></li>
+                    <li><a href="/geoprocessing/dashboard">Geoprocessing</a></li>
+                    <li><a href="/statistics">Statistics</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            {% if user.level == 4 %}
+                            <li><a href="/agencies">Agencies</a></li>
+                            {% endif %}
+                            {% if user.level == 3 or user.level == 4 %}
+                            <li><a href="/programs">Programs</a></li>
+                            {% endif %}
+                            {% if user.level >= 1 %}
+                            <li><a href="/projects/all">Projects</a></li>
+                            <li><a href="/workspace?current_workspace=all">Workspaces</a></li>
+                            {% endif %}
+                            {% if user.level == 4 %}
+                            <li><a href="/dashboard">Users</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                {% endif %}
+                {% if user %}
+                    <li> <p> {{ user.name }} ({{ role }}) </p> </li>
+                    <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                    {% else %}
+                    <li class="{% if page_register %}active{% endif %}"><a href="/register">Register</a></li>
+                    <li class="{% if page_login %}active{% endif %}"><a href="/login">Login</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

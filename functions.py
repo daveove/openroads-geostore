@@ -1107,7 +1107,7 @@ def find_between_r(s, first, last):
 def compute_kml_length(kml_id):
     kml_id = normalize_id(kml_id)
     kml = APIData.get_by_id(kml_id)
-    location = kml.file_url.replace("https://storage.googleapis.com", '')
+    location = urllib.unquote(kml.file_url).replace("https://storage.googleapis.com", '')
     location = location.replace("http://storage.googleapis.com", '')
     response = {}
     try:
@@ -1125,7 +1125,7 @@ def compute_kml_length(kml_id):
     for points in response['points']:
         p = 0
         for i in range(1, len(points)):
-            p += get_distance_in_km(points[i-1], points[i])
+            p += get_distance_in_km(points[i - 1], points[i])
         response['length'].append(p)
     return response
 

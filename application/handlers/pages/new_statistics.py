@@ -34,14 +34,31 @@ class NewStatisticsDashboard(BaseHandler):
                     response['message'] = ('Please refresh this page within 1-'
                                            '2 minutes to check if the statisti'
                                            'cs has been generated.')
-                    self.response.write(json.dumps(response))
+                    logging.debug(response)
+                    self.render('new-statistics-summary-dashboard-generating.html')
                 return
             else:
                 taskqueue.add(url='/statistics/generate')
-                self.response.write(json.dumps({'done': False, 'generating': True}))
+                response = {}
+                response['done'] = False
+                response['generating'] = True
+                response['message'] = ('Please refresh this page within 1-'
+                                       '2 minutes to check if the statisti'
+                                       'cs has been generated.')
+                logging.debug(response)
+                self.render('new-statistics-summary-dashboard-generating.html')
+            return
         else:
             taskqueue.add(url='/statistics/generate')
-            self.response.write(json.dumps({'done': False, 'generating': True}))
+            response = {}
+            response['done'] = False
+            response['generating'] = True
+            response['message'] = ('Please refresh this page within 1-'
+                                   '2 minutes to check if the statisti'
+                                   'cs has been generated.')
+            logging.debug(response)
+            self.render('new-statistics-summary-dashboard-generating.html')
+        return
         # self.tv['statistics'] = json.dumps({
         #     'coa_projects_geoprocessed': memcache.get('statistics_coa_projects_geoprocessed'),
         #     'prdp_projects_geoprocessed': memcache.get('statistics_prdp_projects_geoprocessed'),

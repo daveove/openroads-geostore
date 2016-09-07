@@ -1,1 +1,4 @@
 cron:
+- description: generate statistics
+  url: /statistics/generate
+  schedule: every day 18:00
