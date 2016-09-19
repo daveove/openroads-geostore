@@ -1,9 +1,26 @@
 {% extends 'index.html' %}
 {% block style %}
-	<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
-	<link rel="stylesheet" type="text/css" href="/css/2.0/flatty.css">
-	<link rel="stylesheet" type="text/css" href="/css/2.0/dataTables.bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/2.0/dashboard.css">
+<link rel="stylesheet" type="text/css" href="/css/2.0/flatty.css">
+<link rel="stylesheet" type="text/css" href="/css/2.0/dataTables.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.3/css/selectize.default.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.1.0/css/buttons.bootstrap.min.css">
+<style type="text/css">
+#program-filter-container {
+	margin-left: 20px;
+	position: relative;
+	font-size: 12px;
+}
+#program-filter {
+	width: 400px;
+	position: absolute;
+	top: 6px;
+	left: 0;
+}
+.selectize-input {
+	border-radius: 0;
+}
+</style>
 {% endblock %}
 {% block content %}
 {% include '2.0/navigation.html' %}
@@ -15,6 +32,12 @@
 	</ol>
 	<h3>
 		<i class="glyphicon glyphicon-list-alt h3-icon"></i> Projects
+		<span id="program-filter-container">
+			<div id="program-filter">
+				<label>Filter by Program</label>
+				<select></select>
+			</div>
+		</span>
 		{% if program != 'all' %}
 		{% if program == 'coa' %}
 		<a href="/projects/{{ program }}/new" class="btn btn-success btn-sm pull-right">Add Project under COA CPA</a>
@@ -53,6 +76,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.3/js/standalone/selectize.min.js"></script>
 <script src="https://cdn.ravenjs.com/3.0.4/raven.min.js"></script>
 <script type="text/javascript">
 	Raven.config('https://40dee6edeb0548f99e483cf64b74a5c1@app.getsentry.com/77892').install()
@@ -74,8 +98,41 @@
 		'url': '{{ app_url }}/api/v1/data?callback=?&type=PROJECT&n=100',
 		'db': {{ projects|safe }},
 	};
+	var programs = {{ programs|safe }};
 	var table;
+	var $programs;
+	var $filter = [];
+	for(var i = 0; i < programs.length; i++) {
+		programs[i].value = programs[i].agency.name + ' (' + programs[i].name + ')';
+	}
 	$(document).ready(function() {
+		$programs = $('#program-filter > select').selectize({
+			persist: false,
+			maxItems: null,
+			valueField: 'value',
+			labelField: 'agency.name',
+			searchField: ['name', 'agency.name'],
+			options: programs,
+			render: {
+				item: function(item, escape) {
+					return '<div>' +
+						'<span>' + escape(item.agency.name) + ' (' + escape(item.name) + ')</span>' +
+					'</div>';
+				},
+				option: function(item, escape) {
+					var label = item.agency.name || item.name;
+		            var caption = item.agency.name ? item.name : null;
+		            return '<div>' +
+		                (caption ? '<div class="text-primary">' + escape(caption) + '</div>' : '') +
+		                '<small>' + escape(label) + '</small>' +
+		            '</div>';
+				}
+			}
+		});
+		$programs.on('change', function(a) {
+			$filter = a.target.selectize.getValue();
+			render_table();
+		});
 		table = $('#table_id').DataTable({
 			'pageLength': 100,
 			'autoWidth': false,
@@ -96,19 +153,28 @@
 	            }
 	        ],
 		});
-		for (x in config.db){
-			var row = []
-			row.push(x);
-			row.push(config.db[x].title);
-			row.push(config.db[x].location);
-			row.push(config.db[x].agency + ' (' + config.db[x].program + ')');
-			row.push(parseInt(config.db[x].has_data) ? 'YES': 'NO');
-			row.push('<div style="width: 141px;"><a href="/projects/' + config.db[x].program  + '/' + x + '" class="btn btn-xs btn-success">Update</a> <a href="/viewer?project_id=' + x + '" class="btn btn-xs btn-success">View on Map</a></div>');
-			table.row.add(row);
+		function render_table() {
+			table.clear();
+			for (x in config.db){
+				var program = config.db[x].agency + ' (' + config.db[x].program + ')';
+				if($filter.length) {
+					if($filter.indexOf(program) == -1) {
+						continue;
+					}
+				}
+				var row = []
+				row.push(x);
+				row.push(config.db[x].title);
+				row.push(config.db[x].location);
+				row.push(program);
+				row.push(parseInt(config.db[x].has_data) ? 'YES': 'NO');
+				row.push('<div style="width: 141px;"><a href="/projects/' + config.db[x].program  + '/' + x + '" class="btn btn-xs btn-success">Update</a> <a href="/viewer?project_id=' + x + '" class="btn btn-xs btn-success">View on Map</a></div>');
+				table.row.add(row);
+			}
+			table.draw();
 		}
-		table.draw();
+		render_table();
 		get_projects(config.program);
-		console.log(JSON.parse(localStorage.getItem('projects_database')));
 	});
 </script>
 {% endblock %}

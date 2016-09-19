@@ -9,6 +9,7 @@ from functions import (code_to_project_id, generate_parameter_tags,
 from application.handlers.base import BaseHandler
 from application.models.environment import Environment
 from application.models.agency import Agency
+from application.models.program import Program
 
 
 class ProjectDashboardHandler(BaseHandler):
@@ -86,6 +87,12 @@ class ProjectDashboardHandler(BaseHandler):
                 return
             with open('projects-new-dict.json', 'rb') as f:
                 self.tv['projects'] = json.dumps(json.loads(f.read()))
+            query = Program.query()
+            results = query.fetch()
+            self.tv['programs'] = []
+            for result in results:
+                self.tv['programs'].append(result.to_api_object())
+            self.tv['programs'] = json.dumps(self.tv['programs'])
             self.render('2.0/list.html')
         else:
             self.redirect('/projects/all')
