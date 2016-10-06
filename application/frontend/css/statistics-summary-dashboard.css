@@ -5,6 +5,17 @@ html, body {
 section:not(:first-child) {
     margin-top: 25px;
 }
+section.section {
+    margin: 75px 0;
+    border-top: 1px solid #ccc;
+    padding: 75px 0;
+}
+/*section:nth-child(even):not(:nth-child(2)) {
+    background-color: rgba(0, 0, 0, 0.25);
+    margin: 50px 0;
+    border-top: 1px solid #ccc;
+    padding: 50px 0;
+}*/
 .table-heading {
     background: #000;
     color: #fff;
@@ -15,7 +26,8 @@ section:not(:first-child) {
 #placeholder {
     height: 500px;
 }
-.graph-first, .graph-second {
+.graph-first, .graph-second, .graph-third {
+    margin-top: 50px;
     height: 250px;
 }
 #statistics-table > thead > tr > th {
@@ -51,4 +63,70 @@ th {
 }
 .legend > table td:nth-child(even) {
     padding-left: 4px;
+}
+#firstrow-nav {
+    background-color: #111111 !important;
+    border-radius: 0px;
+    margin: 0px;
+    /*min-height: 40px!important;*/
+}
+
+#firstrow-nav .navbar-nav>li {
+    border-right: 3px solid;
+    color: #1e1e1e;
+    /*height: 40px!important;*/
+}
+
+#firstrow-nav .navbar-nav>li>a {
+    padding-top: 14px;
+    color: #fff;
+}
+
+#firstrow-nav .navbar-brand img {
+    width:100px!important;
+    height:auto!important;
+    margin-top: -5px;
+}
+
+#firstrow-nav .navbar-nav>li>a:hover {
+    color: #fff;
+    /*transition: .3s ease-in;*/
+    /*height: 40px!important;*/
+}
+
+#firstrow-nav .navbar-nav .active-1 a{
+    height: 40px!important;
+}
+
+#firstrow-nav .navbar-nav li>p {
+    color: #fff;
+    padding: 0 14px;
+}
+
+.navbar-default .navbar-nav>.open>a,
+.navbar-default .navbar-nav>.open>a:focus,
+.navbar-default .navbar-nav>.open>a:hover {
+    background-color: #1e1e1e;
+    color: #fff;
+    /*transition: .3s ease-in;*/
+}
+
+#firstrow-nav .navbar-toggle {
+    margin-top: 19px;
+}
+
+#firstrow-nav .navbar-header {
+    height: 40px!important;
+}
+.navbar-default .navbar-nav .open .dropdown-menu>li>a:hover {
+    color: #fff !important;
+}
+
+#statistics-table > tbody > tr:last-child,
+#geotag-table > tbody > tr:last-child,
+#geoprocess-table > tbody > tr:last-child,
+#images-table > tbody > tr:last-child {
+    border-top: 3px solid #333;
+    font-size: 1.35em;
+    font-weight: bold;
 }

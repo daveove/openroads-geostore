@@ -39,7 +39,7 @@
                 <ul class="nav navbar-nav navbar-right">
                 {% endif %}
                 {% if user %}
-                    <li> <p> {{ user.name }} ({{ role }}) </p> </li>
+                    <li> <p class="navbar-text"> {{ user.name }} ({{ role }}) </p> </li>
                     <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                     {% else %}
                     <li class="{% if page_register %}active{% endif %}"><a href="/register">Register</a></li>

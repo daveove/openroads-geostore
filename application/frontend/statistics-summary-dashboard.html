@@ -781,14 +781,42 @@
         }
         var v = []
         var p = ['prdp', 'bub', 'gaa', 'trip']
-        for(var i = 0; i < 4; i++) {
+        for(var i = 0; i < p.length; i++) {
             var t = [];
             for (var j = 0; j < statistics[p[i] + '_projects']; j++) {
                 t.push([j, statistics[p[i] + '_geotag_images']]);
             }
-            v.push(t);
+            v.push({label: i.toUpperCase(), data: t});
         }
+        console.log(v);
         $.plot("#placeholder", v);
+        /*
+        function fillHistogram() {
+            var year = $('#select_year').val();
+            var data = {}
+            var lines = [];
+            for(var x in statistics) {
+                if(!(year in statistics[x])) {
+                    continue;
+                }
+                var keys = Object.keys(statistics[x]).length;
+                if(keys == 3) {
+                    continue;
+                }
+                var tmp = [];
+                data[x] = [];
+                for(var y in statistics[x][year].geoprocessed_projects_details) {
+                    data[x].push(statistics[x][year].geoprocessed_projects_details[y]);
+                }
+                data[x].sort(function(a,b){return a - b});
+                for(var i = 0; i < data[x].length; i++) {
+                    tmp.push([i, data[x][i]]);
+                }
+                lines.push({label: x, data: tmp, hoverable: true});
+            }
+            $.plot('#placeholder', lines);
+        }
+        */
     </script>
 </body>
 </html>

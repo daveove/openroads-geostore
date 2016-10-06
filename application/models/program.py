@@ -22,5 +22,7 @@ class Program(SysLog):
         data['updated'] = self.updated.strftime("%b %d, %Y %I:%M:%S %p")
         data['agency'] = Agency.get_by_id(self.agency).to_api_object()
         if self.user:
-            data['user'] = self.user.get().to_api_object()
+            user = self.user.get()
+            if user:
+                data['user'] = user.to_api_object()
         return data

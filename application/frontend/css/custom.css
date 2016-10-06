@@ -98,6 +98,13 @@ ul.dropdown-menu {
     padding: 12px 14px;
 }
 
+#firstrow-nav .navbar-nav li>p.navbar-text {
+    color: #fff;
+    /*padding: 12px 14px;*/
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 #firstrow-nav .navbar-nav>.active-1>a,
 #firstrow-nav .navbar-nav>.active-1>a:focus,
 #firstrow-nav .navbar-nav>.active-1>a:hover {

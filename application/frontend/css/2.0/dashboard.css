@@ -359,7 +359,7 @@ form h4.background span {
 #firstrow-nav .navbar-nav>li {
     border-right: 3px solid;
     color: #1e1e1e;
-    height: 40px!important;
+    /*height: 40px!important;*/
 }
 
 #firstrow-nav .navbar-nav>li>a {
@@ -386,7 +386,7 @@ form h4.background span {
 
 #firstrow-nav .navbar-nav li>p {
     color: #fff;
-    padding: 12px 14px;
+    padding: 0 14px;
 }
 
 #firstrow-nav .navbar-nav>.active-1>a,
